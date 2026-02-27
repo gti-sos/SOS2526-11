@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/gti-sos/SOS2526-11/issues"
   },
-  "homepage": "https://github.com/gti-sos/SOS2526-11#readme"
+  "homepage": "https://github.com/gti-sos/SOS2526-11#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
