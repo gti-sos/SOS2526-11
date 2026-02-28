@@ -68,9 +68,11 @@ app.get('/samples/TGG', (req, res) => {
             .reduce((acc, value) => acc + value, 0) / filtered.length;
 
         console.log(`Media de 'total' en ${targetCountry}: ${averageTotal.toFixed(2)}%`);
+        res.send(`<p>Media de 'total' en ${targetCountry}: ${averageTotal.toFixed(2)}%</p>`);
 
     } else {
         console.log(`No se encontraron datos para ${targetCountry}`);
+        res.send(`<p>No se encontraron datos para ${targetCountry}</p>`);
     }
 });
 app.listen(port, () => {
