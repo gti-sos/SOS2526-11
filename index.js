@@ -3,8 +3,8 @@ const app = express();
 const port = process.env.PORT || 8080;
 let cool = require('cool-ascii-faces');
 
-// Sirve archivos estáticos desde la carpeta 'public' (Para tu about.html)
-app.use('/', express.static('public'));
+// Sirve archivos estáticos desde la carpeta 'public' (Para about.html)
+app.use('/', express.static('./public'));
 
 // Tarea de Grupo: Ruta /cool
 app.get('/cool', (req, res) => {
