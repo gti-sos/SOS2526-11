@@ -165,7 +165,6 @@ app.put(BASE_URL_API_MRG, (req, res) => {
 //Ruta /samples/TGG https://sos2526-11.onrender.com/samples/TGG
 {
 app.get('/samples/TGG', (req, res) => {
-    //Inicializa un array con los datos de ejemplo pestaña individual de la ficha de trabajo.
     const literacyData = [
     { country: "Armenia", total: 99.8, male: 99.8, female: 99.7, gender_gap: 0.1, year: 2020 },
     { country: "Colombia", total: 95.6, male: 95.4, female: 95.9, gender_gap: 0.5, year: 2020 },
@@ -181,9 +180,7 @@ app.get('/samples/TGG', (req, res) => {
     { country: "Spain", total: 98.6, male: 99.0, female: 98.2, gender_gap: 0.8, year: 2020 },
     { country: "Spain", total: 99.3, male: 98.5, female: 98.1, gender_gap: 0.6, year: 2021 }
     ];
-    // Realice un algoritmo usando iteradores (forEach, Map, filter, …) que permita calcular la media de
-    // valores de alguna de los campos numéricos del subconjunto de filas que comparten un determinado valor
-    // en el campo de información geográfica.
+   
     const targetCountry = "Spain";
     const filtered = literacyData.filter(d => d.country === targetCountry);
     if (filtered.length > 0) {
@@ -302,8 +299,8 @@ app.listen(port, () => {
 
 
 
-
-// Tarea Individual: Ruta /samples/JFM
+// Tarea Individual: Ruta /samples/JFM https://sos2526-11.onrender.com/samples/JFM
+{
 app.get('/samples/JFM', (req, res) => {
 
     const deathData = [
@@ -343,3 +340,4 @@ app.get('/samples/JFM', (req, res) => {
     }
 
 });
+}
