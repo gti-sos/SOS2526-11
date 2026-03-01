@@ -477,10 +477,6 @@ app.post(BASE_URL_API_JFM, (req, res) => {
 app.put(BASE_URL_API_JFM, (req, res) => res.sendStatus(200));
 
 
-// Ruta de acceso al servidor
-app.listen(port, () => {
-  console.log(`Servidor funcionando en el puerto ${port}`);
-});
 
 
 
