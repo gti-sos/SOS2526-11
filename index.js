@@ -99,7 +99,7 @@ let literacyStats = [
     { country: "Spain", total: 98.6, male: 99.0, female: 98.2, gender_gap: 0.8, year: 2020 },
     { country: "Spain", total: 99.3, male: 98.5, female: 98.1, gender_gap: 0.6, year: 2021 }
     ];
-//loadInitialData localhost:8080/api/v1/literacy-rates/loadInitialData
+//loadInitialData localhost:8080/api/v1/literacy-rates/loadInitialData https://sos2526-11.onrender.com/api/v1/literacy-rates/loadInitialData
 app.get("/api/v1/literacy-rates/loadInitialData", (req, res) => {
     if (literacyStats.length > 0) {
         return res.status(400).json({ error: "Bad Request: Data already exists" });
@@ -121,11 +121,11 @@ app.get("/api/v1/literacy-rates/loadInitialData", (req, res) => {
     ];
     res.status(200).json(literacyStats);
 });
-//get todo localhost:8080/api/v1/literacy-rates
+//get todo localhost:8080/api/v1/literacy-rates https://sos2526-11.onrender.com/api/v1/literacy-rates
 app.get(BASE_URL_API_TGG, (req, res) => {
     res.send(JSON.stringify(literacyStats,null,2));
 });
-// get pais localhost:8080/api/v1/literacy-rates/Spain
+// get pais localhost:8080/api/v1/literacy-rates/Spain https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain
 app.get(BASE_URL_API_TGG + "/:country", (req, res) => {
     const { country } = req.params;
     const { year, from, to } = req.query;
@@ -135,7 +135,7 @@ app.get(BASE_URL_API_TGG + "/:country", (req, res) => {
     if (to)   result = result.filter((d) => d.year <= parseInt(to));
     res.status(200).json(result);
 });
-//get pais año localhost:8080/api/v1/literacy-rates/Spain/2020
+//get pais año localhost:8080/api/v1/literacy-rates/Spain/2020 https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
 app.get(BASE_URL_API_TGG, (req, res) => {
     const { country, year, from, to } = req.query;
     let result = [...literacyStats];
@@ -145,14 +145,14 @@ app.get(BASE_URL_API_TGG, (req, res) => {
     if (to)      result = result.filter((d) => d.year <= parseInt(to));
     res.status(200).json(result);
 });  
-// get  pais/año (recurso concreto) localhost:8080/api/v1/literacy-rates/Spain/2020
+// get  pais/año (recurso concreto) localhost:8080/api/v1/literacy-rates/Spain/2020 https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
 app.get(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
     const { country, year } = req.params;
     const resource = literacyStats.find(
       (d) => d.country.toLowerCase() === country.toLowerCase() && d.year == year);
     resource ? res.status(200).json(resource) : res.sendStatus(404);
 });
-//post 
+//post https://sos2526-11.onrender.com/api/v1/literacy-rates
 app.post(BASE_URL_API_TGG, (req, res) => {
     const data = req.body;
     if (!data.country || !data.year || data.total === undefined ||
@@ -175,7 +175,7 @@ app.post(BASE_URL_API_TGG, (req, res) => {
     });
     res.sendStatus(201);
 });
-// put
+// put https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
 app.put(BASE_URL_API_TGG, (req, res) => res.sendStatus(200));
 }
 //ruta de acceso al servidort localhost:8080
