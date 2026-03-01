@@ -8,10 +8,10 @@ let BASE_URL_API_TGG =   BASE_URL_API + "/literacy-rates";
 // Middleware para parsear JSON
 app.use(express.json());
 
-// Sirve archivos estáticos desde la carpeta 'public' (Para about.html)
+// Sirve archivos estáticos desde la carpeta 'public' (Para about.html) https://sos2526-11.onrender.com/about.html
 app.use('/', express.static('./public'));
 
-// Tarea de Grupo: Ruta /cool
+// Tarea de Grupo: Ruta /cool https://sos2526-11.onrender.com/cool
 {
 app.get('/cool', (req, res) => {
     res.send("<html><body><h1>" + cool() + "</h1></body></html>");
@@ -45,7 +45,7 @@ app.get('/samples/MRG', (req, res) => {
 }
 
 // Tarea Individual: Ruta /samples/TGG + API TGG
-//Ruta /samples/TGG
+//Ruta /samples/TGG https://sos2526-11.onrender.com/samples/TGG
 {
 app.get('/samples/TGG', (req, res) => {
     //Inicializa un array con los datos de ejemplo pestaña individual de la ficha de trabajo.
@@ -64,33 +64,25 @@ app.get('/samples/TGG', (req, res) => {
     { country: "Spain", total: 98.6, male: 99.0, female: 98.2, gender_gap: 0.8, year: 2020 },
     { country: "Spain", total: 99.3, male: 98.5, female: 98.1, gender_gap: 0.6, year: 2021 }
     ];
-
     // Realice un algoritmo usando iteradores (forEach, Map, filter, …) que permita calcular la media de
     // valores de alguna de los campos numéricos del subconjunto de filas que comparten un determinado valor
     // en el campo de información geográfica.
     const targetCountry = "Spain";
-
     const filtered = literacyData.filter(d => d.country === targetCountry);
-
     if (filtered.length > 0) {
-
         const averageTotal = filtered
             .map(d => d.total)
             .reduce((acc, value) => acc + value, 0) / filtered.length;
-
         console.log(`Media de 'total' en ${targetCountry}: ${averageTotal.toFixed(2)}%`);
         res.send(`<p>Media de 'total' en ${targetCountry}: ${averageTotal.toFixed(2)}%</p>`);
-
     } else {
         console.log(`No se encontraron datos para ${targetCountry}`);
         res.send(`<p>No se encontraron datos para ${targetCountry}</p>`);
     }
-
-    
 });
 }
 
-//API TGG
+//API TGG https://sos2526-11.onrender.com/api/v1/literacy-rates
 {
 let literacyStats = [
         { country: "Armenia", total: 99.8, male: 99.8, female: 99.7, gender_gap: 0.1, year: 2020 },
