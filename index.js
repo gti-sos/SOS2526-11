@@ -185,8 +185,8 @@ app.listen(port, () => {
 
 
 
-
-// Tarea Individual: Ruta /samples/JFM
+// Tarea Individual: Ruta /samples/JFM https://sos2526-11.onrender.com/samples/JFM
+{
 app.get('/samples/JFM', (req, res) => {
 
     const deathData = [
@@ -226,3 +226,4 @@ app.get('/samples/JFM', (req, res) => {
     }
 
 });
+}
