@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 const port = process.env.PORT || 8080;
 let cool = require('cool-ascii-faces');
@@ -11,6 +12,10 @@ app.use(express.json());
 // Sirve archivos estáticos desde la carpeta 'public' (Para about.html) https://sos2526-11.onrender.com/about.html
 app.use('/', express.static('./public'));
 
+// Ruta /about https://sos2526-11.onrender.com/about
+app.get('/about', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/about.html'));
+});
 // Tarea de Grupo: Ruta /cool https://sos2526-11.onrender.com/cool
 {
 app.get('/cool', (req, res) => {
