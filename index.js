@@ -10,8 +10,6 @@ let BASE_URL_API_TGG =   BASE_URL_API + "/literacy-rates";
 app.use(express.json());
 
 // Sirve archivos estáticos desde la carpeta 'public' (Para about.html) https://sos2526-11.onrender.com/about.html
-app.use('/', express.static('./public'));
-
 // Ruta /about https://sos2526-11.onrender.com/about
 app.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/about.html'));
