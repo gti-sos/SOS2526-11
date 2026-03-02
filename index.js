@@ -57,7 +57,7 @@ app.get('/samples/MRG', (req, res) => {
         res.send(`<p>No se encontraron datos para ${targetNation}</p>`);
     }
 });
-const BASE_URL_API_MRG = "/api/v1/alcohol-consumptions";
+const BASE_URL_API_MRG = "/api/v1/alcohol-consumptions-per-capita";
 let alcoholStats = []; 
 
 app.use(express.json());
