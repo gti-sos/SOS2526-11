@@ -199,19 +199,7 @@ app.get('/samples/TGG', (req, res) => {
 //API TGG https://sos2526-11.onrender.com/api/v1/literacy-rates
 {
 let literacyStats = [
-        { country: "Armenia", total: 99.8, male: 99.8, female: 99.7, gender_gap: 0.1, year: 2020 },
-    { country: "Colombia", total: 95.6, male: 95.4, female: 95.9, gender_gap: 0.5, year: 2020 },
-    { country: "Ecuador", total: 93.6, male: 94.8, female: 92.5, gender_gap: 2.3, year: 2020 },
-    { country: "Indonesia", total: 96.0, male: 97.4, female: 94.6, gender_gap: 2.8, year: 2020 },
-    { country: "Kuwait", total: 96.5, male: 97.1, female: 95.4, gender_gap: 1.7, year: 2020 },
-    { country: "Mexico", total: 95.2, male: 96.1, female: 94.5, gender_gap: 1.6, year: 2020 },
-    { country: "Mongolia", total: 99.2, male: 99.1, female: 99.2, gender_gap: 0.1, year: 2020 },
-    { country: "North Macedonia", total: 98.4, male: 99.1, female: 97.6, gender_gap: 1.5, year: 2020 },
-    { country: "Paraguay", total: 94.5, male: 94.9, female: 94.2, gender_gap: 0.7, year: 2020 },
-    { country: "Peru", total: 94.5, male: 97.0, female: 92.0, gender_gap: 5.0, year: 2020 },
-    { country: "Saudi Arabia", total: 97.6, male: 98.6, female: 96.0, gender_gap: 2.6, year: 2020 },
-    { country: "Spain", total: 98.6, male: 99.0, female: 98.2, gender_gap: 0.8, year: 2020 },
-    { country: "Spain", total: 99.3, male: 98.5, female: 98.1, gender_gap: 0.6, year: 2021 }
+        
     ];
 //loadInitialData localhost:8080/api/v1/literacy-rates/loadInitialData https://sos2526-11.onrender.com/api/v1/literacy-rates/loadInitialData
 app.get("/api/v1/literacy-rates/loadInitialData", (req, res) => {
@@ -239,7 +227,7 @@ app.get("/api/v1/literacy-rates/loadInitialData", (req, res) => {
 app.get(BASE_URL_API_TGG, (req, res) => {
     res.send(JSON.stringify(literacyStats,null,2));
 });
-// get pais localhost:8080/api/v1/literacy-rates/Spain https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain
+// get /pais localhost:8080/api/v1/literacy-rates/Spain https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain
 app.get(BASE_URL_API_TGG + "/:country", (req, res) => {
     const { country } = req.params;
     const { year, from, to } = req.query;
@@ -249,7 +237,7 @@ app.get(BASE_URL_API_TGG + "/:country", (req, res) => {
     if (to)   result = result.filter((d) => d.year <= parseInt(to));
     res.status(200).json(result);
 });
-//get pais año localhost:8080/api/v1/literacy-rates/Spain/2020 https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
+//get pais/año localhost:8080/api/v1/literacy-rates/Spain/2020 https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
 app.get(BASE_URL_API_TGG, (req, res) => {
     const { country, year, from, to } = req.query;
     let result = [...literacyStats];
@@ -292,10 +280,8 @@ app.post(BASE_URL_API_TGG, (req, res) => {
 // put https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
 app.put(BASE_URL_API_TGG, (req, res) => res.sendStatus(200));
 }
-//ruta de acceso al servidort localhost:8080
-app.listen(port, () => {
-    console.log(`Servidor funcionando en el puerto ${port}`);
-});
+
+
 
 
 
@@ -344,7 +330,7 @@ app.get('/samples/JFM', (req, res) => {
 }
 
 // API JFM https://sos2526-11.onrender.com/api/v1/road-fatalities
-
+{
 const BASE_URL_API_JFM = "/api/v1/road-fatalities";
 
 let roadFatalitiesStats = []; //Vacío para que loadInitialData tenga sentido
@@ -477,6 +463,9 @@ app.post(BASE_URL_API_JFM, (req, res) => {
 app.put(BASE_URL_API_JFM, (req, res) => res.sendStatus(200));
 
 
+}
 
-
-
+//ruta de acceso al servidort localhost:8080
+app.listen(port, () => {
+    console.log(`Servidor funcionando en el puerto ${port}`);
+});
