@@ -466,9 +466,8 @@ app.post(BASE_URL_API_JFM, (req, res) => {
 app.put(BASE_URL_API_JFM, (req, res) => res.sendStatus(405));
 
 
-
+// DELETE
 app.delete(BASE_URL_API_JFM, (req, res) => {
-    roadFatalitiesStats = [];
     res.status(401).json({ message: "No tienes permisos" });
 });
 
