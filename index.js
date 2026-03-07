@@ -370,7 +370,7 @@ app.get(BASE_URL_API_JFM + "/loadInitialData", (req, res) => {
 
 //GET todo 
 //localhost:8080/api/v1/road-fatalities https://sos2526-11.onrender.com/api/v1/road-fatalities
-app.get(BASE_URL_API_TGG, (req, res) => {
+app.get(BASE_URL_API_JFM, (req, res) => {
     res.send(JSON.stringify(roadFatalitiesStats,null,2));
 });
 
