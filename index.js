@@ -527,7 +527,8 @@ app.put(BASE_URL_API_JFM + "/:nation/:year", (req, res) => {
 // DELETE (a todo)
 //Ej: DELETE  /api/v1/road-fatalities
 app.delete(BASE_URL_API_JFM, (req, res) => {
-    res.status(401).json({ message: "No tienes permisos" });
+    roadFatalitiesStats = [];
+    res.sendStatus(200);
 });
 
 
