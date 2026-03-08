@@ -204,7 +204,7 @@ app.get('/samples/TGG', (req, res) => {
 let literacyStats = [
         
     ];
-//loadInitialData localhost:8080/api/v1/literacy-rates/loadInitialData https://sos2526-11.onrender.com/api/v1/literacy-rates/loadInitialData
+// GET /api/v1/literacy-rates/loadInitialData - Carga datos iniciales. Ejemplo: https://sos2526-11.onrender.com/api/v1/literacy-rates/loadInitialData (carga datos como Armenia 2020, Spain 2020, etc.)
 app.get("/api/v1/literacy-rates/loadInitialData", (req, res) => {
     if (literacyStats.length > 0) {
         return res.status(400).json({ error: "Bad Request: Data already exists" });
@@ -226,11 +226,11 @@ app.get("/api/v1/literacy-rates/loadInitialData", (req, res) => {
     ];
     res.status(200).json(literacyStats);
 });
-//get todo localhost:8080/api/v1/literacy-rates https://sos2526-11.onrender.com/api/v1/literacy-rates
+// GET /api/v1/literacy-rates  https://sos2526-11.onrender.com/api/v1/literacy-rates
 app.get(BASE_URL_API_TGG, (req, res) => {
     res.send(JSON.stringify(literacyStats,null,2));
 });
-// get /pais localhost:8080/api/v1/literacy-rates/Spain https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain
+// GET /api/v1/literacy-rates/:country https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain
 app.get(BASE_URL_API_TGG + "/:country", (req, res) => {
     const { country } = req.params;
     const { year, from, to } = req.query;
@@ -240,7 +240,7 @@ app.get(BASE_URL_API_TGG + "/:country", (req, res) => {
     if (to)   result = result.filter((d) => d.year <= parseInt(to));
     res.status(200).json(result);
 });
-//get pais/año localhost:8080/api/v1/literacy-rates/Spain/2020 https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
+// GET /api/v1/literacy-rates con filtros https://sos2526-11.onrender.com/api/v1/literacy-rates?country=Spain
 app.get(BASE_URL_API_TGG, (req, res) => {
     const { country, year, from, to } = req.query;
     let result = [...literacyStats];
@@ -250,14 +250,14 @@ app.get(BASE_URL_API_TGG, (req, res) => {
     if (to)      result = result.filter((d) => d.year <= parseInt(to));
     res.status(200).json(result);
 });  
-// get  pais/año (recurso concreto) localhost:8080/api/v1/literacy-rates/Spain/2020 https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
+// GET /api/v1/literacy-rates/:country/:year - Obtiene un recurso concreto. Ejemplo: https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
 app.get(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
     const { country, year } = req.params;
     const resource = literacyStats.find(
       (d) => d.country.toLowerCase() === country.toLowerCase() && d.year == year);
     resource ? res.status(200).json(resource) : res.sendStatus(404);
 });
-//post https://sos2526-11.onrender.com/api/v1/literacy-rates
+// POST /api/v1/literacy-rates  https://sos2526-11.onrender.com/api/v1/literacy-rates { "country": "Spain", "year": 2022, "total": 99.0, "male": 99.5, "female": 98.5, "gender_gap": 1.0 }
 app.post(BASE_URL_API_TGG, (req, res) => {
     const data = req.body;
     if (!data.country || !data.year || data.total === undefined ||
@@ -280,12 +280,65 @@ app.post(BASE_URL_API_TGG, (req, res) => {
     });
     res.sendStatus(200);
 });
-// put https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
+// PUT /api/v1/literacy-rates No permitido
 app.put(BASE_URL_API_TGG, (req, res) => res.sendStatus(405));
 }
 
+// DELETE /api/v1/literacy-rates https://sos2526-11.onrender.com/api/v1/literacy-rates
 app.delete(BASE_URL_API_TGG, (req, res) => {
-    res.status(401).json({ message: "No tienes autorización para eliminar recursos." });
+    literacyStats = [];
+    res.status(200).json({ message: "OK: Todos los recursos han sido eliminados." });
+});
+
+// POST /api/v1/literacy-rates/:country/:year No permitido https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
+app.post(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
+    res.status(405).json({ error: "Method Not Allowed: No se puede hacer POST a un recurso concreto." });
+});
+
+// PUT /api/v1/literacy-rates/:country/:year https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020 con body { "country": "Spain", "year": 2020, "total": 99.0, "male": 99.5, "female": 98.5, "gender_gap": 1.0 }
+app.put(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
+    const { country, year } = req.params;
+    const updatedData = req.body;
+
+    if (!updatedData.country || !updatedData.year || updatedData.total === undefined ||
+        updatedData.male === undefined || updatedData.female === undefined || updatedData.gender_gap === undefined) {
+        return res.status(400).json({ error: "Bad Request: Faltan campos obligatorios." });
+    }
+
+    if (updatedData.country.toLowerCase() !== country.toLowerCase() || updatedData.year != year) {
+        return res.status(400).json({ error: "Bad Request: Los IDs del cuerpo no coinciden con los de la URL." });
+    }
+
+    const index = literacyStats.findIndex(d => d.country.toLowerCase() === country.toLowerCase() && d.year == year);
+    
+    if (index !== -1) {
+        literacyStats[index] = {
+            country: String(updatedData.country),
+            year: Number(updatedData.year),
+            countryCode: updatedData.countryCode || "",
+            total: Number(updatedData.total),
+            male: Number(updatedData.male),
+            female: Number(updatedData.female),
+            gender_gap: Number(updatedData.gender_gap),
+        };
+        res.status(200).json({ message: "OK: Recurso actualizado." });
+    } else {
+        res.status(404).json({ error: "Not Found: El recurso que intentas actualizar no existe." });
+    }
+});
+
+// DELETE /api/v1/literacy-rates/:country/:year https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
+app.delete(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
+    const { country, year } = req.params;
+    const initialLength = literacyStats.length;
+    
+    literacyStats = literacyStats.filter(d => !(d.country.toLowerCase() === country.toLowerCase() && d.year == year));
+
+    if (literacyStats.length < initialLength) {
+        res.status(200).json({ message: "OK: Recurso eliminado correctamente." });
+    } else {
+        res.status(404).json({ error: "Not Found: El recurso a borrar no existe." });
+    }
 });
 
 
