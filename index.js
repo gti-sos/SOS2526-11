@@ -481,8 +481,14 @@ app.put(BASE_URL_API_JFM + "/:nation/:year", (req, res) => {
   const { nation, year } = req.params;
   const data = req.body;
 
-  // Error 400: Falta el JSON correcto o faltan campos
-  if (!validateFields(data)) {
+  // Error 400: Falta el JSON correcto o faltan campos obligatorios
+  if (!data.nation || 
+      data.year === undefined || 
+      data.population_death_rate === undefined ||
+      data.vehicle_death_rate === undefined || 
+      data.total_death === undefined ||
+      !data.income_level || 
+      !data.traffic_side) {
     return res.status(400).json({ error: "Bad Request: JSON inválido o faltan campos esperados." });
   }
 
