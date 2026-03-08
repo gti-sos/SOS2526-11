@@ -262,7 +262,7 @@ app.post(BASE_URL_API_TGG, (req, res) => {
     const data = req.body;
     if (!data.country || !data.year || data.total === undefined ||
         data.male === undefined || data.female === undefined || data.gender_gap === undefined)
-      return res.status(401).json({ error: "Bad Request: Faltan campos obligatorios (country, year, total, male, female, gender_gap)" });
+      return res.status(400).json({ error: "Bad Request: Faltan campos obligatorios (country, year, total, male, female, gender_gap)" });
     const exists = literacyStats.some(
       (d) => d.country.toLowerCase() === data.country.toLowerCase() && d.year == data.year
     );
