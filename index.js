@@ -465,14 +465,84 @@ app.post(BASE_URL_API_JFM, (req, res) => {
 });
 
 
-// PUT 
+// POST (a un recurso concreto (NO PERMITIDO))
+//Ej: POST /api/v1/road-fatalities/italy/2023
+app.post(BASE_URL_API_JFM + "/:nation/:year", (req, res) => res.sendStatus(405));
+
+
+// PUT (coleccion (NO PERMITIDO))
+//Ej: PUT  /api/v1/road-fatalities
 app.put(BASE_URL_API_JFM, (req, res) => res.sendStatus(405));
 
 
-// DELETE
+// PUT (a un recurso concreto (Actualiza los datos))
+// Ej: PUT /api/v1/road-fatalities/spain/2013
+app.put(BASE_URL_API_JFM + "/:nation/:year", (req, res) => {
+  const { nation, year } = req.params;
+  const data = req.body;
+
+  // Error 400: Falta el JSON correcto o faltan campos
+  if (!validateFields(data)) {
+    return res.status(400).json({ error: "Bad Request: JSON inválido o faltan campos esperados." });
+  }
+
+  // Error 400: El ID del body no coincide con el de la URL
+  if (data.nation.toLowerCase() !== nation.toLowerCase() || String(data.year) !== String(year)) {
+    return res.status(400).json({ error: "Bad Request: Los identificadores de la URL no coinciden con el body." });
+  }
+
+  const index = roadFatalitiesStats.findIndex(
+    d => d.nation.toLowerCase() === nation.toLowerCase() && d.year == year
+  );
+
+  // Error 404: El recurso no existe
+  if (index === -1) {
+    return res.sendStatus(404);
+  }
+
+  // Éxito 200: Actualización correcta (Sobreescribiendo el índice)
+  roadFatalitiesStats[index] = {
+    nation:                 String(data.nation).toLowerCase(),
+    year:                   Number(data.year),
+    population_death_rate:  Number(data.population_death_rate),
+    vehicle_death_rate:     (data.vehicle_death_rate === null ? null : Number(data.vehicle_death_rate)),
+    distance_death_rate:    (data.distance_death_rate === null || data.distance_death_rate === undefined)
+                              ? null
+                              : Number(data.distance_death_rate),
+    total_death:            Number(data.total_death),
+    income_level:           String(data.income_level),
+    traffic_side:           String(data.traffic_side)
+  };
+
+  return res.sendStatus(200);
+});
+
+
+// DELETE (a todo)
+//Ej: DELETE  /api/v1/road-fatalities
 app.delete(BASE_URL_API_JFM, (req, res) => {
     res.status(401).json({ message: "No tienes permisos" });
 });
+
+
+// DELETE (a un recurso concreto, borra solo un país en un año específico)
+//Ej: DELETE  /api/v1/road-fatalities/spain/2013
+app.delete(BASE_URL_API_JFM + "/:nation/:year", (req, res) => {
+  const { nation, year } = req.params;
+
+  const initialLength = roadFatalitiesStats.length;
+  roadFatalitiesStats = roadFatalitiesStats.filter(
+    d => !(d.nation.toLowerCase() === nation.toLowerCase() && d.year == year));
+
+  // Si no ha cambiado el tamaño, el recurso no existía
+  if (roadFatalitiesStats.length === initialLength) {
+    return res.sendStatus(404);
+  }
+
+  // Si se ha borrado correctamente
+  return res.sendStatus(200);
+});
+
 
 }
 
