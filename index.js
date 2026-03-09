@@ -199,11 +199,12 @@ app.get('/samples/TGG', (req, res) => {
 });
 }
 
-//API TGG https://sos2526-11.onrender.com/api/v1/literacy-rates
-{
+// API TGG https://sos2526-11.onrender.com/api/v1/literacy-rates
 let literacyStats = [
         
     ];
+{
+
 // GET /api/v1/literacy-rates/loadInitialData - Carga datos iniciales. Ejemplo: https://sos2526-11.onrender.com/api/v1/literacy-rates/loadInitialData (carga datos como Armenia 2020, Spain 2020, etc.)
 app.get("/api/v1/literacy-rates/loadInitialData", (req, res) => {
     if (literacyStats.length > 0) {
@@ -240,16 +241,7 @@ app.get(BASE_URL_API_TGG + "/:country", (req, res) => {
     if (to)   result = result.filter((d) => d.year <= parseInt(to));
     res.status(200).json(result);
 });
-// GET /api/v1/literacy-rates con filtros https://sos2526-11.onrender.com/api/v1/literacy-rates?country=Spain
-app.get(BASE_URL_API_TGG, (req, res) => {
-    const { country, year, from, to } = req.query;
-    let result = [...literacyStats];
-    if (country) result = result.filter((d) => d.country.toLowerCase() === country.toLowerCase());
-    if (year)    result = result.filter((d) => d.year == year);
-    if (from)    result = result.filter((d) => d.year >= parseInt(from));
-    if (to)      result = result.filter((d) => d.year <= parseInt(to));
-    res.status(200).json(result);
-});  
+  
 // GET /api/v1/literacy-rates/:country/:year - Obtiene un recurso concreto. Ejemplo: https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
 app.get(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
     const { country, year } = req.params;
@@ -295,36 +287,73 @@ app.post(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
     res.status(405).json({ error: "Method Not Allowed: No se puede hacer POST a un recurso concreto." });
 });
 
-// PUT /api/v1/literacy-rates/:country/:year https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020 con body { "country": "Spain", "year": 2020, "total": 99.0, "male": 99.5, "female": 98.5, "gender_gap": 1.0 }
+// PUT /api/v1/literacy-rates/:country/:year https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020 { "country": "Spain", "year": 2020, "total": 99.0, "male": 99.5, "female": 98.5, "gender_gap": 1.0 }
 app.put(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
+
     const { country, year } = req.params;
     const updatedData = req.body;
 
-    if (!updatedData.country || !updatedData.year || updatedData.total === undefined ||
-        updatedData.male === undefined || updatedData.female === undefined || updatedData.gender_gap === undefined) {
-        return res.status(400).json({ error: "Bad Request: Faltan campos obligatorios." });
+    // comprobar que hay body
+    if (!updatedData) {
+        return res.status(400).json({ error: "Bad Request: Body vacío." });
     }
 
-    if (updatedData.country.toLowerCase() !== country.toLowerCase() || updatedData.year != year) {
-        return res.status(400).json({ error: "Bad Request: Los IDs del cuerpo no coinciden con los de la URL." });
+    // comprobar campos obligatorios
+    if (
+        updatedData.country === undefined ||
+        updatedData.year === undefined ||
+        updatedData.total === undefined ||
+        updatedData.male === undefined ||
+        updatedData.female === undefined ||
+        updatedData.gender_gap === undefined
+    ) {
+        return res.status(400).json({
+            error: "Bad Request: Faltan campos obligatorios (country, year, total, male, female, gender_gap)"
+        });
     }
 
-    const index = literacyStats.findIndex(d => d.country.toLowerCase() === country.toLowerCase() && d.year == year);
-    
-    if (index !== -1) {
-        literacyStats[index] = {
-            country: String(updatedData.country),
-            year: Number(updatedData.year),
-            countryCode: updatedData.countryCode || "",
-            total: Number(updatedData.total),
-            male: Number(updatedData.male),
-            female: Number(updatedData.female),
-            gender_gap: Number(updatedData.gender_gap),
-        };
-        res.status(200).json({ message: "OK: Recurso actualizado." });
-    } else {
-        res.status(404).json({ error: "Not Found: El recurso que intentas actualizar no existe." });
+    // validar tipos básicos
+    if (typeof updatedData.country !== "string") {
+        return res.status(400).json({ error: "Bad Request: country debe ser string." });
     }
+
+    // comprobar que los IDs coinciden con la URL
+    if (
+        updatedData.country.toLowerCase() !== country.toLowerCase() ||
+        Number(updatedData.year) !== Number(year)
+    ) {
+        return res.status(400).json({
+            error: "Bad Request: Los IDs del cuerpo no coinciden con los de la URL."
+        });
+    }
+
+    // buscar recurso
+    const index = literacyStats.findIndex(
+        d =>
+            d.country.toLowerCase() === country.toLowerCase() &&
+            d.year == year
+    );
+
+    // si no existe
+    if (index === -1) {
+        return res.status(404).json({
+            error: "Not Found: El recurso que intentas actualizar no existe."
+        });
+    }
+
+    // actualizar
+    literacyStats[index] = {
+        country: String(updatedData.country),
+        year: Number(updatedData.year),
+        countryCode: updatedData.countryCode || "",
+        total: Number(updatedData.total),
+        male: Number(updatedData.male),
+        female: Number(updatedData.female),
+        gender_gap: Number(updatedData.gender_gap)
+    };
+
+    res.status(200).json({ message: "OK: Recurso actualizado correctamente." });
+
 });
 
 // DELETE /api/v1/literacy-rates/:country/:year https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
