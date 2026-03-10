@@ -60,6 +60,10 @@ let alcoholStats = [];
 
 app.use(express.json());
 
+app.get("/api/v1/alcohol-consumptions-per-capita/docs", (req, res) => {
+    res.redirect("https://documenter.getpostman.com/view/52276603/2sBXieqtK2");
+});
+
 app.get(BASE_URL_API_MRG + "/loadInitialData", (req, res) => {
     if (alcoholStats.length > 0) {
         return res.status(400).json({ error: "Bad Request: Los datos ya han sido cargados." });
