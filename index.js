@@ -6,6 +6,8 @@ let cool = require('cool-ascii-faces');
 let BASE_URL_API = "/api/v1";
 let BASE_URL_API_TGG =   BASE_URL_API + "/literacy-rates";
 
+app.use('/', express.static('public'));
+
 // Middleware para parsear JSON
 app.use(express.json());
 
