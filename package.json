@@ -1,10 +1,11 @@
 {
   "name": "sos2526-11",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
-  "main": "index.js",
+  "main": "src/back/index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node ./src/back/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
