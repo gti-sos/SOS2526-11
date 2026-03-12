@@ -5,8 +5,14 @@
   "description": "",
   "main": "src/back/index.js",
   "scripts": {
+<<<<<<< HEAD
     "start": "node ./src/back/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+=======
+    "start": "node index.js",
+    "test": "newman run tests/api-mrg.json && newman run tests/api-tgg.json && newman run tests/api-jfm.json",
+    "test-alcohol-consumptions-per-capita": "newman run tests/api-mrg.json"
+>>>>>>> b56987846ccaab97fbdc40e714119be9ed19d521
   },
   "repository": {
     "type": "git",
@@ -22,6 +28,10 @@
   "dependencies": {
     "body-parser": "^2.2.2",
     "cool-ascii-faces": "^1.3.4",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "nedb": "^1.8.0"
+  },
+  "devDependencies": {
+    "newman": "^6.2.2"
   }
 }

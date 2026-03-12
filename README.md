@@ -8,6 +8,6 @@
 - **Repository**: [gti-sos/SOS2526-11](https://github.com/gti-sos/SOS2526-11)
 - **URL:** https://sos2526-11.onrender.com
 - **APIs**:
-  - Miguel Ridao Gallardo : https://sos2526-11.onrender.com/api/v1/alcohol-consumptions-per-capita
-  - Tomás Gutiérrez García: https://sos2526-11.onrender.com/api/v1/literacy-rates
-  - José Fernández Montero: https://sos2526-11.onrender.com/api/v1/road-fatalities
+  - https://sos2526-11.onrender.com/api/v1/alcohol-consumptions-per-capita/docs (developed by Miguel Ridao Gallardo)
+  - https://sos2526-11.onrender.com/api/v1/literacy-rates (developed by Tomás Gutiérrez García)
+  - https://sos2526-11.onrender.com/api/v1/road-fatalities (developed by José Fernández Montero)
