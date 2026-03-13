@@ -37,7 +37,10 @@ function loadBackendTGG() {
     });
 // GET /api/v1/literacy-rates  https://sos2526-11.onrender.com/api/v1/literacy-rates
     app.get(BASE_URL_API_TGG, (req, res) => {
+        db.find({}, (err, literacyStats) => {
         res.send(JSON.stringify(literacyStats,null,2));
+        });
+
     });
 // GET /api/v1/literacy-rates/:country https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain
     app.get(BASE_URL_API_TGG + "/:country", (req, res) => {

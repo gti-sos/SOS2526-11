@@ -1,11 +1,10 @@
 import express from 'express';
 import path from 'path';
-import cool from 'cool-ascii-faces';
+//import cool from 'cool-ascii-faces';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { loadBackendTGG } from './api/api-TGG.js';
-import { loadSamplesTGG } from '../index-TGG.js';
-import express from 'express';
+import Datastore from 'nedb';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -26,11 +25,11 @@ app.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/about.html'));
 });
 // Tarea de Grupo: Ruta /cool https://sos2526-11.onrender.com/cool
-{
+/* {
 app.get('/cool', (req, res) => {
     res.send("<html><body><h1>" + cool() + "</h1></body></html>");
 });
-}
+} */
 
 // Tarea Individual: Ruta /samples/MRG + API MRG
 //Ruta /samples/MRG https://sos2526-11.onreder.com/samples/MRG
@@ -173,10 +172,7 @@ app.get('/cool', (req, res) => {
 //     res.status(405).json({ error: "Method Not Allowed: No se puede hacer PUT sobre la lista general." });
 // });
 // }
-{
-    const Datastore = require('nedb');
-
-    module.exports = (app) => {
+export default (app) => {
         const BASE_URL_API_MRG = "/api/v1/alcohol-consumptions-per-capita";
         
         // 1. Inicializamos NeDB (creará el archivo local de la BD) [cite: 21]
@@ -362,17 +358,9 @@ app.get('/cool', (req, res) => {
             });
         });
     };
-}
-
-<<<<<<< HEAD:src/back/index.js
-=======
 
 
 
-
->>>>>>> b56987846ccaab97fbdc40e714119be9ed19d521:index.js
-// Tarea Individual: Ruta /samples/TGG + API TGG
-loadSamplesTGG();
 //API TGG https://sos2526-11.onrender.com/api/v1/literacy-rates
 loadBackendTGG();
 

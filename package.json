@@ -5,14 +5,11 @@
   "description": "",
   "main": "src/back/index.js",
   "scripts": {
-<<<<<<< HEAD
     "start": "node ./src/back/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-=======
-    "start": "node index.js",
     "test": "newman run tests/api-mrg.json && newman run tests/api-tgg.json && newman run tests/api-jfm.json",
-    "test-alcohol-consumptions-per-capita": "newman run tests/api-mrg.json"
->>>>>>> b56987846ccaab97fbdc40e714119be9ed19d521
+    "test-alcohol-consumptions-per-capita": "newman run tests/api-mrg.json",
+    "test-literacy-rates": "newman run tests/api-tgg.json",
+    "test-road-fatalities": "newman run tests/api-jfm.json"
   },
   "repository": {
     "type": "git",
