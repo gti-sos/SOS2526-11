@@ -17,7 +17,6 @@ let BASE_URL_API_TGG =   BASE_URL_API + "/literacy-rates";
 
 app.use('/', express.static('public'));
 
-// Middleware para parsear JSON
 app.use(express.json());
 
 // Sirve archivos estáticos desde la carpeta 'public' (Para about.html) https://sos2526-11.onrender.com/about.html
