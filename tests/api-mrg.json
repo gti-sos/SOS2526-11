@@ -273,6 +273,30 @@
           "path": ["api", "v1", "alcohol-consumptions-per-capita", "Albania", "2016"]
         }
       }
+    },
+    {
+      "name": "99. Delete Final (Limpiar BD)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{base_url}}/api/v1/alcohol-consumptions-per-capita",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "alcohol-consumptions-per-capita"]
+        }
+      }
     }
   ]
 }

@@ -19,7 +19,7 @@ export function loadBackendMRG(app) {
 
     // GET /api/v1/alcohol-consumptions-per-capita/docs
     app.get(BASE_URL_API_MRG + "/docs", (req, res) => {
-        res.redirect("https://documenter.getpostman.com/view/52276603/2sBXieqtK2");
+        res.redirect("https://documenter.getpostman.com/view/52276603/2sBXigLstT");
     });
 
     // GET /api/v1/alcohol-consumptions-per-capita/loadInitialData
