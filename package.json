@@ -4,10 +4,10 @@
   "type": "module",
   "description": "",
   "main": "src/back/index.js",
-  "scripts": {
+ "scripts": {
     "start": "node ./src/back/index.js",
-    "test": "newman run tests/api-mrg.json && newman run tests/api-tgg.json && newman run tests/api-jfm.json",
-    "test-alcohol-consumptions-per-capita": "newman run tests/api-mrg.json -e tests/env-local.json",
+    "test": "newman run tests/api-mrg.json --env-var \"base_url=https://sos2526-11.onrender.com\" && newman run tests/api-tgg.json && newman run tests/api-jfm.json",
+    "test-alcohol-consumptions-per-capita": "newman run tests/api-mrg.json --env-var \"base_url=https://sos2526-11.onrender.com\"",
     "test-literacy-rates": "newman run tests/api-tgg.json",
     "test-road-fatalities": "newman run tests/api-jfm.json"
   },
