@@ -3,7 +3,7 @@ import path from 'path';
 //import cool from 'cool-ascii-faces';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-//import { loadBackendMRG } from "./api/api-MRG.js";
+import { loadBackendMRG } from "./api/api-MRG.js";
 //import { loadBackendTGG } from './api/api-TGG.js';
 import Datastore from 'nedb';
 
@@ -226,7 +226,7 @@ export default (app) => {
 
 //API TGG https://sos2526-11.onrender.com/api/v1/literacy-rates
 
-//loadBackendMRG(app);
+loadBackendMRG(app);
 //loadBackendTGG();
 
 
