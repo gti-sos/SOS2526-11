@@ -3,8 +3,9 @@ import path from 'path';
 //import cool from 'cool-ascii-faces';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { loadBackendTGG } from './api/api-TGG.js';
+//import { loadBackendTGG } from './api/api-TGG.js';
 import Datastore from 'nedb';
+import { loadBackendMRG } from "./api/api-MRG.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -362,7 +363,10 @@ export default (app) => {
 
 
 //API TGG https://sos2526-11.onrender.com/api/v1/literacy-rates
-loadBackendTGG();
+
+//loadBackendTGG();
+
+loadBackendMRG(app);
 
 
 // API JFM https://sos2526-11.onrender.com/api/v1/road-fatalities

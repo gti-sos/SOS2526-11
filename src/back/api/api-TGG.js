@@ -1,185 +1,165 @@
-import express from "express";
-import bodyParser from "body-parser";
 import dataStore from "nedb";
-const app = express();
-let db = new dataStore();
-app.use(bodyParser.json());
-export const BASE_URL_API_TGG = "/api/v1/literacy-rates";
 
-function loadBackendTGG() {
-// API TGG https://sos2526-11.onrender.com/api/v1/literacy-rates
-    let literacyStats = [];
-    db.insert(literacyStats);
-    
-// GET /api/v1/literacy-rates/loadInitialData - Carga datos iniciales. Ejemplo: https://sos2526-11.onrender.com/api/v1/literacy-rates/loadInitialData (carga datos como Armenia 2020, Spain 2020, etc.)
-    app.get("/api/v1/literacy-rates/loadInitialData", (req, res) => {
-        db.find({}, (err, literacyStats) => {
-            if (literacyStats.length > 0) {
+export const BASE_URL_API_MRG = "/api/v1/alcohol-consumptions-per-capita";
+
+export function loadBackendMRG(app) {
+    // Inicializamos NeDB con persistencia en archivo
+    const db = new dataStore({ filename: './data/alcohol-consumptions-per-capita.db', autoload: true });
+
+    // Función auxiliar estricta para validar JSON
+    function isValidAlcoholStats(body) {
+        const expectedKeys = ["nation", "date_year", "alcohol_litre", "recorded_consumption", "unrecorded_consumption"];
+        const bodyKeys = Object.keys(body);
+        if (bodyKeys.length !== expectedKeys.length) return false;
+        for (let key of expectedKeys) {
+            if (!bodyKeys.includes(key)) return false;
+        }
+        return true;
+    }
+
+    // GET /api/v1/alcohol-consumptions-per-capita/docs - Redirección a la documentación
+    app.get(BASE_URL_API_MRG + "/docs", (req, res) => {
+        res.redirect("https://documenter.getpostman.com/view/52276603/2sBXieqtK2");
+    });
+
+    // GET /api/v1/alcohol-consumptions-per-capita/loadInitialData
+    app.get(BASE_URL_API_MRG + "/loadInitialData", (req, res) => {
+        db.find({}, (err, docs) => {
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            
+            if (docs.length > 0) {
                 return res.status(400).json({ error: "Bad Request: Data already exists" });
+            } else {
+                const initialData = [
+                    { nation: "Albania", date_year: 2016, alcohol_litre: 7.5, recorded_consumption: 4.4, unrecorded_consumption: 0.7 },
+                    { nation: "Angola", date_year: 2016, alcohol_litre: 8.8, recorded_consumption: 4.8, unrecorded_consumption: 0.9 },
+                    { nation: "Argentina", date_year: 2016, alcohol_litre: 9.8, recorded_consumption: 5.6, unrecorded_consumption: 1.0 },
+                    { nation: "Armenia", date_year: 2016, alcohol_litre: 5.5, recorded_consumption: 2.9, unrecorded_consumption: 0.5 },
+                    { nation: "Australia", date_year: 2016, alcohol_litre: 10.6, recorded_consumption: 6.8, unrecorded_consumption: 1.1 },
+                    { nation: "Austria", date_year: 2016, alcohol_litre: 11.6, recorded_consumption: 7.2, unrecorded_consumption: 1.2 },
+                    { nation: "Belgium", date_year: 2016, alcohol_litre: 12.1, recorded_consumption: 10.4, unrecorded_consumption: 1.7 },
+                    { nation: "Brazil", date_year: 2016, alcohol_litre: 7.8, recorded_consumption: 6.1, unrecorded_consumption: 1.7 },
+                    { nation: "Canada", date_year: 2016, alcohol_litre: 8.9, recorded_consumption: 6.9, unrecorded_consumption: 2.0 },
+                    { nation: "Chile", date_year: 2016, alcohol_litre: 9.3, recorded_consumption: 7.7, unrecorded_consumption: 1.6 }
+                ];
+
+                db.insert(initialData, (err, newDocs) => {
+                    if (err) return res.status(500).json({ error: "Error al insertar datos" });
+                    newDocs.forEach(d => delete d._id);
+                    res.status(200).json(newDocs);
+                });
             }
-            literacyStats = [
-                { country: "Armenia", total: 99.8, male: 99.8, female: 99.7, gender_gap: 0.1, year: 2020 },
-            { country: "Colombia", total: 95.6, male: 95.4, female: 95.9, gender_gap: 0.5, year: 2020 },
-            { country: "Ecuador", total: 93.6, male: 94.8, female: 92.5, gender_gap: 2.3, year: 2020 },
-            { country: "Indonesia", total: 96.0, male: 97.4, female: 94.6, gender_gap: 2.8, year: 2020 },
-            { country: "Kuwait", total: 96.5, male: 97.1, female: 95.4, gender_gap: 1.7, year: 2020 },
-            { country: "Mexico", total: 95.2, male: 96.1, female: 94.5, gender_gap: 1.6, year: 2020 },
-            { country: "Mongolia", total: 99.2, male: 99.1, female: 99.2, gender_gap: 0.1, year: 2020 },
-            { country: "North Macedonia", total: 98.4, male: 99.1, female: 97.6, gender_gap: 1.5, year: 2020 },
-            { country: "Paraguay", total: 94.5, male: 94.9, female: 94.2, gender_gap: 0.7, year: 2020 },
-            { country: "Peru", total: 94.5, male: 97.0, female: 92.0, gender_gap: 5.0, year: 2020 },
-            { country: "Saudi Arabia", total: 97.6, male: 98.6, female: 96.0, gender_gap: 2.6, year: 2020 },
-            { country: "Spain", total: 98.6, male: 99.0, female: 98.2, gender_gap: 0.8, year: 2020 },
-            { country: "Spain", total: 99.3, male: 98.5, female: 98.1, gender_gap: 0.6, year: 2021 }
-            ];
-            res.status(200).json(literacyStats);
         });
     });
-// GET /api/v1/literacy-rates  https://sos2526-11.onrender.com/api/v1/literacy-rates
-    app.get(BASE_URL_API_TGG, (req, res) => {
-        db.find({}, (err, literacyStats) => {
-        res.send(JSON.stringify(literacyStats,null,2));
+
+    // GET /api/v1/alcohol-consumptions-per-capita
+    app.get(BASE_URL_API_MRG, (req, res) => {
+        let query = {};
+        let offset = 0;
+        let limit = 0;
+
+        if (req.query.nation) query.nation = req.query.nation;
+        if (req.query.date_year) query.date_year = parseInt(req.query.date_year);
+        if (req.query.alcohol_litre) query.alcohol_litre = parseFloat(req.query.alcohol_litre);
+        if (req.query.recorded_consumption) query.recorded_consumption = parseFloat(req.query.recorded_consumption);
+        if (req.query.unrecorded_consumption) query.unrecorded_consumption = parseFloat(req.query.unrecorded_consumption);
+
+        if (req.query.offset) offset = parseInt(req.query.offset);
+        if (req.query.limit) limit = parseInt(req.query.limit);
+
+        db.find(query, { _id: 0 }).skip(offset).limit(limit).exec((err, docs) => {
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            res.status(200).json(docs);
         });
+    });
 
-    });
-// GET /api/v1/literacy-rates/:country https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain
-    app.get(BASE_URL_API_TGG + "/:country", (req, res) => {
-        const { country } = req.params;
-        const { year, from, to } = req.query;
-        let result = literacyStats.filter((d) => d.country.toLowerCase() === country.toLowerCase());
-        if (year) result = result.filter((d) => d.year == year);
-        if (from) result = result.filter((d) => d.year >= parseInt(from));
-        if (to)   result = result.filter((d) => d.year <= parseInt(to));
-        res.status(200).json(result);
-    });
-    
-// GET /api/v1/literacy-rates/:country/:year - Obtiene un recurso concreto. Ejemplo: https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
-    app.get(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
-        const { country, year } = req.params;
-        const resource = literacyStats.find(
-        (d) => d.country.toLowerCase() === country.toLowerCase() && d.year == year);
-        resource ? res.status(200).json(resource) : res.sendStatus(404);
-    });
-// POST /api/v1/literacy-rates  https://sos2526-11.onrender.com/api/v1/literacy-rates { "country": "Spain", "year": 2022, "total": 99.0, "male": 99.5, "female": 98.5, "gender_gap": 1.0 }
-    app.post(BASE_URL_API_TGG, (req, res) => {
-        const data = req.body;
-        if (!data.country || !data.year || data.total === undefined ||
-            data.male === undefined || data.female === undefined || data.gender_gap === undefined)
-        return res.status(400).json({ error: "Bad Request: Faltan campos obligatorios (country, year, total, male, female, gender_gap)" });
-        const exists = literacyStats.some(
-        (d) => d.country.toLowerCase() === data.country.toLowerCase() && d.year == data.year
-        );
-        if (exists)
-        return res.status(409).json({ error: "Conflict: Ya existe una entrada para ese país y año" });
+    // GET /api/v1/alcohol-consumptions-per-capita/:nation/:year
+    app.get(BASE_URL_API_MRG + "/:nation/:date_year", (req, res) => {
+        const nationParam = req.params.nation;
+        const yearParam = parseInt(req.params.date_year);
 
-        literacyStats.push({
-        country:     String(data.country),
-        year:        Number(data.year),
-        countryCode: data.countryCode || "",
-        total:       Number(data.total),
-        male:        Number(data.male),
-        female:      Number(data.female),
-        gender_gap:  Number(data.gender_gap),
+        db.findOne({ nation: nationParam, date_year: yearParam }, { _id: 0 }, (err, doc) => {
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            doc ? res.status(200).json(doc) : res.status(404).json({ error: "Not Found: Recurso no encontrado" });
         });
-        res.sendStatus(200);
-    });
-    // PUT /api/v1/literacy-rates No permitido
-    app.put(BASE_URL_API_TGG, (req, res) => res.sendStatus(405));
-    
-
-// DELETE /api/v1/literacy-rates https://sos2526-11.onrender.com/api/v1/literacy-rates
-    app.delete(BASE_URL_API_TGG, (req, res) => {
-        literacyStats = [];
-        res.status(200).json({ message: "OK: Todos los recursos han sido eliminados." });
     });
 
-// POST /api/v1/literacy-rates/:country/:year No permitido https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
-    app.post(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
+    // POST /api/v1/alcohol-consumptions-per-capita
+    app.post(BASE_URL_API_MRG, (req, res) => {
+        const newData = req.body;
+
+        if (!isValidAlcoholStats(newData)) {
+            return res.status(400).json({ error: "Bad Request: Estructura de JSON incorrecta o faltan campos" });
+        }
+
+        db.find({ nation: newData.nation, date_year: newData.date_year }, (err, docs) => {
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            
+            if (docs.length > 0) {
+                return res.status(409).json({ error: "Conflict: Ya existe una entrada para ese país y año" });
+            } else {
+                db.insert(newData, (err, newDoc) => {
+                    if (err) return res.status(500).json({ error: "Error al guardar" });
+                    res.status(201).json({ message: "Created: Recurso creado exitosamente." });
+                });
+            }
+        });
+    });
+
+    // PUT /api/v1/alcohol-consumptions-per-capita (No permitido)
+    app.put(BASE_URL_API_MRG, (req, res) => {
+        res.status(405).json({ error: "Method Not Allowed: No se puede actualizar la lista completa" });
+    });
+
+    // DELETE /api/v1/alcohol-consumptions-per-capita
+    app.delete(BASE_URL_API_MRG, (req, res) => {
+        db.remove({}, { multi: true }, (err, numRemoved) => {
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            res.status(200).json({ message: "OK: Todos los recursos han sido eliminados." });
+        });
+    });
+
+    // POST /api/v1/alcohol-consumptions-per-capita/:nation/:year (No permitido)
+    app.post(BASE_URL_API_MRG + "/:nation/:date_year", (req, res) => {
         res.status(405).json({ error: "Method Not Allowed: No se puede hacer POST a un recurso concreto." });
     });
 
-// PUT /api/v1/literacy-rates/:country/:year https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020 { "country": "Spain", "year": 2020, "total": 99.0, "male": 99.5, "female": 98.5, "gender_gap": 1.0 }
-    app.put(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
+    // PUT /api/v1/alcohol-consumptions-per-capita/:nation/:year
+    app.put(BASE_URL_API_MRG + "/:nation/:date_year", (req, res) => {
+        const nationParam = req.params.nation;
+        const yearParam = parseInt(req.params.date_year);
+        const body = req.body;
 
-        const { country, year } = req.params;
-        const updatedData = req.body;
+        if (!body) return res.status(400).json({ error: "Bad Request: Body vacío." });
 
-        // comprobar que hay body
-        if (!updatedData) {
-            return res.status(400).json({ error: "Bad Request: Body vacío." });
+        if (nationParam !== body.nation || yearParam !== body.date_year) {
+            return res.status(400).json({ error: "Bad Request: Los IDs del cuerpo no coinciden con los de la URL." });
         }
 
-        // comprobar campos obligatorios
-        if (
-            updatedData.country === undefined ||
-            updatedData.year === undefined ||
-            updatedData.total === undefined ||
-            updatedData.male === undefined ||
-            updatedData.female === undefined ||
-            updatedData.gender_gap === undefined
-        ) {
-            return res.status(400).json({
-                error: "Bad Request: Faltan campos obligatorios (country, year, total, male, female, gender_gap)"
-            });
+        if (!isValidAlcoholStats(body)) {
+            return res.status(400).json({ error: "Bad Request: Faltan campos obligatorios o estructura incorrecta." });
         }
 
-        // validar tipos básicos
-        if (typeof updatedData.country !== "string") {
-            return res.status(400).json({ error: "Bad Request: country debe ser string." });
-        }
-
-        // comprobar que los IDs coinciden con la URL
-        if (
-            updatedData.country.toLowerCase() !== country.toLowerCase() ||
-            Number(updatedData.year) !== Number(year)
-        ) {
-            return res.status(400).json({
-                error: "Bad Request: Los IDs del cuerpo no coinciden con los de la URL."
-            });
-        }
-
-        // buscar recurso
-        const index = literacyStats.findIndex(
-            d =>
-                d.country.toLowerCase() === country.toLowerCase() &&
-                d.year == year
-        );
-
-        // si no existe
-        if (index === -1) {
-            return res.status(404).json({
-                error: "Not Found: El recurso que intentas actualizar no existe."
-            });
-        }
-
-        // actualizar
-        literacyStats[index] = {
-            country: String(updatedData.country),
-            year: Number(updatedData.year),
-            countryCode: updatedData.countryCode || "",
-            total: Number(updatedData.total),
-            male: Number(updatedData.male),
-            female: Number(updatedData.female),
-            gender_gap: Number(updatedData.gender_gap)
-        };
-
-        res.status(200).json({ message: "OK: Recurso actualizado correctamente." });
-
+        db.update({ nation: nationParam, date_year: yearParam }, body, {}, (err, numReplaced) => {
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            if (numReplaced === 0) {
+                return res.status(404).json({ error: "Not Found: El recurso que intentas actualizar no existe." });
+            }
+            res.status(200).json({ message: "OK: Recurso actualizado correctamente." });
+        });
     });
 
-// DELETE /api/v1/literacy-rates/:country/:year https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020
-    app.delete(BASE_URL_API_TGG + "/:country/:year", (req, res) => {
-        const { country, year } = req.params;
-        const initialLength = literacyStats.length;
-        
-        literacyStats = literacyStats.filter(d => !(d.country.toLowerCase() === country.toLowerCase() && d.year == year));
+    // DELETE /api/v1/alcohol-consumptions-per-capita/:nation/:year
+    app.delete(BASE_URL_API_MRG + "/:nation/:date_year", (req, res) => {
+        const nationParam = req.params.nation;
+        const yearParam = parseInt(req.params.date_year);
 
-        if (literacyStats.length < initialLength) {
+        db.remove({ nation: nationParam, date_year: yearParam }, {}, (err, numRemoved) => {
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            if (numRemoved === 0) {
+                return res.status(404).json({ error: "Not Found: El recurso a borrar no existe." });
+            }
             res.status(200).json({ message: "OK: Recurso eliminado correctamente." });
-        } else {
-            res.status(404).json({ error: "Not Found: El recurso a borrar no existe." });
-        }
-});
+        });
+    });
 }
-
-export { loadBackendTGG };
