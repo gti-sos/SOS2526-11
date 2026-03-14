@@ -21,10 +21,9 @@ export function loadBackendJFM(app) {
         return true;
     }
 
-    // Ruta para la documentación (Requisito F06)
+    // Ruta para la documentación 
     app.get(BASE_URL_API_JFM + "/docs", (req, res) => {
-        // SUSTITUYE ESTE ENLACE POR TU ENLACE PUBLICADO DE POSTMAN
-        res.redirect("https://documenter.getpostman.com/view/TU_ENLACE_AQUI");
+        res.redirect("https://documenter.getpostman.com/view/52276616/2sBXigMDg4");
     });
 
     // GET /loadInitialData
