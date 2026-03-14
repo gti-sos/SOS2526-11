@@ -8,10 +8,24 @@
   },
   "item": [
     {
-      "name": "New Request",
+      "name": "DELETE",
       "request": {
-        "method": "GET",
-        "header": []
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates"
+          ]
+        }
       },
       "response": []
     },
