@@ -28,7 +28,7 @@ export function loadBackendTGG(app) {
 
     // GET /api/v1/literacy-rates/docs - Redirección a la documentación (si existe)
     app.get(BASE_URL_API_TGG + "/docs", (req, res) => {
-        res.redirect("https://documenter.getpostman.com/view/52276603/2sBXieqtK2");
+        res.redirect("https://documenter.getpostman.com/view/52263638/2sBXigMDfw");
     });
 
     // GET /api/v1/literacy-rates/loadInitialData
