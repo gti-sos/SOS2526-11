@@ -1,0 +1,13 @@
+{"nation":"mexico","year":2019,"population_death_rate":5.7,"vehicle_death_rate":14.2,"distance_death_rate":null,"total_death":4125,"income_level":"middle","traffic_side":"right","_id":"RgrgP2pWpnYKOQ6h"}
+{"nation":"albania","year":2013,"population_death_rate":15.1,"vehicle_death_rate":107.2,"distance_death_rate":null,"total_death":478,"income_level":"middle","traffic_side":"right","_id":"nd2OcgFHfVU4BkGn"}
+{"nation":"argelia","year":2013,"population_death_rate":23.8,"vehicle_death_rate":127.8,"distance_death_rate":null,"total_death":9337,"income_level":"middle","traffic_side":"right","_id":"td934gvFDHLrpxdC"}
+{"nation":"canada","year":2013,"population_death_rate":6,"vehicle_death_rate":9.5,"distance_death_rate":6.2,"total_death":2114,"income_level":"high","traffic_side":"right","_id":"B3916Tm93TCVYSOD"}
+{"nation":"united kingdom","year":2013,"population_death_rate":2.9,"vehicle_death_rate":5.1,"distance_death_rate":3.6,"total_death":1827,"income_level":"high","traffic_side":"left","_id":"8xSlCS310yjPRKi2"}
+{"nation":"ukraine","year":2012,"population_death_rate":13.5,"vehicle_death_rate":35.3,"distance_death_rate":null,"total_death":5099,"income_level":"middle","traffic_side":"right","_id":"VPmQ0lO0HGhnKUJm"}
+{"nation":"spain","year":2013,"population_death_rate":3.7,"vehicle_death_rate":5.3,"distance_death_rate":7.8,"total_death":1730,"income_level":"high","traffic_side":"right","_id":"bwvE2ctgc3n1wsi0"}
+{"nation":"norway","year":2017,"population_death_rate":2.2,"vehicle_death_rate":3.1,"distance_death_rate":null,"total_death":112,"income_level":"high","traffic_side":"right","_id":"4P2XJjdgiOHchPOt"}
+{"nation":"uganda","year":2013,"population_death_rate":27.4,"vehicle_death_rate":836.8,"distance_death_rate":null,"total_death":10280,"income_level":"low","traffic_side":"left","_id":"jVlbUtMzyRM4QIB1"}
+{"nation":"switzerland","year":2016,"population_death_rate":2.6,"vehicle_death_rate":3.6,"distance_death_rate":3.6,"total_death":216,"income_level":"high","traffic_side":"right","_id":"x7cPJutaq5JWOM9M"}
+{"nation":"argentina","year":2013,"population_death_rate":13.6,"vehicle_death_rate":24.3,"distance_death_rate":null,"total_death":5619,"income_level":"middle","traffic_side":"right","_id":"Hi41Uiciofb4zcG0"}
+{"nation":"italy","year":2013,"population_death_rate":6.1,"vehicle_death_rate":7.3,"distance_death_rate":null,"total_death":3753,"income_level":"high","traffic_side":"right","_id":"PCfhkjpRV9frS8Eu"}
+{"nation":"italy","year":2023,"population_death_rate":5.2,"vehicle_death_rate":null,"distance_death_rate":null,"total_death":3039,"income_level":"high","traffic_side":"right","_id":"KHSkKUn2mJ0QD9CY"}
