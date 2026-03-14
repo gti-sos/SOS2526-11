@@ -1,0 +1,327 @@
+{
+  "info": {
+    "_postman_id": "9490cefa-25a8-4382-9eb2-89b3d428f6de",
+    "name": "F05",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52263638",
+    "_collection_link": "https://go.postman.co/collection/52263638-9490cefa-25a8-4382-9eb2-89b3d428f6de?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "DELETE",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Load",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/loadInitialData",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates",
+            "loadInitialData"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetAll",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetFiltro",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates",
+            "Spain"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetRecursoConcreto",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates",
+            "Spain",
+            "2020"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetRecursoConcretoError",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/1500",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates",
+            "Spain",
+            "1500"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Post",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n \"country\": \"France\",\r\n \"year\": 2022,\r\n \"total\": 99.0,\r\n \"male\": 99.2,\r\n \"female\": 98.8,\r\n \"gender_gap\": 0.4\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PostErrorDuplicado",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n \"country\": \"France\",\r\n \"year\": 2022,\r\n \"total\": 99.0,\r\n \"male\": 99.2,\r\n \"female\": 98.8,\r\n \"gender_gap\": 0.4\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PostErrorFormato",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n \"country\": \"Germany\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Put",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n \"country\": \"Spain\",\r\n \"year\": 2020,\r\n \"total\": 99.0,\r\n \"male\": 99.5,\r\n \"female\": 98.5,\r\n \"gender_gap\": 1.0\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates",
+            "Spain",
+            "2020"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PutError",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeleteFiltro",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Delete",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
