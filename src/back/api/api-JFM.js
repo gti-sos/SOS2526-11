@@ -22,11 +22,13 @@ export function loadBackendJFM(app) {
     }
 
     // Ruta para la documentación 
+    // Ej: // GET /api/v1/road-fatalities/docs
     app.get(BASE_URL_API_JFM + "/docs", (req, res) => {
         res.redirect("https://documenter.getpostman.com/view/52276616/2sBXigMDg4");
     });
 
     // GET /loadInitialData
+    //Ej :  // GET /api/v1/road-fatalities/loadInitialData
     app.get(BASE_URL_API_JFM + "/loadInitialData", (req, res) => {
         db.find({}, (err, docs) => {
             if (err) return res.status(500).json({ error: "Error interno del servidor" });
@@ -59,7 +61,12 @@ export function loadBackendJFM(app) {
         });
     });
 
+    
     // GET colección con Paginación y Búsquedas por TODOS los campos
+    // Ej: GET /api/v1/road-fatalities
+    // Ej (Búsqueda): GET /api/v1/road-fatalities?income_level=high
+    // Ej (Rango de años): GET /api/v1/road-fatalities?from=2013&to=2019
+    // Ej (Paginación): GET /api/v1/road-fatalities?limit=5&offset=2
     app.get(BASE_URL_API_JFM, (req, res) => {
         let query = {};
         let offset = 0;
@@ -69,9 +76,8 @@ export function loadBackendJFM(app) {
         if (req.query.offset) offset = parseInt(req.query.offset);
         if (req.query.limit) limit = parseInt(req.query.limit);
 
-        // Búsquedas
+        // Búsquedas directas
         if (req.query.nation) query.nation = req.query.nation.toLowerCase();
-        if (req.query.year) query.year = parseInt(req.query.year);
         if (req.query.population_death_rate) query.population_death_rate = parseFloat(req.query.population_death_rate);
         if (req.query.vehicle_death_rate) query.vehicle_death_rate = req.query.vehicle_death_rate === "null" ? null : parseFloat(req.query.vehicle_death_rate);
         if (req.query.distance_death_rate) query.distance_death_rate = req.query.distance_death_rate === "null" ? null : parseFloat(req.query.distance_death_rate);
@@ -79,23 +85,50 @@ export function loadBackendJFM(app) {
         if (req.query.income_level) query.income_level = req.query.income_level.toLowerCase();
         if (req.query.traffic_side) query.traffic_side = req.query.traffic_side.toLowerCase();
 
+        // Búsqueda por año (exacto) o por rango (from / to)
+        if (req.query.from || req.query.to) {
+            query.year = {};
+            if (req.query.from) query.year.$gte = parseInt(req.query.from);
+            if (req.query.to)   query.year.$lte = parseInt(req.query.to);
+        } else if (req.query.year) {
+            query.year = parseInt(req.query.year);
+        }
+
         db.find(query, { _id: 0 }).skip(offset).limit(limit).exec((err, docs) => {
             if (err) return res.status(500).json({ error: "Error interno del servidor" });
             res.status(200).json(docs);
         });
     });
 
-    // GET colección de un país específico (Devuelve Array)
+
+    // GET colección de un país específico con opción a filtrar por año (Devuelve Array)
+    // Ej (País específico): GET /api/v1/road-fatalities/italy
+    // Ej (País y rango de años): GET /api/v1/road-fatalities/italy?from=2010&to=2020
     app.get(BASE_URL_API_JFM + "/:nation", (req, res) => {
         const nationParam = req.params.nation.toLowerCase();
+        
+        // Empezamos la búsqueda fijando obligatoriamente el país de la URL
+        let query = { nation: nationParam }; 
 
-        db.find({ nation: nationParam }, { _id: 0 }, (err, docs) => {
+        // Si nos pasan parámetros de fecha en la URL (?from=2010&to=2020), los añadimos a la búsqueda
+        if (req.query.from || req.query.to) {
+            query.year = {};
+            if (req.query.from) query.year.$gte = parseInt(req.query.from);
+            if (req.query.to)   query.year.$lte = parseInt(req.query.to);
+        } else if (req.query.year) {
+            query.year = parseInt(req.query.year);
+        }
+
+        // Ejecutamos la búsqueda en la base de datos
+        db.find(query, { _id: 0 }, (err, docs) => {
             if (err) return res.status(500).json({ error: "Error interno del servidor" });
-            res.status(200).json(docs); // Los GET a colecciones deben devolver un array
+            res.status(200).json(docs); 
         });
     });
 
+
     // GET recurso concreto (País y Año) (Devuelve Objeto)
+    // Ej: GET /api/v1/road-fatalities/spain/2013
     app.get(BASE_URL_API_JFM + "/:nation/:year", (req, res) => {
         const nationParam = req.params.nation.toLowerCase();
         const yearParam = parseInt(req.params.year);
@@ -110,7 +143,9 @@ export function loadBackendJFM(app) {
         });
     });
 
+
     // POST colección 
+    // Ej: POST /api/v1/road-fatalities
     app.post(BASE_URL_API_JFM, (req, res) => {
         const newData = req.body;
 
@@ -136,17 +171,23 @@ export function loadBackendJFM(app) {
         });
     });
 
+
     // POST a recurso concreto (NO PERMITIDO)
+    //Ej: POST /api/v1/road-fatalities/italy/2023
     app.post(BASE_URL_API_JFM + "/:nation/:year", (req, res) => {
         res.status(405).json({ error: "Method Not Allowed" });
     });
 
+
     // PUT colección (NO PERMITIDO)
+    //Ej: PUT  /api/v1/road-fatalities
     app.put(BASE_URL_API_JFM, (req, res) => {
         res.status(405).json({ error: "Method Not Allowed" });
     });
 
+
     // PUT recurso concreto (Actualiza los datos)
+    // Ej: PUT /api/v1/road-fatalities/spain/2013
     app.put(BASE_URL_API_JFM + "/:nation/:year", (req, res) => {
         const nationParam = req.params.nation.toLowerCase();
         const yearParam = parseInt(req.params.year);
@@ -171,7 +212,9 @@ export function loadBackendJFM(app) {
         });
     });
 
+
     // DELETE a todo
+    //Ej: DELETE  /api/v1/road-fatalities
     app.delete(BASE_URL_API_JFM, (req, res) => {
         db.remove({}, { multi: true }, (err, numRemoved) => {
             if (err) return res.status(500).json({ error: "Error interno del servidor" });
@@ -179,7 +222,9 @@ export function loadBackendJFM(app) {
         });
     });
 
-    // DELETE a recurso concreto
+
+    // DELETE a recurso concreto    
+    //Ej: DELETE  /api/v1/road-fatalities/spain/2013  (borra solo un país en un año específico)
     app.delete(BASE_URL_API_JFM + "/:nation/:year", (req, res) => {
         const nationParam = req.params.nation.toLowerCase();
         const yearParam = parseInt(req.params.year);
