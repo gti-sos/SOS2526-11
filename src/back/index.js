@@ -4,11 +4,8 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 // IMPORTAMOS TU API
-import { loadBackendMRG } from "./api/api-miguel.js";
-//import { loadBackendMRG } from "./api/api-MRG.js";
-import { loadBackendTGG } from "./api/api-TGG.js";
-import { loadBackendJFM } from "./api/api-JFM.js";
-
+import { loadBackendMRG } from "./api/api-MRG.js";
+// import { loadBackendTGG } from './api/api-TGG.js'; // Comentado por ahora
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -30,12 +27,6 @@ app.get('/about', (req, res) => {
 
 // API MRG (Miguel Ridao)
 loadBackendMRG(app);
-
-// API TGG (Tomás)
-loadBackendTGG(app);
-
-// API JFM (José Fernández Montero)
-loadBackendJFM(app);
 
 
 // =====================================
