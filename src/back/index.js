@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 // IMPORTAMOS TU API
 import { loadBackendMRG } from "./api/api-MRG.js";
-// import { loadBackendTGG } from './api/api-TGG.js'; // Comentado por ahora
+import { loadBackendTGG } from "./api/api-TGG.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,6 +27,9 @@ app.get('/about', (req, res) => {
 
 // API MRG (Miguel Ridao)
 loadBackendMRG(app);
+
+// API TGG (Tomás)
+loadBackendTGG(app);
 
 
 // =====================================
