@@ -1,158 +1,92 @@
 {
   "info": {
-    "_postman_id": "9490cefa-25a8-4382-9eb2-89b3d428f6de",
-    "name": "F05",
+    "_postman_id": "f26f7074-26a3-4718-866d-1336275bee51",
+    "name": "My Collection",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "52263638",
-    "_collection_link": "https://go.postman.co/collection/52263638-9490cefa-25a8-4382-9eb2-89b3d428f6de?source=collection_link"
+    "_exporter_id": "52276616",
+    "_collection_link": "https://go.postman.co/collection/52276616-f26f7074-26a3-4718-866d-1336275bee51?source=collection_link"
   },
   "item": [
     {
-      "name": "DELETE",
+      "name": "DELETE todo (200OK)",
       "request": {
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/road-fatalities",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
             "v1",
-            "literacy-rates"
+            "road-fatalities"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "Load",
+      "name": "GET LoadInitialData (200 OK)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/loadInitialData",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/road-fatalities/loadInitialData",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
             "v1",
-            "literacy-rates",
+            "road-fatalities",
             "loadInitialData"
           ]
-        }
+        },
+        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
       },
       "response": []
     },
     {
-      "name": "GetAll",
+      "name": "GET  todo (200 OK)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Successful POST request\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
-          "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "literacy-rates"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "GetFiltro",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain",
-          "protocol": "https",
-          "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "literacy-rates",
-            "Spain"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "GetRecursoConcreto",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020",
-          "protocol": "https",
-          "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "literacy-rates",
-            "Spain",
-            "2020"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "GetRecursoConcretoError",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/1500",
-          "protocol": "https",
-          "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "literacy-rates",
-            "Spain",
-            "1500"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Post",
-      "request": {
-        "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n \"country\": \"France\",\r\n \"year\": 2022,\r\n \"total\": 99.0,\r\n \"male\": 99.2,\r\n \"female\": 98.8,\r\n \"gender_gap\": 0.4\r\n}",
+          "raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -160,30 +94,206 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/road-fatalities",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
             "v1",
-            "literacy-rates"
+            "road-fatalities"
+          ]
+        },
+        "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+      },
+      "response": []
+    },
+    {
+      "name": "GET recurso concreto (Pais y año) (200 OK)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities/spain/2013",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities",
+            "spain",
+            "2013"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "PostErrorDuplicado",
+      "name": "GET por nación (200 OK)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities/italy",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities",
+            "italy"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET colección con filtros (200 OK)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities?nation=italy&from=2010&to=2023",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities"
+          ],
+          "query": [
+            {
+              "key": "nation",
+              "value": "italy"
+            },
+            {
+              "key": "from",
+              "value": "2010"
+            },
+            {
+              "key": "to",
+              "value": "2023"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Paginación (Página 1, tamaño 2)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities?limit=2&offset=0",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "2"
+            },
+            {
+              "key": "offset",
+              "value": "0"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Búsqueda por campo (Ej: income_level = high)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities?income_level=high",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities"
+          ],
+          "query": [
+            {
+              "key": "income_level",
+              "value": "high"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Búsqueda por rango de años (from/to)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities?from=2013&to=2016",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities"
+          ],
+          "query": [
+            {
+              "key": "from",
+              "value": "2013"
+            },
+            {
+              "key": "to",
+              "value": "2016"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Recurso concreto ERROR 404",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities/narnia/2050",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities",
+            "narnia",
+            "2050"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST colección (201 created)",
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n \"country\": \"France\",\r\n \"year\": 2022,\r\n \"total\": 99.0,\r\n \"male\": 99.2,\r\n \"female\": 98.8,\r\n \"gender_gap\": 0.4\r\n}",
+          "raw": "{\r\n  \"nation\": \"portugal\",\r\n  \"year\": 2020,\r\n  \"population_death_rate\": 4.1,\r\n  \"vehicle_death_rate\": 5.0,\r\n  \"distance_death_rate\": null,\r\n  \"total_death\": 450,\r\n  \"income_level\": \"high\",\r\n  \"traffic_side\": \"right\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -191,30 +301,27 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/road-fatalities",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
             "v1",
-            "literacy-rates"
+            "road-fatalities"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "PostErrorFormato",
+      "name": "POST (400 Bad Request)",
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n \"country\": \"Germany\"\r\n}",
+          "raw": "{\r\n  \"nation\": \"portugal\",\r\n  \"population_death_rate\": 4.1,\r\n  \"vehicle_death_rate\": 5.0,\r\n  \"distance_death_rate\": null,\r\n  \"total_death\": 450,\r\n  \"income_level\": \"high\",\r\n  \"traffic_side\": \"right\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -222,30 +329,85 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/road-fatalities",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
             "v1",
-            "literacy-rates"
+            "road-fatalities"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "Put",
+      "name": "POST (405 Method Not Allowed)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"test\": \"data\" }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities/spain/2013",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities",
+            "spain",
+            "2013"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST (409 Conflict)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nation\": \"portugal\",\r\n  \"year\": 2020,\r\n  \"population_death_rate\": 4.1,\r\n  \"vehicle_death_rate\": 5.0,\r\n  \"distance_death_rate\": null,\r\n  \"total_death\": 450,\r\n  \"income_level\": \"high\",\r\n  \"traffic_side\": \"right\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PUT (400 Bad Request)",
       "request": {
         "method": "PUT",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n \"country\": \"Spain\",\r\n \"year\": 2020,\r\n \"total\": 99.0,\r\n \"male\": 99.5,\r\n \"female\": 98.5,\r\n \"gender_gap\": 1.0\r\n}",
+          "raw": "{\r\n  \"nation\": \"spain\",\r\n  \"year\": 2025,\r\n  \"population_death_rate\": 3.7,\r\n  \"vehicle_death_rate\": 5.3,\r\n  \"distance_death_rate\": 7.8,\r\n  \"total_death\": 1730,\r\n  \"income_level\": \"high\",\r\n  \"traffic_side\": \"right\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -253,71 +415,165 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/road-fatalities/spain/2013",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
             "v1",
-            "literacy-rates",
-            "Spain",
-            "2020"
+            "road-fatalities",
+            "spain",
+            "2013"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "PutError",
+      "name": "PUT (404 Not Found)",
       "request": {
         "method": "PUT",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nation\": \"francia\",\r\n  \"year\": 2099,\r\n  \"population_death_rate\": 1.0,\r\n  \"vehicle_death_rate\": 1.0,\r\n  \"distance_death_rate\": null,\r\n  \"total_death\": 100,\r\n  \"income_level\": \"high\",\r\n  \"traffic_side\": \"right\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/road-fatalities/francia/2099",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
             "v1",
-            "literacy-rates"
+            "road-fatalities",
+            "francia",
+            "2099"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "DeleteFiltro",
+      "name": "PUT (405 Method Not Allowed)",
       "request": {
-        "method": "GET",
-        "header": []
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"test\": \"data\" }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities"
+          ]
+        }
       },
       "response": []
     },
     {
-      "name": "Delete",
+      "name": "PUT (200 OK)",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nation\": \"spain\",\r\n  \"year\": 2013,\r\n  \"population_death_rate\": 3.7,\r\n  \"vehicle_death_rate\": 5.3,\r\n  \"distance_death_rate\": 7.8,\r\n  \"total_death\": 1500,\r\n  \"income_level\": \"high\",\r\n  \"traffic_side\": \"right\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities/spain/2013",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities",
+            "spain",
+            "2013"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE (404 Not Found)",
       "request": {
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/road-fatalities/francia/2099",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
             "v1",
-            "literacy-rates"
+            "road-fatalities",
+            "francia",
+            "2099"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE recurso concreto (200 OK)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities/spain/2013",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities",
+            "spain",
+            "2013"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE todo (200 OK)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/road-fatalities",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "road-fatalities"
           ]
         }
       },
