@@ -3,10 +3,10 @@ import Datastore from "nedb";
 export const BASE_URL_API_JFM = "/api/v1/road-fatalities";
 
 export function loadBackendJFM(app) {
-    // 1. Inicializamos NeDB con persistencia en archivo
+    // Inicializamos NeDB con persistencia en archivo
     const db = new Datastore({ filename: './data/road-fatalities.db', autoload: true });
 
-    // 2. Función auxiliar estricta para validar JSON (Requisito: devolver 400 si no tiene la estructura exacta)
+    // Función auxiliar estricta para validar JSON (Requisito: devolver 400 si no tiene la estructura exacta)
     function isValidRoadFatalities(body) {
         const expectedKeys = [
             "nation", "year", "population_death_rate",
@@ -21,7 +21,7 @@ export function loadBackendJFM(app) {
         return true;
     }
 
-    // 3. Ruta para la documentación (Requisito F06)
+    // Ruta para la documentación (Requisito F06)
     app.get(BASE_URL_API_JFM + "/docs", (req, res) => {
         // SUSTITUYE ESTE ENLACE POR TU ENLACE PUBLICADO DE POSTMAN
         res.redirect("https://documenter.getpostman.com/view/TU_ENLACE_AQUI");
@@ -60,7 +60,7 @@ export function loadBackendJFM(app) {
         });
     });
 
-    // 4. GET colección con Paginación y Búsquedas por TODOS los campos
+    // GET colección con Paginación y Búsquedas por TODOS los campos
     app.get(BASE_URL_API_JFM, (req, res) => {
         let query = {};
         let offset = 0;
