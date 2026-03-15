@@ -9,6 +9,26 @@
   "item": [
     {
       "name": "DELETE",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 or 204', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([",
+              "        200,",
+              "        204",
+              "    ]);",
+              "})",
+              "",
+              "pm.test('Response time is acceptable', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "DELETE",
         "header": [],
@@ -31,6 +51,29 @@
     },
     {
       "name": "Load",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array');",
+              "})",
+              "",
+              "pm.test('Array length is greater than 0', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json.length).to.be.above(0);",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -54,6 +97,36 @@
     },
     {
       "name": "GetAll",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array');",
+              "})",
+              "",
+              "pm.test('Each item has required fields', function () {",
+              "    const json = pm.response.json();",
+              "    json.forEach(function (item) {",
+              "        pm.expect(item).to.have.property('country');",
+              "        pm.expect(item).to.have.property('year');",
+              "        pm.expect(item).to.have.property('total');",
+              "        pm.expect(item).to.have.property('male');",
+              "        pm.expect(item).to.have.property('female');",
+              "        pm.expect(item).to.have.property('gender_gap');",
+              "    });",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -76,6 +149,47 @@
     },
     {
       "name": "GetFiltro",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array');",
+              "})",
+              "",
+              "pm.test('Every item has country === \\'Spain\\'', function () {",
+              "    const json = pm.response.json();",
+              "    json.forEach(function (item) {",
+              "        pm.expect(item.country).to.eql('Spain');",
+              "    });",
+              "})",
+              "",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array');",
+              "})",
+              "",
+              "pm.test('Every item has country === \\'Spain\\'', function () {",
+              "    const json = pm.response.json();",
+              "    json.forEach(function (item) {",
+              "        pm.expect(item.country).to.eql('Spain');",
+              "    });",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -99,6 +213,65 @@
     },
     {
       "name": "GetRecursoConcreto",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response has country === \\'Spain\\'', function () {",
+              "    const json = pm.response.json();",
+              "    const item = Array.isArray(json) ? json[0] : json;",
+              "    pm.expect(item.country).to.eql('Spain');",
+              "})",
+              "",
+              "pm.test('Response has year === 2020', function () {",
+              "    const json = pm.response.json();",
+              "    const item = Array.isArray(json) ? json[0] : json;",
+              "    pm.expect(item.year).to.eql(2020);",
+              "})",
+              "",
+              "pm.test('Response has required fields: total, male, female, gender_gap', function () {",
+              "    const json = pm.response.json();",
+              "    const item = Array.isArray(json) ? json[0] : json;",
+              "    pm.expect(item).to.have.property('total');",
+              "    pm.expect(item).to.have.property('male');",
+              "    pm.expect(item).to.have.property('female');",
+              "    pm.expect(item).to.have.property('gender_gap');",
+              "})",
+              "",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response has country === \\'Spain\\'', function () {",
+              "    const json = pm.response.json();",
+              "    const item = Array.isArray(json) ? json[0] : json;",
+              "    pm.expect(item.country).to.eql('Spain');",
+              "})",
+              "",
+              "pm.test('Response has year === 2020', function () {",
+              "    const json = pm.response.json();",
+              "    const item = Array.isArray(json) ? json[0] : json;",
+              "    pm.expect(item.year).to.eql(2020);",
+              "})",
+              "",
+              "pm.test('Response has required fields: total, male, female, gender_gap', function () {",
+              "    const json = pm.response.json();",
+              "    const item = Array.isArray(json) ? json[0] : json;",
+              "    pm.expect(item).to.have.property('total');",
+              "    pm.expect(item).to.have.property('male');",
+              "    pm.expect(item).to.have.property('female');",
+              "    pm.expect(item).to.have.property('gender_gap');",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -123,6 +296,25 @@
     },
     {
       "name": "GetRecursoConcretoError",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 404', function () {",
+              "    pm.response.to.have.status(404);",
+              "})",
+              "",
+              "pm.test('Response body contains an error message', function () {",
+              "    const json = pm.response.json();",
+              "    const hasError = json.hasOwnProperty('error') || json.hasOwnProperty('message') || json.hasOwnProperty('detail');",
+              "    pm.expect(hasError).to.be.true;",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
@@ -147,6 +339,19 @@
     },
     {
       "name": "Post",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [],
@@ -178,6 +383,25 @@
     },
     {
       "name": "PostErrorDuplicado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 409 (conflict/duplicate)', function () {",
+              "    pm.response.to.have.status(409);",
+              "})",
+              "",
+              "pm.test('Response body contains an error message', function () {",
+              "    const json = pm.response.json();",
+              "    const hasError = json.hasOwnProperty('error') || json.hasOwnProperty('message') || json.hasOwnProperty('detail');",
+              "    pm.expect(hasError).to.be.true;",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [],
@@ -209,6 +433,25 @@
     },
     {
       "name": "PostErrorFormato",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 400 (bad request)', function () {",
+              "    pm.response.to.have.status(400);",
+              "})",
+              "",
+              "pm.test('Response body contains an error message', function () {",
+              "    const json = pm.response.json();",
+              "    const hasError = json.hasOwnProperty('error') || json.hasOwnProperty('message') || json.hasOwnProperty('detail');",
+              "    pm.expect(hasError).to.be.true;",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [],
@@ -240,6 +483,19 @@
     },
     {
       "name": "Put",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "PUT",
         "header": [],
@@ -323,6 +579,26 @@
     },
     {
       "name": "Delete",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 or 204', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([",
+              "        200,",
+              "        204",
+              "    ]);",
+              "})",
+              "",
+              "pm.test('Response time is acceptable', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "DELETE",
         "header": [],
