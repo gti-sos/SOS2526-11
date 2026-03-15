@@ -6,7 +6,7 @@
   "main": "src/back/index.js",
   "scripts": {
     "start": "node ./src/back/index.js",
-    "test": "newman run tests/api-mrg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\" && newman run tests/api-tgg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\" && newman run tests/api-jfm-test.json --env-var \"base_url=https://sos2526-11.onrender.com\"",
+    "test": "newman run tests/api-mrg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\" && newman run tests/api-jfm-test.json --env-var \"base_url=https://sos2526-11.onrender.com\" && newman run tests/api-tgg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\"",
     "test-alcohol-consumptions-per-capita": "newman run tests/api-mrg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\"",
     "test-literacy-rates": "newman run tests/api-tgg-test.json",
     "test-road-fatalities": "newman run tests/api-jfm-test.json --env-var \"base_url=https://sos2526-11.onrender.com\""
