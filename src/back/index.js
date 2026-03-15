@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 // IMPORTAMOS TU API
 import { loadBackendMRG } from "./api/api-MRG.js";
-// import { loadBackendTGG } from './api/api-TGG.js'; // Comentado por ahora
+import { loadBackendTGG } from './api/api-TGG.js'; // Comentado por ahora
 import { loadBackendJFM } from "./api/api-JFM.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,6 +31,9 @@ loadBackendMRG(app);
 
 // API JFM (José Fernández Montero)
 loadBackendJFM(app);
+
+// API TGG (Tomás Gutiérrez García)
+loadBackendTGG(app);
 
 
 // =====================================
