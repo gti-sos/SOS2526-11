@@ -296,8 +296,28 @@
     {
       "name": "DeleteFiltro",
       "request": {
-        "method": "GET",
-        "header": []
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n \"country\": \"Spain\",\r\n \"year\": 2020,\r\n \"total\": 99.0,\r\n \"male\": 99.5,\r\n \"female\": 98.5,\r\n \"gender_gap\": 1.0\r\n}"
+        },
+        "url": {
+          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020",
+          "protocol": "https",
+          "host": [
+            "sos2526-11",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates",
+            "Spain",
+            "2020"
+          ]
+        }
       },
       "response": []
     },
