@@ -86,21 +86,28 @@ export function loadBackendTGG(app) {
         });
     });
 
-    // GET /api/v1/literacy-rates/:country (filtros year/from/to)
+    // GET /api/v1/literacy-rates/:country (filtros year/from/to y paginación)
     app.get(BASE_URL_API_TGG + "/:country", (req, res) => {
         const countryParam = req.params.country;
-        const { year, from, to } = req.query;
+        const { year, from, to, offset, limit } = req.query;
 
-        db.find({ country: countryParam }, { _id: 0 }, (err, docs) => {
+        const query = { country: countryParam };
+        let skip = 0;
+        let lim = 0;
+
+        if (year) query.year = parseInt(year);
+        if (from || to) {
+            query.year = {};
+            if (from) query.year.$gte = parseInt(from);
+            if (to) query.year.$lte = parseInt(to);
+        }
+
+        if (offset) skip = parseInt(offset);
+        if (limit) lim = parseInt(limit);
+
+        db.find(query, { _id: 0 }).skip(skip).limit(lim).exec((err, docs) => {
             if (err) return res.status(500).json({ error: "Error interno del servidor" });
-
-            let result = docs;
-
-            if (year) result = result.filter(d => d.year == parseInt(year));
-            if (from) result = result.filter(d => d.year >= parseInt(from));
-            if (to) result = result.filter(d => d.year <= parseInt(to));
-
-            res.status(200).json(result);
+            res.status(200).json(docs);
         });
     });
 
