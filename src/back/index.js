@@ -3,7 +3,7 @@ import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-// IMPORTAMOS TU API
+// IMPORTAMOS API
 import { loadBackendMRG } from "./api/api-MRG.js";
 import { loadBackendTGG } from './api/api-TGG.js'; // Comentado por ahora
 import { loadBackendJFM } from "./api/api-JFM.js";
