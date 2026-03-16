@@ -13,7 +13,6 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 200 or 204', function () {",
               "    pm.expect(pm.response.code).to.be.oneOf([",
@@ -21,11 +20,11 @@
               "        204",
               "    ]);",
               "})",
-              "",
-              "pm.test('Response time is acceptable', function () {",
-              "    pm.expect(pm.response.responseTime).to.be.below(5000);",
-              "})"
-            ]
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -33,12 +32,9 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -55,7 +51,6 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 200', function () {",
               "    pm.response.to.have.status(200);",
@@ -70,7 +65,10 @@
               "    const json = pm.response.json();",
               "    pm.expect(json.length).to.be.above(0);",
               "})"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -78,12 +76,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/loadInitialData",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates/loadInitialData",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -101,7 +96,6 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 200', function () {",
               "    pm.response.to.have.status(200);",
@@ -123,7 +117,10 @@
               "        pm.expect(item).to.have.property('gender_gap');",
               "    });",
               "})"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -131,12 +128,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -153,7 +147,6 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 200', function () {",
               "    pm.response.to.have.status(200);",
@@ -186,7 +179,10 @@
               "        pm.expect(item.country).to.eql('Spain');",
               "    });",
               "})"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -194,12 +190,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates/Spain",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -212,12 +205,157 @@
       "response": []
     },
     {
+      "name": "GetFiltroRango",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array');",
+              "})",
+              "",
+              "pm.test('Every item has country === \\'Spain\\'', function () {",
+              "    const json = pm.response.json();",
+              "    json.forEach(function (item) {",
+              "        pm.expect(item.country).to.eql('Spain');",
+              "    });",
+              "})",
+              "",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array');",
+              "})",
+              "",
+              "pm.test('Every item has country === \\'Spain\\'', function () {",
+              "    const json = pm.response.json();",
+              "    json.forEach(function (item) {",
+              "        pm.expect(item.country).to.eql('Spain');",
+              "    });",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/literacy-rates/Spain?offset=0&limit=5",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates",
+            "Spain"
+          ],
+          "query": [
+            {
+              "key": "offset",
+              "value": "0"
+            },
+            {
+              "key": "limit",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetFiltroRango Copy",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array');",
+              "})",
+              "",
+              "pm.test('Every item has country === \\'Spain\\'', function () {",
+              "    const json = pm.response.json();",
+              "    json.forEach(function (item) {",
+              "        pm.expect(item.country).to.eql('Spain');",
+              "    });",
+              "})",
+              "",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array');",
+              "})",
+              "",
+              "pm.test('Every item has country === \\'Spain\\'', function () {",
+              "    const json = pm.response.json();",
+              "    json.forEach(function (item) {",
+              "        pm.expect(item.country).to.eql('Spain');",
+              "    });",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/literacy-rates/Spain?from=2015&to=2021",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "literacy-rates",
+            "Spain"
+          ],
+          "query": [
+            {
+              "key": "from",
+              "value": "2015"
+            },
+            {
+              "key": "to",
+              "value": "2021"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "GetRecursoConcreto",
       "event": [
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 200', function () {",
               "    pm.response.to.have.status(200);",
@@ -268,7 +406,10 @@
               "    pm.expect(item).to.have.property('female');",
               "    pm.expect(item).to.have.property('gender_gap');",
               "})"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -276,12 +417,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates/Spain/2020",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -300,7 +438,6 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 404', function () {",
               "    pm.response.to.have.status(404);",
@@ -311,7 +448,10 @@
               "    const hasError = json.hasOwnProperty('error') || json.hasOwnProperty('message') || json.hasOwnProperty('detail');",
               "    pm.expect(hasError).to.be.true;",
               "})"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -319,12 +459,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/1500",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates/Spain/1500",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -343,12 +480,16 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 201', function () {",
               "    pm.response.to.have.status(201);",
-              "})"
-            ]
+              "})",
+              "",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -365,12 +506,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -387,7 +525,6 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 409 (conflict/duplicate)', function () {",
               "    pm.response.to.have.status(409);",
@@ -398,7 +535,10 @@
               "    const hasError = json.hasOwnProperty('error') || json.hasOwnProperty('message') || json.hasOwnProperty('detail');",
               "    pm.expect(hasError).to.be.true;",
               "})"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -415,12 +555,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -437,7 +574,6 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 400 (bad request)', function () {",
               "    pm.response.to.have.status(400);",
@@ -448,7 +584,10 @@
               "    const hasError = json.hasOwnProperty('error') || json.hasOwnProperty('message') || json.hasOwnProperty('detail');",
               "    pm.expect(hasError).to.be.true;",
               "})"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -465,12 +604,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -487,12 +623,16 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 200', function () {",
               "    pm.response.to.have.status(200);",
-              "})"
-            ]
+              "})",
+              "",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -509,12 +649,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates/Spain/2020",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -533,12 +670,9 @@
         "method": "PUT",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -559,12 +693,9 @@
           "raw": "{\r\n \"country\": \"Spain\",\r\n \"year\": 2020,\r\n \"total\": 99.0,\r\n \"male\": 99.5,\r\n \"female\": 98.5,\r\n \"gender_gap\": 1.0\r\n}"
         },
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates/Spain/2020",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates/Spain/2020",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -583,7 +714,6 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "pm.test('Status code is 200 or 204', function () {",
               "    pm.expect(pm.response.code).to.be.oneOf([",
@@ -595,7 +725,10 @@
               "pm.test('Response time is acceptable', function () {",
               "    pm.expect(pm.response.responseTime).to.be.below(5000);",
               "})"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -603,12 +736,9 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "https://sos2526-11.onrender.com/api/v1/literacy-rates",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/literacy-rates",
           "host": [
-            "sos2526-11",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -618,6 +748,30 @@
         }
       },
       "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
     }
   ]
 }
