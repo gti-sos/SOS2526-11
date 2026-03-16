@@ -22,6 +22,29 @@ export function loadBackendMRG(app) {
         res.redirect("https://documenter.getpostman.com/view/52276603/2sBXigLstT");
     });
 
+    // GET /api/v1/alcohol-consumptions-per-capita
+    app.get(BASE_URL_API_MRG, (req, res) => {
+        let query = {};
+        let offset = 0;
+        let limit = 0;
+
+        // Búsquedas adaptadas a tus campos
+        if (req.query.nation) query.nation = req.query.nation;
+        if (req.query.date_year) query.date_year = parseInt(req.query.date_year);
+        if (req.query.alcohol_litre) query.alcohol_litre = parseFloat(req.query.alcohol_litre);
+        if (req.query.recorded_consumption) query.recorded_consumption = parseFloat(req.query.recorded_consumption);
+        if (req.query.unrecorded_consumption) query.unrecorded_consumption = parseFloat(req.query.unrecorded_consumption);
+
+        // Paginación
+        if (req.query.offset) offset = parseInt(req.query.offset);
+        if (req.query.limit) limit = parseInt(req.query.limit);
+
+        // Búsqueda en NeDB
+        db.find(query, { _id: 0 }).skip(offset).limit(limit).exec((err, docs) => {
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            res.status(200).json(docs);
+        });
+    });
     // GET /api/v1/alcohol-consumptions-per-capita/loadInitialData
     app.get(BASE_URL_API_MRG + "/loadInitialData", (req, res) => {
         db.find({}, (err, docs) => {
