@@ -1,7 +1,9 @@
 import express from 'express';
+import cors from 'cors';
 import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import {handler} from "../front/svelte-app/build/handler.js";
 
 // IMPORTAMOS API
 import { loadBackendMRG } from "./api/api-MRG.js";
@@ -14,7 +16,9 @@ const __dirname = dirname(__filename);
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.use('/', express.static('public'));
+app.use(cors());
+
+//app.use('/', express.static('public'));
 app.use(express.json());
 
 // Ruta estática
@@ -38,6 +42,7 @@ loadBackendJFM(app);
 
 // API TGG (Tomás Gutiérrez García)
 loadBackendTGG(app);
+app.use(handler);
 
 
 // =====================================

@@ -6,6 +6,7 @@
   "main": "src/back/index.js",
   "scripts": {
     "start": "node ./src/back/index.js",
+    "build": "cd src/front/svelte-app && npm run build",
     "test": "newman run tests/api-mrg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\" && newman run tests/api-jfm-test.json --env-var \"base_url=https://sos2526-11.onrender.com\" && newman run tests/api-tgg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\"",
     "test-alcohol-consumptions-per-capita": "newman run tests/api-mrg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\"",
     "test-literacy-rates": "newman run tests/api-tgg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\"",
@@ -25,6 +26,7 @@
   "dependencies": {
     "body-parser": "^2.2.2",
     "cool-ascii-faces": "^1.3.4",
+    "cors": "^2.8.6",
     "express": "^5.2.1",
     "nedb": "^1.8.0"
   },
