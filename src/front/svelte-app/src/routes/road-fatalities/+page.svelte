@@ -73,6 +73,10 @@
     // Crear un nuevo recurso
     async function createRoadFatality() {
         try {
+
+
+
+ (Correccion del svelte2 de jose)
             const data = {
                 nation: newItem.nation.trim(),
                 year: parseInt(newItem.year, 10),
