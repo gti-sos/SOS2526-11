@@ -24,7 +24,7 @@
         <ul>
             <li><a href="/literacy-rates" target="_blank">Interfaz general de gestión (tgg)</a> - recurso: <span class="label">literacy-rates</span></li>
             <li><a href="/mrgs" target="_blank">Interfaz de alcohol-consumptions-per-capita (mrg)</a> - recurso: <span class="label">alcohol-consumptions-per-capita</span></li>
-            <li><a href="/jfms" target="_blank">Interfaz de road-fatalities (jfm)</a> - recurso: <span class="label">road-fatalities</span></li>
+            <li><a href="/road-fatalities" target="_blank">Interfaz de road-fatalities (jfm)</a> - recurso: <span class="label">road-fatalities</span></li>
         </ul>
     </section>
 
@@ -52,13 +52,13 @@
         <ul>
             <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Doc API alcohol-consumptions-per-capita</a></li>
             <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Doc API literacy-rates</a></li>
-            <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Doc API road-fatalities</a></li>
+            <li><a href="https://documenter.getpostman.com/view/52276616/2sBXigMDg4" target="_blank">Doc API road-fatalities</a></li>
         </ul>
         <h3>APIs v2</h3>
         <ul>
             <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Doc API alcohol-consumptions-per-capita</a></li>
             <li><a href="https://documenter.getpostman.com/view/52263638/2sBXijJBnr" target="_blank">Doc API literacy-rates</a></li>
-            <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Doc API road-fatalities</a></li>
+            <li><a href="https://documenter.getpostman.com/view/52276616/2sBXigMDg4" target="_blank">Doc API road-fatalities</a></li>
         </ul>
     </section>
 
