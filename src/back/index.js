@@ -9,6 +9,7 @@ import {handler} from "../front/svelte-app/build/handler.js";
 import { loadBackendMRG } from "./api/api-MRG.js";
 import { loadBackendTGG } from './api/api-TGG.js'; // Comentado por ahora
 import { loadBackendJFM } from "./api/api-JFM.js";
+import { loadBackendTGGv2 } from './api/api-TGG-v2.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -26,9 +27,11 @@ app.use(express.json());
 //     res.sendFile(path.join(__dirname, 'public/about.html'));
 // });
 // Ruta estática
-app.get('/about', (req, res) => {
+/* app.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, '../../public/about.html'));
-});
+}); */
+
+
 
 // =====================================
 // CARGAR APIs
@@ -42,8 +45,14 @@ loadBackendJFM(app);
 
 // API TGG (Tomás Gutiérrez García)
 loadBackendTGG(app);
-app.use(handler);
 
+// API TGG v2
+loadBackendTGGv2(app);
+
+// =====================================
+// CARGAR SVELTEKIT HANDLER PRIMERO
+// =====================================
+app.use(handler);
 
 // =====================================
 // ARRANQUE DEL SERVIDOR

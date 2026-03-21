@@ -11,3 +11,4 @@
   - https://sos2526-11.onrender.com/api/v1/alcohol-consumptions-per-capita/docs (developed by Miguel Ridao Gallardo)
   - https://sos2526-11.onrender.com/api/v1/literacy-rates/docs (developed by Tomás Gutiérrez García)
   - https://sos2526-11.onrender.com/api/v1/road-fatalities/docs (developed by José Fernández Montero)
+  - https://sos2526-11.onrender.com/api/v2/literacy-rates/docs (developed by Tomás Gutiérrez García - v2)
