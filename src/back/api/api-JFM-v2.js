@@ -25,7 +25,7 @@ export function loadBackendJFMv2(app) {
     // Ruta para la documentación 
     // Ej: GET /api/v2/road-fatalities/docs
     app.get(BASE_URL_API_JFM_V2 + "/docs", (req, res) => {
-        res.redirect("https://documenter.getpostman.com/view/52276616/2sBXigMDg4");
+        res.redirect("https://documenter.getpostman.com/view/52276616/2sBXijJC24");
     });
 
 
