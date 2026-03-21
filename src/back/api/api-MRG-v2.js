@@ -1,10 +1,10 @@
 import Datastore from "nedb";
 
-// ¡OJO! Aquí cambiamos la ruta a v2
+
 export const BASE_URL_API_MRG_V2 = "/api/v2/alcohol-consumptions-per-capita";
 
 export function loadBackendMRGv2(app) {
-    // Creamos una base de datos separada para la v2
+
     const db = new Datastore({ filename: './data/alcohol-consumptions-per-capita-v2.db', autoload: true });
 
     function isValidAlcoholStats(body) {
@@ -17,9 +17,9 @@ export function loadBackendMRGv2(app) {
         return true;
     }
 
-    // GET /api/v2/.../docs (Recuerda actualizar el enlace cuando subas la nueva documentación)
+    
     app.get(BASE_URL_API_MRG_V2 + "/docs", (req, res) => {
-        res.redirect("https://documenter.getpostman.com/view/52276603/2sBXigNZJ5"); // Pon aquí tu nuevo enlace de la v2 luego
+        res.redirect("https://documenter.getpostman.com/view/52276603/2sBXijJBwi");
     });
 
     // GET /api/v2/.../loadInitialData
@@ -72,6 +72,7 @@ export function loadBackendMRGv2(app) {
             res.status(200).json(docs);
         });
     });
+    
 
     // GET a recurso concreto
     app.get(BASE_URL_API_MRG_V2 + "/:nation/:date_year", (req, res) => {
