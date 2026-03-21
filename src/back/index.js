@@ -11,6 +11,7 @@ import { loadBackendTGG } from './api/api-TGG.js';
 import { loadBackendJFM } from "./api/api-JFM.js";
 import { loadBackendMRGv2 } from "./api/api-MRG-v2.js";
 import { loadBackendTGGv2 } from './api/api-TGG-v2.js';
+import { loadBackendJFMv2 } from './api/api-JFM-v2.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -46,6 +47,9 @@ loadBackendMRGv2(app);
 
 // API JFM (José Fernández Montero)
 loadBackendJFM(app);
+
+// API JFM v2
+loadBackendJFMv2(app);
 
 // API TGG (Tomás Gutiérrez García)
 loadBackendTGG(app);
