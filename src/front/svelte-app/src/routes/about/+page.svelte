@@ -57,7 +57,7 @@
         <h3>APIs v2</h3>
         <ul>
             <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Doc API alcohol-consumptions-per-capita</a></li>
-            <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Doc API literacy-rates</a></li>
+            <li><a href="https://documenter.getpostman.com/view/52263638/2sBXijJBnr" target="_blank">Doc API literacy-rates</a></li>
             <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Doc API road-fatalities</a></li>
         </ul>
     </section>
