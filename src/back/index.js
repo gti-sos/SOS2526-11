@@ -39,6 +39,8 @@ app.use(express.json());
 
 // API MRG (Miguel Ridao)
 loadBackendMRG(app);
+// API MRG v2
+loadBackendMRGv2(app);
 
 // API JFM (José Fernández Montero)
 loadBackendJFM(app);
