@@ -64,10 +64,15 @@
         await listRoadFatalities();
     });
 
+
     // Crear un nuevo recurso 
     async function createRoadFatality() {
         try {
             // Formateo estricto de los datos 
+
+    // Crear un nuevo recurso
+    async function createRoadFatality() {
+        try {
             const data = {
                 nation: newItem.nation.trim(),
                 year: parseInt(newItem.year, 10),
@@ -244,7 +249,10 @@
                     Conducción por la {record.traffic_side === 'right' ? 'derecha' : 'izquierda'}
                 </div>
                 <div class="record-actions">
-                    <button onclick={() => deleteRoadFatality(record.nation, record.year)}>Eliminar</button>
+                    <a href="/road-fatalities/{record.nation}/{record.year}" class="btn-edit">
+                        Editar
+                    </a>
+                    <button class="btn-delete" onclick={() => deleteRoadFatality(record.nation, record.year)}>Eliminar</button>
                 </div>
             </li>
         {/each}
@@ -300,8 +308,7 @@
 
     .actions button,
     .form-container button,
-    .delete-form button,
-    li button {
+    .delete-form button {
         border: 1px solid transparent;
         border-radius: 0.65rem;
         padding: 0.75rem 1rem;
@@ -416,16 +423,43 @@
 
     .record-info { flex-grow: 1; }
 
-    li button {
-        background-color: #ef4444;
+    .record-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    /* Estilos compartidos para los botones de la lista */
+    .btn-edit, .btn-delete {
+        border: 1px solid transparent;
+        border-radius: 0.65rem;
+        padding: 0.6rem 1rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+        text-decoration: none; /* Quita el subrayado del enlace */
+        font-size: 0.9rem;
+    }
+
+    .btn-edit {
+        background-color: #3b82f6; /* Azul */
+        color: #fff;
+    }
+    
+    .btn-edit:hover { background-color: #2563eb; transform: translateY(-1px); }
+
+    .btn-delete {
+        background-color: #ef4444; /* Rojo */
         color: #fff;
     }
 
-    li button:hover { background-color: #dc2626; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
 
     @media (max-width: 640px) {
         .delete-form { grid-template-columns: 1fr; }
         li { flex-direction: column; align-items: stretch; text-align: center; }
-        li button { width: 100%; margin-top: 0.5rem; }
+        .record-actions { flex-direction: column; }
+        .btn-edit, .btn-delete { width: 100%; text-align: center; }
     }
 </style>
