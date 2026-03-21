@@ -130,10 +130,14 @@ export function loadBackendJFMv2(app) {
     app.get(BASE_URL_API_JFM_V2 + "/:nation/:year", (req, res) => {
         const nationParam = req.params.nation.toLowerCase();
         const yearParam = parseInt(req.params.year);
-
+    
         db.findOne({ nation: nationParam, year: yearParam }, { _id: 0 }, (err, doc) => {
-            if (err) return res.status(500).json({ error: "Error interno" });
-            doc ? res.status(200).json(doc) : res.status(404).json({ error: "Not Found" });
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            if (doc) {
+                res.status(200).json(doc); // Los GET a recursos concretos deben devolver un objeto
+            } else {
+                res.status(404).json({ error: "Not Found: Recurso no encontrado" });
+            }
         });
     });
 
@@ -142,18 +146,24 @@ export function loadBackendJFMv2(app) {
     // Ej: POST /api/v2/road-fatalities
     app.post(BASE_URL_API_JFM_V2, (req, res) => {
         const newData = req.body;
-        if (!isValidRoadFatalities(newData)) return res.status(400).json({ error: "Bad Request" });
 
+        // Comprobar estrictamente el formato esperado
+        if (!isValidRoadFatalities(newData)) {
+            return res.status(400).json({ error: "Bad Request: Estructura de JSON incorrecta o faltan campos esperados" });
+        }
+
+        // Formatear para evitar inyecciones raras
         newData.nation = newData.nation.toLowerCase();
 
         db.find({ nation: newData.nation, year: newData.year }, (err, docs) => {
-            if (err) return res.status(500).json({ error: "Error interno" });
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+
             if (docs.length > 0) {
-                return res.status(409).json({ error: "Conflict" });
+                return res.status(409).json({ error: "Conflict: Ya existe un recurso para ese país y año." });
             } else {
-                db.insert(newData, (err) => {
+                db.insert(newData, (err, newDoc) => {
                     if (err) return res.status(500).json({ error: "Error al guardar" });
-                    res.status(201).json({ message: "Created" });
+                    res.status(201).json({ message: "Created: Recurso creado exitosamente." });
                 });
             }
         });
@@ -181,13 +191,22 @@ export function loadBackendJFMv2(app) {
         const yearParam = parseInt(req.params.year);
         const body = req.body;
 
-        if (!body || !isValidRoadFatalities(body) || body.nation.toLowerCase() !== nationParam || body.year !== yearParam) {
-            return res.status(400).json({ error: "Bad Request" });
+        if (!body) return res.status(400).json({ error: "Bad Request: Body vacío." });
+
+        if (!isValidRoadFatalities(body)) {
+            return res.status(400).json({ error: "Bad Request: Estructura de JSON incorrecta o faltan campos esperados." });
+        }
+
+        if (body.nation.toLowerCase() !== nationParam || body.year !== yearParam) {
+            return res.status(400).json({ error: "Bad Request: Los identificadores de la URL no coinciden con el body." });
         }
 
         db.update({ nation: nationParam, year: yearParam }, body, {}, (err, numReplaced) => {
-            if (err) return res.status(500).json({ error: "Error interno" });
-            numReplaced === 0 ? res.status(404).json({ error: "Not Found" }) : res.status(200).json({ message: "OK" });
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            if (numReplaced === 0) {
+                return res.status(404).json({ error: "Not Found: El recurso a actualizar no existe." });
+            }
+            res.status(200).json({ message: "OK: Recurso actualizado correctamente." });
         });
     });
 
@@ -195,9 +214,9 @@ export function loadBackendJFMv2(app) {
     // DELETE a todo
     //Ej: DELETE  /api/v2/road-fatalities
     app.delete(BASE_URL_API_JFM_V2, (req, res) => {
-        db.remove({}, { multi: true }, (err) => {
-            if (err) return res.status(500).json({ error: "Error interno" });
-            res.status(200).json({ message: "OK" });
+        db.remove({}, { multi: true }, (err, numRemoved) => {
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            res.status(200).json({ message: "OK: Todos los recursos eliminados." });
         });
     });
 
@@ -209,9 +228,12 @@ export function loadBackendJFMv2(app) {
         const yearParam = parseInt(req.params.year);
 
         db.remove({ nation: nationParam, year: yearParam }, {}, (err, numRemoved) => {
-            if (err) return res.status(500).json({ error: "Error interno" });
-            numRemoved === 0 ? res.status(404).json({ error: "Not Found" }) : res.status(200).json({ message: "OK" });
+            if (err) return res.status(500).json({ error: "Error interno del servidor" });
+            if (numRemoved === 0) {
+                return res.status(404).json({ error: "Not Found: El recurso a borrar no existe." });
+            }
+            res.status(200).json({ message: "OK: Recurso eliminado correctamente." });
         });
     });
-
+    
 }
