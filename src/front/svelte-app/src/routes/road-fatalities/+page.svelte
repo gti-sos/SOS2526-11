@@ -182,9 +182,9 @@
 
 <div class="actions">
     <button onclick={loadInitialData}>Cargar Accidentes de Tráfico</button>
-    <button onclick={listRoadFatalities}>Actualizar Lista</button>
-    <button onclick={() => showCreateForm = !showCreateForm}>Añadir Nuevo Registro</button>
-    <button onclick={deleteAllRoadFatalities} style="background-color: #991b1b;">Vaciar Base de Datos</button>
+    <button onclick={listRoadFatalities}>Listar Accidentes de Tráfico</button>
+    <button onclick={() => showCreateForm = !showCreateForm}>Crear Nuevo Recurso</button>
+    <button onclick={deleteAllRoadFatalities} style="background-color: #991b1b;">Eliminar Todos los Recursos</button>
 </div>
 
 <div class="delete-specific">
