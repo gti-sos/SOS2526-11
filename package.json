@@ -6,7 +6,7 @@
   "main": "src/back/index.js",
   "scripts": {
     "start": "node ./src/back/index.js",
-    "build": "cd src/front/svelte-app && npm run build",
+    "build": "cd src/front/svelte-app && npm install && npm run build",
     "test": "newman run tests/api-mrg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\" && newman run tests/api-jfm-test.json --env-var \"base_url=https://sos2526-11.onrender.com\" && newman run tests/api-tgg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\"",
     "test-alcohol-consumptions-per-capita": "newman run tests/api-mrg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\"",
     "test-literacy-rates": "newman run tests/api-tgg-test.json --env-var \"base_url=https://sos2526-11.onrender.com\"",
