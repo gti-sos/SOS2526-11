@@ -23,7 +23,7 @@
         <h2>Enlaces de front-end del equipo</h2>
         <ul>
             <li><a href="/literacy-rates" target="_blank">Interfaz general de gestión (tgg)</a> - recurso: <span class="label">literacy-rates</span></li>
-            <li><a href="/mrgs" target="_blank">Interfaz de alcohol-consumptions-per-capita (mrg)</a> - recurso: <span class="label">alcohol-consumptions-per-capita</span></li>
+            <li><a href="/alcohol-consumptions-per-capita" target="_blank">Interfaz de alcohol-consumptions-per-capita (mrg)</a> - recurso: <span class="label">alcohol-consumptions-per-capita</span></li>
             <li><a href="/road-fatalities" target="_blank">Interfaz de road-fatalities (jfm)</a> - recurso: <span class="label">road-fatalities</span></li>
         </ul>
     </section>
