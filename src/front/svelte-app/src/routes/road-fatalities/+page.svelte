@@ -233,7 +233,7 @@
 {/if}
 
 {#if roadFatalities.length > 0}
-    <h2>Registros Guardados</h2>
+    <h2>Lista de Accidentes de Tráfico</h2>
     <ul>
         {#each roadFatalities as record}
             <li>
