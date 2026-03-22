@@ -181,7 +181,7 @@
 {/if}
 
 <div class="actions">
-    <button onclick={loadInitialData}>Cargar Datos de Prueba</button>
+    <button onclick={loadInitialData}>Cargar Accidentes de Tráfico</button>
     <button onclick={listRoadFatalities}>Actualizar Lista</button>
     <button onclick={() => showCreateForm = !showCreateForm}>Añadir Nuevo Registro</button>
     <button onclick={deleteAllRoadFatalities} style="background-color: #991b1b;">Vaciar Base de Datos</button>
