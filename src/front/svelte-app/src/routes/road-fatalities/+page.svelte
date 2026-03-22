@@ -244,9 +244,6 @@
                     Conducción por la {record.traffic_side === 'right' ? 'derecha' : 'izquierda'}
                 </div>
                 <div class="record-actions">
-                    <a href="/road-fatalities/{record.nation}/{record.year}" class="btn-edit">
-                        Editar
-                    </a>
                     <button class="btn-delete" onclick={() => deleteRoadFatality(record.nation, record.year)}>Eliminar</button>
                 </div>
             </li>
@@ -424,7 +421,7 @@
     }
 
     /* Estilos para los botones de la lista */
-    .btn-edit, .btn-delete {
+    .btn-delete {
         border: 1px solid transparent;
         border-radius: 0.65rem;
         padding: 0.6rem 1rem;
@@ -436,14 +433,7 @@
         text-decoration: none; /* Quita el subrayado del enlace */
         font-size: 0.9rem;
     }
-
-    .btn-edit {
-        background-color: #3b82f6; /* Azul */
-        color: #fff;
-    }
     
-    .btn-edit:hover { background-color: #2563eb; transform: translateY(-1px); }
-
     .btn-delete {
         background-color: #ef4444; /* Rojo */
         color: #fff;
@@ -455,6 +445,6 @@
         .delete-form { grid-template-columns: 1fr; }
         li { flex-direction: column; align-items: stretch; text-align: center; }
         .record-actions { flex-direction: column; }
-        .btn-edit, .btn-delete { width: 100%; text-align: center; }
+        .btn-delete { width: 100%; text-align: center; }
     }
 </style>
