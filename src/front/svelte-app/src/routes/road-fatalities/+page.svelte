@@ -64,19 +64,10 @@
         await listRoadFatalities();
     });
 
-
-    // Crear un nuevo recurso 
-    async function createRoadFatality() {
-        try {
-            // Formateo estricto de los datos 
-
     // Crear un nuevo recurso
     async function createRoadFatality() {
         try {
-
-
-
- (Correccion del svelte2 de jose)
+            // Formateo estricto de los datos 
             const data = {
                 nation: newItem.nation.trim(),
                 year: parseInt(newItem.year, 10),
@@ -114,7 +105,7 @@
         }
     }
 
-    // Borrar todos los recursos
+    // Borrar TODOS los recursos
     async function deleteAllRoadFatalities() {
         if (!confirm("¿Estás completamente seguro de que quieres eliminar TODOS los registros de accidentes?")) return;
 
@@ -432,7 +423,7 @@
         gap: 8px;
     }
 
-    /* Estilos compartidos para los botones de la lista */
+    /* Estilos para los botones de la lista */
     .btn-edit, .btn-delete {
         border: 1px solid transparent;
         border-radius: 0.65rem;
