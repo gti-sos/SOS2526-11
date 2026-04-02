@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # v6 doesn't exist, use v4
+        uses: actions/checkout@v6 
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -14,15 +14,14 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies (backend)
-        run: npm ci
-
-      - name: Install dependencies (frontend)
-        working-directory: src/front/svelte-app
-        run: npm ci
+        run: npm install
 
       - name: Build UI  # Antes de los tests, para asegurarnos de que el código más reciente se está probando
         working-directory: src/front/svelte-app
         run: npm run build
+      
+      - name: Server startup
+        run: npm start 
 
       - name: Install Playwright Browsers  
         run: npx playwright install --with-deps
