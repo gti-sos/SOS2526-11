@@ -1,17 +1,6 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-/**
- * @see https://playwright.dev/docs/test-configuration
- */
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: false,
@@ -20,59 +9,33 @@ export default defineConfig({
   workers: 1,
   reporter: 'html',
   webServer: {
-    command: 'npm start',
+    command: 'node ./src/back/index.js', // directo a node, sin pasar por npm
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
-    timeout: 120000, // Aumentar el timeout para esperar a que el servidor esté listo
+    timeout: 120000,
+    stdout: 'pipe', // muestra logs del servidor en caso de error
+    stderr: 'pipe',
   },
   use: {
     baseURL: 'http://localhost:8080',
     trace: 'off',
+    actionTimeout: 15000,    // timeout para cada acción (click, fill...)
+    navigationTimeout: 15000, // timeout para navegación
   },
 
-  /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: 'chromium', // solo chromium en CI para ir más rápido
       use: { ...devices['Desktop Chrome'] },
     },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
-    /* Test against mobile viewports. */
+    // firefox y webkit comentados para CI - descomentar solo en local
     // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
     // },
     // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
     // },
   ],
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 });
-
