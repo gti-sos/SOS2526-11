@@ -180,6 +180,7 @@
                 
                 // Filtrar por rango de años en frontend si no hay país
                 if (!searchParams.country && (searchParams.from || searchParams.to)) {
+                    // @ts-ignore
                     results = results.filter(rate => {
                         if (searchParams.from && rate.year < parseInt(searchParams.from)) return false;
                         if (searchParams.to && rate.year > parseInt(searchParams.to)) return false;
@@ -210,103 +211,108 @@
     }
 </script>
 
+<!-- HTML -->
+<!-- HTML -->
+<!-- HTML -->
+<!-- HTML -->
+
 <h1>Gestión de Tasas de Alfabetización</h1>
 
 {#if message.text}
-    <div class="message {message.type}">
+    <div class="message {message.type}" data-testid="message">
         {message.text}
     </div>
 {/if}
 
 <div class="actions">
-    <button onclick={loadInitialData}>Cargar Tasas de Alfabetización</button>
-    <button onclick={listLiteracyRates}>Listar Tasas de Alfabetización</button>
-    <button onclick={() => showCreateForm = !showCreateForm}>Crear Nuevo Recurso</button>
-    <button onclick={deleteAllLiteracyRates}>Eliminar Todos los Recursos</button>
+    <button onclick={loadInitialData} data-testid="load-initial-data">Cargar Tasas de Alfabetización</button>
+    <button onclick={listLiteracyRates} data-testid="list-literacy-rates">Listar Tasas de Alfabetización</button>
+    <button onclick={() => showCreateForm = !showCreateForm} data-testid="toggle-create-form">Crear Nuevo Recurso</button>
+    <button onclick={deleteAllLiteracyRates} data-testid="delete-all-resources">Eliminar Todos los Recursos</button>
 </div>
 
 <div class="search-container">
     <h3>Buscar Recursos</h3>
-    <form onsubmit={(e) => { e.preventDefault(); searchLiteracyRates(); }}>
+    <form onsubmit={(e) => { e.preventDefault(); searchLiteracyRates(); }} data-testid="search-form">
         <div class="search-grid">
             <label>
-                País: <input type="text" bind:value={searchParams.country} />
+                País: <input type="text" bind:value={searchParams.country} data-testid="search-country" />
             </label>
             <label>
-                Año: <input type="number" bind:value={searchParams.year} />
+                Año: <input type="number" bind:value={searchParams.year} data-testid="search-year" />
             </label>
             <label>
-                Desde (año): <input type="number" bind:value={searchParams.from} />
+                Desde (año): <input type="number" bind:value={searchParams.from} data-testid="search-from" />
             </label>
             <label>
-                Hasta (año): <input type="number" bind:value={searchParams.to} />
+                Hasta (año): <input type="number" bind:value={searchParams.to} data-testid="search-to" />
             </label>
             <label>
-                Total (%): <input type="number" step="0.1" bind:value={searchParams.total} />
+                Total (%): <input type="number" step="0.1" bind:value={searchParams.total} data-testid="search-total" />
             </label>
             <label>
-                Hombres (%): <input type="number" step="0.1" bind:value={searchParams.male} />
+                Hombres (%): <input type="number" step="0.1" bind:value={searchParams.male} data-testid="search-male" />
             </label>
             <label>
-                Mujeres (%): <input type="number" step="0.1" bind:value={searchParams.female} />
+                Mujeres (%): <input type="number" step="0.1" bind:value={searchParams.female} data-testid="search-female" />
             </label>
             <label>
-                Brecha de Género (%): <input type="number" step="0.1" bind:value={searchParams.gender_gap} />
+                Brecha de Género (%): <input type="number" step="0.1" bind:value={searchParams.gender_gap} data-testid="search-gender-gap" />
             </label>
             <label>
-                Offset: <input type="number" bind:value={searchParams.offset} />
+                Offset: <input type="number" bind:value={searchParams.offset} data-testid="search-offset" />
             </label>
             <label>
-                Limit: <input type="number" bind:value={searchParams.limit} />
+                Limit: <input type="number" bind:value={searchParams.limit} data-testid="search-limit" />
             </label>
         </div>
         <div class="search-buttons">
-            <button type="submit">Buscar</button>
-            <button type="button" onclick={clearSearch}>Limpiar Búsqueda</button>
+            <button type="submit" data-testid="search-submit">Buscar</button>
+            <button type="button" onclick={clearSearch} data-testid="search-clear">Limpiar Búsqueda</button>
         </div>
     </form>
 </div>
 
 <div class="delete-specific">
     <h3>Eliminar recurso específico</h3>
-    <div class="delete-form">
-        <input placeholder="País" bind:value={deleteCountry} />
-        <input type="number" placeholder="Año" bind:value={deleteYear} />
-        <button onclick={handleDeleteSpecific}>Eliminar recurso</button>
+    <div class="delete-form" data-testid="delete-specific-form">
+        <input placeholder="País" bind:value={deleteCountry} data-testid="delete-country" />
+        <input type="number" placeholder="Año" bind:value={deleteYear} data-testid="delete-year" />
+        <button onclick={handleDeleteSpecific} data-testid="delete-specific-submit">Eliminar recurso</button>
     </div>
 </div>
 
 {#if showCreateForm}
     <div class="form-container">
         <h2>Crear Nuevo Recurso</h2>
-        <form onsubmit={createLiteracyRate}>
+        <form onsubmit={createLiteracyRate} data-testid="create-form">
             <label>
-                País: <input type="text" bind:value={newItem.country} required />
+                País: <input type="text" bind:value={newItem.country} data-testid="create-country" required />
             </label>
             <label>
-                Año: <input type="number" bind:value={newItem.year} required />
+                Año: <input type="number" bind:value={newItem.year} data-testid="create-year" required />
             </label>
             <label>
-                Total: <input type="number" step="0.1" bind:value={newItem.total} required />
+                Total: <input type="number" step="0.1" bind:value={newItem.total} data-testid="create-total" required />
             </label>
             <label>
-                Hombres: <input type="number" step="0.1" bind:value={newItem.male} required />
+                Hombres: <input type="number" step="0.1" bind:value={newItem.male} data-testid="create-male" required />
             </label>
             <label>
-                Mujeres: <input type="number" step="0.1" bind:value={newItem.female} required />
+                Mujeres: <input type="number" step="0.1" bind:value={newItem.female} data-testid="create-female" required />
             </label>
             <label>
-                Brecha de Género: <input type="number" step="0.1" bind:value={newItem.gender_gap} required />
+                Brecha de Género: <input type="number" step="0.1" bind:value={newItem.gender_gap} data-testid="create-gender-gap" required />
             </label>
-            <button type="submit">Crear</button>
-            <button type="button" onclick={() => showCreateForm = false}>Cancelar</button>
+            <button type="submit" data-testid="create-submit">Crear</button>
+            <button type="button" onclick={() => showCreateForm = false} data-testid="create-cancel">Cancelar</button>
         </form>
     </div>
 {/if}
 <h2>Lista de Tasas de Alfabetización</h2>
 {#if literacyRates.length > 0}
     
-    <table>
+    <table data-testid="literacy-rates-table">
         <thead>
             <tr>
                 <th>País</th>
@@ -320,7 +326,7 @@
         </thead>
         <tbody>
             {#each literacyRates as rate}
-                <tr>
+                <tr data-testid="table-row-{rate.country}-{rate.year}">
                     <td>{rate.country}</td>
                     <td>{rate.year}</td>
                     <td>{rate.total}</td>
@@ -328,8 +334,8 @@
                     <td>{rate.female}</td>
                     <td>{rate.gender_gap}</td>
                     <td>
-                        <button onclick={() => goto(`/literacy-rates/${encodeURIComponent(rate.country)}/${rate.year}`)}>Editar</button>
-                        <button onclick={() => deleteLiteracyRate(rate.country, rate.year)}>Eliminar</button>
+                        <button onclick={() => goto(`/literacy-rates/${encodeURIComponent(rate.country)}/${rate.year}`)} data-testid="edit-btn-{rate.country}-{rate.year}">Editar</button>
+                        <button onclick={() => deleteLiteracyRate(rate.country, rate.year)} data-testid="delete-btn-{rate.country}-{rate.year}">Eliminar</button>
                     </td>
                 </tr>
             {/each}
@@ -337,6 +343,10 @@
     </table>
 {/if}
 
+<!-- CSS -->
+<!-- CSS -->
+<!-- CSS -->
+<!-- CSS -->
 <style>
     :global(body) {
         margin: 0;
