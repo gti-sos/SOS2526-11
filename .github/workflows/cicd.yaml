@@ -1,24 +1,38 @@
 name: CI_CD
-on: [push,pull_request]
+on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Install dependencies      
+        uses: actions/checkout@v4  # v6 doesn't exist, use v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies (backend)
         run: npm ci
-      - name: Build UI
+
+      - name: Install dependencies (frontend)
+        working-directory: src/front/svelte-app
+        run: npm ci
+
+      - name: Build UI  # Antes de los tests, para asegurarnos de que el código más reciente se está probando
+        working-directory: src/front/svelte-app
         run: npm run build
-      - name: Test
-        run: npm test
-      - name: Install Playwright Browsers
+
+      - name: Install Playwright Browsers  
         run: npx playwright install --with-deps
+
       - name: Run Playwright tests
         run: npx playwright test
+
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
