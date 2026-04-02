@@ -251,13 +251,13 @@
             <h2>📚 Documentación Postman</h2>
             <h3>Versión 1</h3>
             <ul>
-                <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Documentación - Alcohol Consumptions per Capita</a></li>
+                <li><a href="https://documenter.getpostman.com/view/52276603/2sBXigNZJ5" target="_blank">Documentación - Alcohol Consumptions per Capita</a></li>
                 <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Documentación - Literacy Rates</a></li>
                 <li><a href="https://documenter.getpostman.com/view/52276616/2sBXigMDg4" target="_blank">Documentación - Road Fatalities</a></li>
             </ul>
             <h3>Versión 2</h3>
             <ul>
-                <li><a href="https://documenter.getpostman.com/view/52263638/2sBXigMDfw" target="_blank">Documentación - Alcohol Consumptions per Capita</a></li>
+                <li><a href="https://documenter.getpostman.com/view/52276603/2sBXijJBwi" target="_blank">Documentación - Alcohol Consumptions per Capita</a></li>
                 <li><a href="https://documenter.getpostman.com/view/52263638/2sBXijJBnr" target="_blank">Documentación - Literacy Rates</a></li>
                 <li><a href="https://documenter.getpostman.com/view/52276616/2sBXijJC24" target="_blank">Documentación - Road Fatalities</a></li>
             </ul>
