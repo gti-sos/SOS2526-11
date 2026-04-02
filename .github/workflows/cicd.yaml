@@ -15,6 +15,10 @@ jobs:
 
       - name: Install dependencies (backend)
         run: npm ci
+      
+      - name: Install dependencies (frontend)
+        working-directory: src/front/svelte-app
+        run: npm ci
 
       - name: Build UI  # Antes de los tests, para asegurarnos de que el código más reciente se está probando
         working-directory: src/front/svelte-app
