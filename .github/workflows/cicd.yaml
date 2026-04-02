@@ -14,7 +14,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies (backend)
-        run: npm install
+        run: npm ci
 
       - name: Build UI  # Antes de los tests, para asegurarnos de que el código más reciente se está probando
         working-directory: src/front/svelte-app
