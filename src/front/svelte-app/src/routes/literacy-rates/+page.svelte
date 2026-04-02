@@ -1,10 +1,14 @@
 <script>
     import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
     // @ts-ignore
     let literacyRates = $state([]);
     let message = $state({ text: '', type: '' }); // type: 'success' or 'error'
     let showCreateForm = $state(false);
     let newItem = $state({ country: '', year: '', total: '', male: '', female: '', gender_gap: '' });
+
+    // Búsqueda
+    let searchParams = $state({ country: '', year: '', from: '', to: '', total: '', male: '', female: '', gender_gap: '', offset: '', limit: '' });
 
     // Carga inicial - para poblar si la DB está vacía
     async function loadInitialData() {
@@ -30,14 +34,11 @@
         }
     }
 
-    async function listLiteracyRates() {
+    async function listLiteracyRates(params = {}) {
         try {
-            const res = await fetch('/api/v2/literacy-rates', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const query = new URLSearchParams(params).toString();
+            const url = query ? `/api/v2/literacy-rates?${query}` : '/api/v2/literacy-rates';
+            const res = await fetch(url);
             if (res.ok) {
                 literacyRates = await res.json();
                 setMessage('Datos listados exitosamente.', 'success');
@@ -140,10 +141,72 @@
         await deleteLiteracyRate(deleteCountry.trim(), parseInt(deleteYear, 10));
     }
 
+    async function searchLiteracyRates() {
+        try {
+            let url = '/api/v2/literacy-rates';
+            let results = [];
+
+            // Si se especifica país
+            if (searchParams.country && searchParams.country.trim()) {
+                const country = encodeURIComponent(searchParams.country.trim());
+                const queryParts = [];
+                
+                if (searchParams.year) queryParts.push(`year=${searchParams.year}`);
+                if (searchParams.from) queryParts.push(`from=${searchParams.from}`);
+                if (searchParams.to) queryParts.push(`to=${searchParams.to}`);
+                if (searchParams.offset) queryParts.push(`offset=${searchParams.offset}`);
+                if (searchParams.limit) queryParts.push(`limit=${searchParams.limit}`);
+                
+                const query = queryParts.join('&');
+                url = `/api/v2/literacy-rates/${country}${query ? '?' + query : ''}`;
+            } else {
+                // Sin país: obtiene todos y filtra en frontend
+                const queryParts = [];
+                if (searchParams.year) queryParts.push(`year=${searchParams.year}`);
+                if (searchParams.total) queryParts.push(`total=${searchParams.total}`);
+                if (searchParams.male) queryParts.push(`male=${searchParams.male}`);
+                if (searchParams.female) queryParts.push(`female=${searchParams.female}`);
+                if (searchParams.gender_gap) queryParts.push(`gender_gap=${searchParams.gender_gap}`);
+                if (searchParams.offset) queryParts.push(`offset=${searchParams.offset}`);
+                if (searchParams.limit) queryParts.push(`limit=${searchParams.limit}`);
+                
+                const query = queryParts.join('&');
+                url = `/api/v2/literacy-rates${query ? '?' + query : ''}`;
+            }
+
+            const res = await fetch(url);
+            if (res.ok) {
+                results = await res.json();
+                
+                // Filtrar por rango de años en frontend si no hay país
+                if (!searchParams.country && (searchParams.from || searchParams.to)) {
+                    results = results.filter(rate => {
+                        if (searchParams.from && rate.year < parseInt(searchParams.from)) return false;
+                        if (searchParams.to && rate.year > parseInt(searchParams.to)) return false;
+                        return true;
+                    });
+                }
+                
+                literacyRates = results;
+                setMessage('Búsqueda realizada exitosamente.', 'success');
+            } else {
+                const error = await res.json();
+                setMessage(`Error en la búsqueda: ${error.error}`, 'error');
+            }
+        } catch (err) {
+            setMessage('Error de conexión.', 'error');
+        }
+    }
+
+    async function clearSearch() {
+        searchParams = { country: '', year: '', from: '', to: '', total: '', male: '', female: '', gender_gap: '', offset: '', limit: '' };
+        await listLiteracyRates();
+    }
+
     // @ts-ignore
     function setMessage(text, type) {
         message = { text, type };
-        setTimeout(() => message = { text: '', type: '' }, 5000); // Clear after 5 seconds
+        setTimeout(() => message = { text: '', type: '' }, 10000); // Increased to 10 seconds
     }
 </script>
 
@@ -160,6 +223,48 @@
     <button onclick={listLiteracyRates}>Listar Tasas de Alfabetización</button>
     <button onclick={() => showCreateForm = !showCreateForm}>Crear Nuevo Recurso</button>
     <button onclick={deleteAllLiteracyRates}>Eliminar Todos los Recursos</button>
+</div>
+
+<div class="search-container">
+    <h3>Buscar Recursos</h3>
+    <form onsubmit={(e) => { e.preventDefault(); searchLiteracyRates(); }}>
+        <div class="search-grid">
+            <label>
+                País: <input type="text" bind:value={searchParams.country} />
+            </label>
+            <label>
+                Año: <input type="number" bind:value={searchParams.year} />
+            </label>
+            <label>
+                Desde (año): <input type="number" bind:value={searchParams.from} />
+            </label>
+            <label>
+                Hasta (año): <input type="number" bind:value={searchParams.to} />
+            </label>
+            <label>
+                Total (%): <input type="number" step="0.1" bind:value={searchParams.total} />
+            </label>
+            <label>
+                Hombres (%): <input type="number" step="0.1" bind:value={searchParams.male} />
+            </label>
+            <label>
+                Mujeres (%): <input type="number" step="0.1" bind:value={searchParams.female} />
+            </label>
+            <label>
+                Brecha de Género (%): <input type="number" step="0.1" bind:value={searchParams.gender_gap} />
+            </label>
+            <label>
+                Offset: <input type="number" bind:value={searchParams.offset} />
+            </label>
+            <label>
+                Limit: <input type="number" bind:value={searchParams.limit} />
+            </label>
+        </div>
+        <div class="search-buttons">
+            <button type="submit">Buscar</button>
+            <button type="button" onclick={clearSearch}>Limpiar Búsqueda</button>
+        </div>
+    </form>
 </div>
 
 <div class="delete-specific">
@@ -198,17 +303,38 @@
         </form>
     </div>
 {/if}
-
+<h2>Lista de Tasas de Alfabetización</h2>
 {#if literacyRates.length > 0}
-    <h2>Lista de Tasas de Alfabetización</h2>
-    <ul>
-        {#each literacyRates as rate}
-            <li>
-                <strong>{rate.country} ({rate.year})</strong>: Total {rate.total}%, Hombres {rate.male}%, Mujeres {rate.female}%, Brecha {rate.gender_gap}%
-                <button onclick={() => deleteLiteracyRate(rate.country, rate.year)}>Eliminar</button>
-            </li>
-        {/each}
-    </ul>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>País</th>
+                <th>Año</th>
+                <th>Total (%)</th>
+                <th>Hombres (%)</th>
+                <th>Mujeres (%)</th>
+                <th>Brecha de Género (%)</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {#each literacyRates as rate}
+                <tr>
+                    <td>{rate.country}</td>
+                    <td>{rate.year}</td>
+                    <td>{rate.total}</td>
+                    <td>{rate.male}</td>
+                    <td>{rate.female}</td>
+                    <td>{rate.gender_gap}</td>
+                    <td>
+                        <button onclick={() => goto(`/literacy-rates/${encodeURIComponent(rate.country)}/${rate.year}`)}>Editar</button>
+                        <button onclick={() => deleteLiteracyRate(rate.country, rate.year)}>Eliminar</button>
+                    </td>
+                </tr>
+            {/each}
+        </tbody>
+    </table>
 {/if}
 
 <style>
@@ -224,6 +350,12 @@
         margin-top: 1rem;
         color: #e2e8f0;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+
+    h2 {
+        text-align: center;
+        color: #e2e8f0;
+        margin-top: 1.5rem;
     }
 
     .message {
@@ -257,8 +389,7 @@
     }
 
     .actions button,
-    .form-container button,
-    li button {
+    .form-container button {
         border: 1px solid transparent;
         border-radius: 0.65rem;
         padding: 0.75rem 1rem;
@@ -376,60 +507,155 @@
         transform: translateY(-1px);
     }
 
-    ul {
+    .search-container {
         max-width: 1000px;
         width: 95%;
-        margin: 0.8rem auto 2rem;
-        padding: 0;
-        list-style: none;
+        margin: 1rem auto;
+        background: #111a30;
+        border: 1px solid #2f3b54;
+        border-radius: 0.75rem;
+        padding: 1rem;
     }
 
-    li {
-        border: 1px solid #334155;
-        background: linear-gradient(180deg, #181f33 0%, #1d2a44 100%);
-        padding: 0.85rem 0.95rem;
-        border-radius: 0.75rem;
-        margin-top: 0.6rem;
-        color: #e2e8f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .search-container h3 {
+        margin: 0 0 0.5rem;
+        color: #cbd5e1;
+    }
+
+    .search-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 0.8rem;
     }
 
-    li button {
-        background-color: #f59e0b;
-        color: #0f172a;
+    .search-grid label {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        color: #cbd5e1;
     }
 
-    li button:hover {
-        background-color: #d97706;
+    .search-grid input {
+        border: 1px solid #334155;
+        border-radius: 0.5rem;
+        padding: 0.6rem 0.7rem;
+        background: #0b1222;
+        color: #e2e8f0;
     }
 
-    li button:last-child {
+    .search-buttons {
+        display: flex;
+        gap: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    .search-buttons button {
+        background-color: #059669;
+        color: #fff;
+        border: none;
+        border-radius: 0.6rem;
+        padding: 0.7rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .search-buttons button:hover {
+        background-color: #047857;
+        transform: translateY(-1px);
+    }
+
+    .search-buttons button[type="button"] {
+        background-color: #6b7280;
+    }
+
+    .search-buttons button[type="button"]:hover {
+        background-color: #4b5563;
+    }
+
+    table {
+        max-width: 1000px;
+        width: 95%;
+        margin: 0.8rem auto 2rem;
+        border-collapse: collapse;
+        background: linear-gradient(180deg, #181f33 0%, #1d2a44 100%);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    th, td {
+        padding: 0.85rem 0.95rem;
+        text-align: left;
+        color: #e2e8f0;
+    }
+
+    th {
+        background: #0f172a;
+        font-weight: 600;
+        border-bottom: 1px solid #334155;
+    }
+
+    td {
+        border-bottom: 1px solid #334155;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    td button {
+        margin-right: 0.5rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 0.4rem;
+        cursor: pointer;
+        transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+    }
+
+    td button:first-child {
+        background-color: #2563eb;
+        color: #fff;
+    }
+
+    td button:first-child:hover {
+        background-color: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    td button:last-child {
         background-color: #ef4444;
         color: #fff;
     }
 
-    li button:last-child:hover {
+    td button:last-child:hover {
         background-color: #dc2626;
+        transform: translateY(-1px);
     }
 
     @media (max-width: 640px) {
         .form-container,
         .actions,
-        ul {
+        table,
+        .search-container {
             width: 98%;
         }
 
-        li {
-            flex-direction: column;
-            align-items: stretch;
+        .search-grid {
+            grid-template-columns: 1fr;
         }
 
-        li button {
-            width: 100%;
-            margin-top: 0.5rem;
+        .search-buttons {
+            flex-direction: column;
+        }
+
+        table {
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.6rem 0.7rem;
         }
     }
 </style>

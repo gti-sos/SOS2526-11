@@ -10,7 +10,5 @@
 </svelte:head>
 
 <Header />
-<hr>
 {@render children()}
-<hr>
 <Footer />
