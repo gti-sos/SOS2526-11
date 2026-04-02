@@ -20,9 +20,10 @@ export default defineConfig({
   workers: 1,
   reporter: 'html',
   webServer: {
-    command: 'npm run dev',
+    command: 'npm start',
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
+    timeout: 120000, // Aumentar el timeout para esperar a que el servidor esté listo
   },
   use: {
     baseURL: 'http://localhost:8080',

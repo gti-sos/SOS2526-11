@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6 
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -15,23 +15,23 @@ jobs:
 
       - name: Install dependencies (backend)
         run: npm ci
-      
+
       - name: Install dependencies (frontend)
         working-directory: src/front/svelte-app
         run: npm ci
 
-      - name: Build UI  # Antes de los tests, para asegurarnos de que el código más reciente se está probando
+      - name: Build UI
         working-directory: src/front/svelte-app
         run: npm run build
-      
-      - name: Server startup
-        run: npm start 
 
-      - name: Install Playwright Browsers  
+      - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests
+      - name: Run Playwright tests  # El servidor lo levanta Playwright via webServer config
         run: npx playwright test
+
+      - name: Run Newman API tests
+        run: npm test
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -39,7 +39,3 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-      - name: Run Newman API tests
-        run: npm run test
-      - name: Run Newman API tests (local)
-        run: npm run test-local
