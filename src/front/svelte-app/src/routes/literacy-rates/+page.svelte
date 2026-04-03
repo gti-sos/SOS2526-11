@@ -128,9 +128,9 @@
     }
 
     // svelte-ignore non_reactive_update
-        let deleteCountry = '';
+        let deleteCountry = $state('');
     // svelte-ignore non_reactive_update
-        let deleteYear = '';
+        let deleteYear = $state('');
 
     async function handleDeleteSpecific() {
         if (!deleteCountry || !deleteYear) {
@@ -285,7 +285,7 @@
 {#if showCreateForm}
     <div class="form-container">
         <h2>Crear Nuevo Recurso</h2>
-        <form onsubmit={createLiteracyRate} data-testid="create-form">
+        <form onsubmit={(e) => { e.preventDefault(); createLiteracyRate(); }} data-testid="create-form">
             <label>
                 País: <input type="text" bind:value={newItem.country} data-testid="create-country" required />
             </label>

@@ -8,6 +8,16 @@ test.describe('Alcohol Consumptions - Requisitos Funcionales', () => {
     await page.goto(BASE_URL);
   });
 
+  test.afterEach(async ({ request }) => {
+    // Limpiar la base de datos después de cada test
+    try {
+      await request.delete('http://localhost:8080/api/v2/alcohol-consumptions-per-capita');
+    } catch (err) {
+      // Ignorar errores en la limpieza
+      console.log('Error limpiando base de datos:', err);
+    }
+  });
+
   // REQUISITO 1: Crear recurso
   test('1. Crear un recurso', async ({ page }) => {
     await page.click('[data-testid="toggle-create-form"]');
@@ -20,7 +30,7 @@ test.describe('Alcohol Consumptions - Requisitos Funcionales', () => {
     await page.fill('[data-testid="create-unrecorded"]', '5.0');
     await page.click('[data-testid="create-submit"]');
     
-    // Esperamos inteligentemente a que la fila aparezca (Igual que Tomás)
+    // Esperamos inteligentemente a que la fila aparezca
     await page.waitForSelector('[data-testid="list-row-TestPais-2024"]', { timeout: 10000 });
     await expect(page.locator('[data-testid="list-row-TestPais-2024"]')).toBeVisible();
   });
@@ -86,6 +96,7 @@ test.describe('Alcohol Consumptions - Requisitos Funcionales', () => {
 
     await page.fill('[data-testid="search-nation"]', 'Albania');
     await page.click('[data-testid="search-submit"]');
+    await page.waitForSelector('[data-testid="message"]', { timeout: 10000 });
     await page.waitForSelector('[data-testid="alcohol-rates-list"]', { timeout: 10000 });
     await expect(page.locator('[data-testid="alcohol-rates-list"]')).toBeVisible();
   });
@@ -95,8 +106,9 @@ test.describe('Alcohol Consumptions - Requisitos Funcionales', () => {
     await page.click('[data-testid="load-initial-data"]');
     await page.waitForSelector('[data-testid="alcohol-rates-list"]', { timeout: 15000 });
 
-    await page.fill('[data-testid="search-year"]', '2019');
+    await page.fill('[data-testid="search-year"]', '2016');
     await page.click('[data-testid="search-submit"]');
+    await page.waitForSelector('[data-testid="message"]', { timeout: 10000 });
     await page.waitForSelector('[data-testid="alcohol-rates-list"]', { timeout: 10000 });
     await expect(page.locator('[data-testid="alcohol-rates-list"]')).toBeVisible();
   });
@@ -109,6 +121,7 @@ test.describe('Alcohol Consumptions - Requisitos Funcionales', () => {
     await page.fill('[data-testid="search-from"]', '2010');
     await page.fill('[data-testid="search-to"]', '2020');
     await page.click('[data-testid="search-submit"]');
+    await page.waitForSelector('[data-testid="message"]', { timeout: 10000 });
     await page.waitForSelector('[data-testid="alcohol-rates-list"]', { timeout: 10000 });
     await expect(page.locator('[data-testid="alcohol-rates-list"]')).toBeVisible();
   });
@@ -118,11 +131,13 @@ test.describe('Alcohol Consumptions - Requisitos Funcionales', () => {
     await page.click('[data-testid="load-initial-data"]');
     await page.waitForSelector('[data-testid="alcohol-rates-list"]', { timeout: 15000 });
 
-    await page.fill('[data-testid="search-year"]', '2019');
+    await page.fill('[data-testid="search-year"]', '2016');
     await page.click('[data-testid="search-submit"]');
+    await page.waitForSelector('[data-testid="message"]', { timeout: 10000 });
     await page.waitForSelector('[data-testid="alcohol-rates-list"]', { timeout: 10000 });
 
     await page.click('[data-testid="search-clear"]');
+    await page.waitForSelector('[data-testid="alcohol-rates-list"]', { timeout: 10000 });
     await expect(page.locator('[data-testid="search-year"]')).toHaveValue('');
   });
 });

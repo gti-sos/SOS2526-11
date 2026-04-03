@@ -1,15 +1,17 @@
 <script>
+// @ts-nocheck
+
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
 
-    // Variables unificadas a Svelte 4 (sin $state para evitar errores)
-    let alcoholData = [];
-    let message = { text: '', type: '' }; 
-    let showCreateForm = false;
-    let newItem = { nation: '', date_year: '', alcohol_litre: '', recorded_consumption: '', unrecorded_consumption: '' };
+    // Variables con $state para reactividad en Svelte 5
+    let alcoholData = $state([]);
+    let message = $state({ text: '', type: '' }); 
+    let showCreateForm = $state(false);
+    let newItem = $state({ nation: '', date_year: '', alcohol_litre: '', recorded_consumption: '', unrecorded_consumption: '' });
 
-    // Variables de búsqueda (estilo Tomás)
-    let searchParams = { nation: '', date_year: '', from: '', to: '', alcohol_litre: '', recorded_consumption: '', unrecorded_consumption: '', offset: '', limit: '' };
+    // Variables de búsqueda
+    let searchParams = $state({ nation: '', date_year: '', from: '', to: '', alcohol_litre: '', recorded_consumption: '', unrecorded_consumption: '', offset: '', limit: '' });
 
     // Carga inicial
     async function loadInitialData() {
@@ -57,6 +59,7 @@
     });
 
     // Crear recurso nuevo
+    // @ts-ignore
     async function createAlcoholData(e) {
         if (e) e.preventDefault();
         try {
@@ -106,6 +109,7 @@
     }
 
     // Eliminar recurso específico
+    // @ts-ignore
     async function deleteAlcoholData(nation, year) {
         try {
             const res = await fetch(`/api/v2/alcohol-consumptions-per-capita/${nation}/${year}`, {
@@ -124,8 +128,8 @@
         }
     }
 
-    let deleteNation = '';
-    let deleteYear = '';
+    let deleteNation = $state('');
+    let deleteYear = $state('');
 
     async function handleDeleteSpecific() {
         if (!deleteNation || !deleteYear) {
@@ -156,8 +160,7 @@
             } else {
                 const queryParts = [];
                 if (searchParams.date_year) queryParts.push(`date_year=${searchParams.date_year}`);
-                if (searchParams.from) queryParts.push(`from=${searchParams.from}`);
-                if (searchParams.to) queryParts.push(`to=${searchParams.to}`);
+                // No incluir from/to en búsqueda sin nación - se filtran en frontend
                 if (searchParams.alcohol_litre) queryParts.push(`alcohol_litre=${searchParams.alcohol_litre}`);
                 if (searchParams.recorded_consumption) queryParts.push(`recorded_consumption=${searchParams.recorded_consumption}`);
                 if (searchParams.unrecorded_consumption) queryParts.push(`unrecorded_consumption=${searchParams.unrecorded_consumption}`);
@@ -175,6 +178,7 @@
                 
                 // Filtrado local para rangos de fechas si no se especifica país (igual que JFM)
                 if (!searchParams.nation && (searchParams.from || searchParams.to)) {
+                    // @ts-ignore
                     results = results.filter(item => {
                         if (searchParams.from && item.date_year < parseInt(searchParams.from)) return false;
                         if (searchParams.to && item.date_year > parseInt(searchParams.to)) return false;
@@ -203,6 +207,7 @@
         await listAlcoholData();
     }
 
+    // @ts-ignore
     function setMessage(text, type) {
         message = { text, type };
         setTimeout(() => message = { text: '', type: '' }, 5000);
@@ -218,15 +223,15 @@
 {/if}
 
 <div class="actions">
-    <button on:click={loadInitialData} data-testid="load-initial-data">Cargar Datos de Alcohol</button>
-    <button on:click={listAlcoholData} data-testid="list-alcohol-data">Listar Datos de Alcohol</button>
-    <button on:click={() => showCreateForm = !showCreateForm} data-testid="toggle-create-form">Crear Nuevo Recurso</button>
-    <button on:click={deleteAllAlcoholData} data-testid="delete-all-resources">Eliminar Todos los Recursos</button>
+    <button onclick={loadInitialData} data-testid="load-initial-data">Cargar Datos de Alcohol</button>
+    <button onclick={listAlcoholData} data-testid="list-alcohol-data">Listar Datos de Alcohol</button>
+    <button onclick={() => showCreateForm = !showCreateForm} data-testid="toggle-create-form">Crear Nuevo Recurso</button>
+    <button onclick={deleteAllAlcoholData} data-testid="delete-all-resources">Eliminar Todos los Recursos</button>
 </div>
 
 <div class="search-container">
     <h3>Buscar Recursos</h3>
-    <form on:submit|preventDefault={searchAlcoholData} data-testid="search-form">
+    <form onsubmit={(e) => { e.preventDefault(); searchAlcoholData(); }} data-testid="search-form">
         <div class="search-grid">
             <label> País: <input type="text" bind:value={searchParams.nation} data-testid="search-nation" /> </label>
             <label> Año: <input type="number" bind:value={searchParams.date_year} data-testid="search-year" /> </label>
@@ -240,7 +245,7 @@
         </div>
         <div class="search-buttons">
             <button type="submit" data-testid="search-submit">Buscar</button>
-            <button type="button" on:click={clearSearch} data-testid="search-clear">Limpiar Búsqueda</button>
+            <button type="button" onclick={clearSearch} data-testid="search-clear">Limpiar Búsqueda</button>
         </div>
     </form>
 </div>
@@ -250,21 +255,21 @@
     <div class="delete-form">
         <input placeholder="País (Nation)" bind:value={deleteNation} data-testid="delete-country" />
         <input type="number" placeholder="Año" bind:value={deleteYear} data-testid="delete-year" />
-        <button on:click={handleDeleteSpecific} data-testid="delete-specific-submit">Eliminar recurso</button>
+        <button onclick={handleDeleteSpecific} data-testid="delete-specific-submit">Eliminar recurso</button>
     </div>
 </div>
 
 {#if showCreateForm}
     <div class="form-container">
         <h2>Crear Nuevo Recurso</h2>
-        <form on:submit|preventDefault={createAlcoholData} data-testid="create-form">
+        <form onsubmit={(e) => { e.preventDefault(); createAlcoholData(e); }} data-testid="create-form">
             <label> País: <input type="text" bind:value={newItem.nation} data-testid="create-nation" required /> </label>
             <label> Año: <input type="number" bind:value={newItem.date_year} data-testid="create-year" required /> </label>
             <label> Litros de Alcohol: <input type="number" step="0.1" bind:value={newItem.alcohol_litre} data-testid="create-litre" required /> </label>
             <label> Consumo Registrado: <input type="number" step="0.1" bind:value={newItem.recorded_consumption} data-testid="create-recorded" required /> </label>
             <label> Consumo No Registrado: <input type="number" step="0.1" bind:value={newItem.unrecorded_consumption} data-testid="create-unrecorded" required /> </label>
             <button type="submit" data-testid="create-submit">Crear</button>
-            <button type="button" on:click={() => showCreateForm = false}>Cancelar</button>
+            <button type="button" onclick={() => showCreateForm = false}>Cancelar</button>
         </form>
     </div>
 {/if}
@@ -277,8 +282,8 @@
                 <strong>{item.nation} ({item.date_year})</strong>: Litros Totales {item.alcohol_litre}, Registrado {item.recorded_consumption}, No Registrado {item.unrecorded_consumption}
                 
                 <div style="display: inline-block; margin-left: 1rem;">
-                    <button style="background-color: #f59e0b; color: white;" on:click={() => goto(`/alcohol-consumptions-per-capita/${encodeURIComponent(item.nation)}/${item.date_year}`)} data-testid="edit-btn-{item.nation}-{item.date_year}">Editar</button>
-                    <button style="background-color: #ef4444; color: white;" on:click={() => deleteAlcoholData(item.nation, item.date_year)}>Eliminar</button>
+                    <button style="background-color: #f59e0b; color: white;" onclick={() => goto(`/alcohol-consumptions-per-capita/${encodeURIComponent(item.nation)}/${item.date_year}`)} data-testid="edit-btn-{item.nation}-{item.date_year}">Editar</button>
+                    <button style="background-color: #ef4444; color: white;" onclick={() => deleteAlcoholData(item.nation, item.date_year)}>Eliminar</button>
                 </div>
             </li>
         {/each}

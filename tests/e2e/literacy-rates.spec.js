@@ -7,6 +7,16 @@ test.describe('Literacy Rates - Requisitos Funcionales', () => {
     await page.goto(BASE_URL);
   });
 
+  test.afterEach(async ({ request }) => {
+    // Limpiar la base de datos después de cada test
+    try {
+      await request.delete('http://localhost:8080/api/v2/literacy-rates');
+    } catch (err) {
+      // Ignorar errores en la limpieza
+      console.log('Error limpiando base de datos:', err);
+    }
+  });
+
   // REQUISITO 1: Crear recurso
   test('1. Crear un recurso', async ({ page }) => {
     await page.click('[data-testid="toggle-create-form"]');
@@ -88,6 +98,8 @@ test.describe('Literacy Rates - Requisitos Funcionales', () => {
 
     await page.fill('[data-testid="search-country"]', 'Spain');
     await page.click('[data-testid="search-submit"]');
+    // Esperar a que el mensaje de éxito aparezca o a que la tabla se actualice
+    await page.waitForSelector('[data-testid="message"]', { timeout: 10000 });
     await page.waitForSelector('[data-testid="literacy-rates-table"]', { timeout: 10000 });
     await expect(page.locator('[data-testid="literacy-rates-table"]')).toBeVisible();
   });
@@ -99,6 +111,8 @@ test.describe('Literacy Rates - Requisitos Funcionales', () => {
 
     await page.fill('[data-testid="search-year"]', '2020');
     await page.click('[data-testid="search-submit"]');
+    // Esperar a que el mensaje de éxito aparezca o a que la tabla se actualice
+    await page.waitForSelector('[data-testid="message"]', { timeout: 10000 });
     await page.waitForSelector('[data-testid="literacy-rates-table"]', { timeout: 10000 });
     await expect(page.locator('[data-testid="literacy-rates-table"]')).toBeVisible();
   });
@@ -111,6 +125,8 @@ test.describe('Literacy Rates - Requisitos Funcionales', () => {
     await page.fill('[data-testid="search-from"]', '2010');
     await page.fill('[data-testid="search-to"]', '2020');
     await page.click('[data-testid="search-submit"]');
+    // Esperar a que el mensaje de éxito aparezca o a que la tabla se actualice
+    await page.waitForSelector('[data-testid="message"]', { timeout: 10000 });
     await page.waitForSelector('[data-testid="literacy-rates-table"]', { timeout: 10000 });
     await expect(page.locator('[data-testid="literacy-rates-table"]')).toBeVisible();
   });
@@ -122,9 +138,13 @@ test.describe('Literacy Rates - Requisitos Funcionales', () => {
 
     await page.fill('[data-testid="search-year"]', '2020');
     await page.click('[data-testid="search-submit"]');
+    // Esperar a que la búsqueda se complete
+    await page.waitForSelector('[data-testid="message"]', { timeout: 10000 });
     await page.waitForSelector('[data-testid="literacy-rates-table"]', { timeout: 10000 });
 
     await page.click('[data-testid="search-clear"]');
+    // Después de limpiar, la tabla debería recargarse con todos los datos
+    await page.waitForSelector('[data-testid="literacy-rates-table"]', { timeout: 10000 });
     await expect(page.locator('[data-testid="search-year"]')).toHaveValue('');
   });
 });

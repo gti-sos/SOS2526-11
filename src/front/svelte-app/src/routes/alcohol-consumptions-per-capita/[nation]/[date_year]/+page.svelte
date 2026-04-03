@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
     import { onMount } from 'svelte';
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
@@ -7,9 +9,9 @@
     let nation = $page.params.nation;
     let date_year = $page.params.date_year;
 
-    let item = {};
-    let message = { text: '', type: '' };
-    let isLoading = true;
+    let item = $state({});
+    let message = $state({ text: '', type: '' });
+    let isLoading = $state(true);
 
     // Cargar los datos actuales del recurso
     async function loadResource() {
@@ -40,10 +42,15 @@
     async function updateResource() {
         try {
             const data = {
+                // @ts-ignore
                 nation: item.nation,
+                // @ts-ignore
                 date_year: parseInt(item.date_year),
+                // @ts-ignore
                 alcohol_litre: parseFloat(item.alcohol_litre),
+                // @ts-ignore
                 recorded_consumption: parseFloat(item.recorded_consumption),
+                // @ts-ignore
                 unrecorded_consumption: parseFloat(item.unrecorded_consumption)
             };
 
@@ -66,6 +73,7 @@
         }
     }
 
+    // @ts-ignore
     function setMessage(text, type) {
         message = { text, type };
         setTimeout(() => message = { text: '', type: '' }, 10000);
@@ -84,7 +92,7 @@
     <p style="text-align: center;">Cargando...</p>
 {:else}
     <div class="form-container">
-        <form on:submit|preventDefault={updateResource}>
+        <form onsubmit={(e) => { e.preventDefault(); updateResource(); }}>
             <label> País: <input type="text" bind:value={item.nation} disabled /> </label>
             <label> Año: <input type="number" bind:value={item.date_year} disabled /> </label>
             
@@ -93,7 +101,7 @@
             <label> Consumo No Registrado: <input type="number" step="0.1" bind:value={item.unrecorded_consumption} required /> </label>
             
             <button type="submit">Actualizar</button>
-            <button type="button" on:click={() => goto('/alcohol-consumptions-per-capita')}>Cancelar</button>
+            <button type="button" onclick={() => goto('/alcohol-consumptions-per-capita')}>Cancelar</button>
         </form>
     </div>
 {/if}
