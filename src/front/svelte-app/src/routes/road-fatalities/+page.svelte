@@ -17,6 +17,11 @@
         traffic_side: ''
     });
 
+    // Variables de busqueda
+    let searchParams = $state({
+        nation: '', year: '', from: '', to: '', income_level: '', traffic_side: '', offset: '', limit: ''
+    });
+
     // Carga inicial de datos
     async function loadInitialData() {
         try {
@@ -69,7 +74,7 @@
         try {
             // Formateo estricto de los datos 
             const data = {
-                nation: newItem.nation.trim(),
+                nation: newItem.nation.trim().toLowerCase(), // Convertimos a minúscula como en el backend
                 year: parseInt(newItem.year, 10),
                 population_death_rate: parseFloat(newItem.population_death_rate),
                 vehicle_death_rate: newItem.vehicle_death_rate ? parseFloat(newItem.vehicle_death_rate) : null,
@@ -164,11 +169,53 @@
         await deleteRoadFatality(deleteNation.trim(), parseInt(deleteYear, 10));
     }
 
+    // Funciones de busqueda 
+    async function searchRoadFatalities() {
+        try {
+            let url = '/api/v2/road-fatalities';
+            const queryParts = [];
+            
+            if (searchParams.nation && searchParams.nation.trim()) {
+                url += `/${encodeURIComponent(searchParams.nation.trim().toLowerCase())}`;
+            }
+
+            if (searchParams.year) queryParts.push(`year=${searchParams.year}`);
+            if (searchParams.from) queryParts.push(`from=${searchParams.from}`);
+            if (searchParams.to) queryParts.push(`to=${searchParams.to}`);
+            if (searchParams.income_level) queryParts.push(`income_level=${searchParams.income_level}`);
+            if (searchParams.traffic_side) queryParts.push(`traffic_side=${searchParams.traffic_side}`);
+            if (searchParams.offset) queryParts.push(`offset=${searchParams.offset}`);
+            if (searchParams.limit) queryParts.push(`limit=${searchParams.limit}`);
+            
+            const query = queryParts.join('&');
+            if (query) url += `?${query}`;
+
+            const res = await fetch(url);
+            if (res.ok) {
+                const results = await res.json();
+                roadFatalities = Array.isArray(results) ? results : [results];
+                setMessage('Búsqueda realizada con éxito.', 'success');
+            } else if (res.status === 404) {
+                setMessage('No se encontraron registros con esos criterios.', 'error');
+                roadFatalities = [];
+            } else {
+                setMessage(`Error en la búsqueda. Revisa los parámetros.`, 'error');
+            }
+        } catch (err) {
+            setMessage('Error de conexión al buscar.', 'error');
+        }
+    }
+
+    async function clearSearch() {
+        searchParams = { nation: '', year: '', from: '', to: '', income_level: '', traffic_side: '', offset: '', limit: '' };
+        await listRoadFatalities();
+    }
+
     // Sistema de notificaciones
     // @ts-ignore
     function setMessage(text, type) {
         message = { text, type };
-        setTimeout(() => message = { text: '', type: '' }, 6000); // 6 segundos para que el usuario pueda leer bien
+        setTimeout(() => message = { text: '', type: '' }, 10000); // 10 segundos para que el usuario pueda leer bien
     }
 </script>
 
@@ -185,6 +232,39 @@
     <button onclick={listRoadFatalities}>Listar Accidentes de Tráfico</button>
     <button onclick={() => showCreateForm = !showCreateForm}>Crear Nuevo Recurso</button>
     <button onclick={deleteAllRoadFatalities} style="background-color: #991b1b;">Eliminar Todos los Recursos</button>
+</div>
+
+<div class="search-container form-container">
+    <h2>Buscar Registros</h2>
+    <form onsubmit={(e) => { e.preventDefault(); searchRoadFatalities(); }}>
+        <div class="form-grid">
+            <label>País: <input type="text" bind:value={searchParams.nation} /></label>
+            <label>Año (Exacto): <input type="number" bind:value={searchParams.year} /></label>
+            <label>Desde (Año): <input type="number" bind:value={searchParams.from} /></label>
+            <label>Hasta (Año): <input type="number" bind:value={searchParams.to} /></label>
+            <label>Nivel de Ingresos:
+                <select bind:value={searchParams.income_level}>
+                    <option value="">Cualquiera</option>
+                    <option value="high">Alto</option>
+                    <option value="middle">Medio</option>
+                    <option value="low">Bajo</option>
+                </select>
+            </label>
+            <label>Lado de Conducción:
+                <select bind:value={searchParams.traffic_side}>
+                    <option value="">Cualquiera</option>
+                    <option value="right">Derecha</option>
+                    <option value="left">Izquierda</option>
+                </select>
+            </label>
+            <label>Límite (Paginación): <input type="number" bind:value={searchParams.limit} /></label>
+            <label>Offset: <input type="number" bind:value={searchParams.offset} /></label>
+        </div>
+        <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
+            <button type="submit" style="background-color: #059669; color: white;">Buscar</button>
+            <button type="button" onclick={clearSearch} style="background-color: #4b5563; color: white;">Limpiar Búsqueda</button>
+        </div>
+    </form>
 </div>
 
 <div class="delete-specific">
@@ -233,7 +313,7 @@
 {/if}
 
 {#if roadFatalities.length > 0}
-    <h2>Lista de Accidentes de Tráfico</h2>
+    <h2>Registros Guardados</h2>
     <ul>
         {#each roadFatalities as record}
             <li>
@@ -244,6 +324,9 @@
                     Conducción por la {record.traffic_side === 'right' ? 'derecha' : 'izquierda'}
                 </div>
                 <div class="record-actions">
+                    <a href="/road-fatalities/{record.nation}/{record.year}" class="btn-edit">
+                        Editar
+                    </a>
                     <button class="btn-delete" onclick={() => deleteRoadFatality(record.nation, record.year)}>Eliminar</button>
                 </div>
             </li>
@@ -421,7 +504,7 @@
     }
 
     /* Estilos para los botones de la lista */
-    .btn-delete {
+    .btn-edit, .btn-delete {
         border: 1px solid transparent;
         border-radius: 0.65rem;
         padding: 0.6rem 1rem;
@@ -433,7 +516,14 @@
         text-decoration: none; /* Quita el subrayado del enlace */
         font-size: 0.9rem;
     }
+
+    .btn-edit {
+        background-color: #3b82f6; /* Azul */
+        color: #fff;
+    }
     
+    .btn-edit:hover { background-color: #2563eb; transform: translateY(-1px); }
+
     .btn-delete {
         background-color: #ef4444; /* Rojo */
         color: #fff;
@@ -445,6 +535,6 @@
         .delete-form { grid-template-columns: 1fr; }
         li { flex-direction: column; align-items: stretch; text-align: center; }
         .record-actions { flex-direction: column; }
-        .btn-delete { width: 100%; text-align: center; }
+        .btn-edit, .btn-delete { width: 100%; text-align: center; box-sizing: border-box; }
     }
 </style>
