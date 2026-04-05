@@ -222,28 +222,28 @@
 <h1>Gestión de Accidentes de Tráfico</h1>
 
 {#if message.text}
-    <div class="message {message.type}">
+    <div class="message {message.type}" data-testid="message">
         {message.text}
     </div>
 {/if}
 
 <div class="actions">
-    <button onclick={loadInitialData}>Cargar Accidentes de Tráfico</button>
-    <button onclick={listRoadFatalities}>Listar Accidentes de Tráfico</button>
-    <button onclick={() => showCreateForm = !showCreateForm}>Crear Nuevo Recurso</button>
-    <button onclick={deleteAllRoadFatalities} style="background-color: #991b1b;">Eliminar Todos los Recursos</button>
+    <button onclick={loadInitialData} data-testid="load-initial-data">Cargar Accidentes de Tráfico</button>
+    <button onclick={listRoadFatalities} data-testid="list-road-fatalities">Listar Accidentes de Tráfico</button>
+    <button onclick={() => showCreateForm = !showCreateForm} data-testid="toggle-create-form">Crear Nuevo Recurso</button>
+    <button onclick={deleteAllRoadFatalities} data-testid="delete-all-resources" style="background-color: #991b1b;">Eliminar Todos los Recursos</button>
 </div>
 
 <div class="search-container form-container">
     <h2>Buscar Registros</h2>
-    <form onsubmit={(e) => { e.preventDefault(); searchRoadFatalities(); }}>
+    <form onsubmit={(e) => { e.preventDefault(); searchRoadFatalities(); }} data-testid="search-form">
         <div class="form-grid">
-            <label>País: <input type="text" bind:value={searchParams.nation} /></label>
-            <label>Año (Exacto): <input type="number" bind:value={searchParams.year} /></label>
-            <label>Desde (Año): <input type="number" bind:value={searchParams.from} /></label>
-            <label>Hasta (Año): <input type="number" bind:value={searchParams.to} /></label>
+            <label>País: <input type="text" bind:value={searchParams.nation} data-testid="search-nation" /></label>
+            <label>Año (Exacto): <input type="number" bind:value={searchParams.year} data-testid="search-year" /></label>
+            <label>Desde (Año): <input type="number" bind:value={searchParams.from} data-testid="search-from" /></label>
+            <label>Hasta (Año): <input type="number" bind:value={searchParams.to} data-testid="search-to" /></label>
             <label>Nivel de Ingresos:
-                <select bind:value={searchParams.income_level}>
+                <select bind:value={searchParams.income_level} data-testid="search-income-level">
                     <option value="">Cualquiera</option>
                     <option value="high">Alto</option>
                     <option value="middle">Medio</option>
@@ -251,41 +251,41 @@
                 </select>
             </label>
             <label>Lado de Conducción:
-                <select bind:value={searchParams.traffic_side}>
+                <select bind:value={searchParams.traffic_side} data-testid="search-traffic-side">
                     <option value="">Cualquiera</option>
                     <option value="right">Derecha</option>
                     <option value="left">Izquierda</option>
                 </select>
             </label>
-            <label>Límite (Paginación): <input type="number" bind:value={searchParams.limit} /></label>
-            <label>Offset: <input type="number" bind:value={searchParams.offset} /></label>
+            <label>Límite (Paginación): <input type="number" bind:value={searchParams.limit} data-testid="search-limit" /></label>
+            <label>Offset: <input type="number" bind:value={searchParams.offset} data-testid="search-offset" /></label>
         </div>
         <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
-            <button type="submit" style="background-color: #059669; color: white;">Buscar</button>
-            <button type="button" onclick={clearSearch} style="background-color: #4b5563; color: white;">Limpiar Búsqueda</button>
+            <button type="submit" data-testid="search-submit" style="background-color: #059669; color: white;">Buscar</button>
+            <button type="button" data-testid="search-clear" onclick={clearSearch} style="background-color: #4b5563; color: white;">Limpiar Búsqueda</button>
         </div>
     </form>
 </div>
 
 <div class="delete-specific">
     <h3>Eliminar un registro concreto</h3>
-    <div class="delete-form">
-        <input type="text" placeholder="País (ej. spain)" bind:value={deleteNation} />
-        <input type="number" placeholder="Año" bind:value={deleteYear} />
-        <button onclick={handleDeleteSpecific}>Eliminar registro</button>
+    <div class="delete-form" data-testid="delete-specific-form">
+        <input type="text" placeholder="País (ej. spain)" bind:value={deleteNation} data-testid="delete-nation" />
+        <input type="number" placeholder="Año" bind:value={deleteYear} data-testid="delete-year" />
+        <button onclick={handleDeleteSpecific} data-testid="delete-specific-submit">Eliminar registro</button>
     </div>
 </div>
 
 {#if showCreateForm}
     <div class="form-container">
         <h2>Añadir Nuevo Registro de Accidentes</h2>
-        <form onsubmit={(e) => { e.preventDefault(); createRoadFatality(); }}>
+        <form onsubmit={(e) => { e.preventDefault(); createRoadFatality(); }} data-testid="create-form">
             <div class="form-grid">
-                <label>País: <input type="text" placeholder="ej. italy" bind:value={newItem.nation} required /></label>
-                <label>Año: <input type="number" bind:value={newItem.year} required /></label>
-                <label>Muertes Totales: <input type="number" bind:value={newItem.total_death} required /></label>
+                <label>País: <input type="text" placeholder="ej. italy" bind:value={newItem.nation} data-testid="create-nation" required /></label>
+                <label>Año: <input type="number" bind:value={newItem.year} data-testid="create-year" required /></label>
+                <label>Muertes Totales: <input type="number" bind:value={newItem.total_death} data-testid="create-total-death" required /></label>
                 <label>Nivel de Ingresos: 
-                    <select bind:value={newItem.income_level} required>
+                    <select bind:value={newItem.income_level} data-testid="create-income-level" required>
                         <option value="" disabled selected>Selecciona nivel</option>
                         <option value="high">Alto</option>
                         <option value="middle">Medio</option>
@@ -293,20 +293,20 @@
                     </select>
                 </label>
                 <label>Lado de Conducción: 
-                    <select bind:value={newItem.traffic_side} required>
+                    <select bind:value={newItem.traffic_side} data-testid="create-traffic-side" required>
                         <option value="" disabled selected>Selecciona lado</option>
                         <option value="right">Derecha</option>
                         <option value="left">Izquierda</option>
                     </select>
                 </label>
-                <label>Mortalidad / Población: <input type="number" step="0.1" bind:value={newItem.population_death_rate} required /></label>
-                <label>Mortalidad / Vehículos: <input type="number" step="0.1" bind:value={newItem.vehicle_death_rate} /></label>
-                <label>Mortalidad / Distancia: <input type="number" step="0.1" bind:value={newItem.distance_death_rate} /></label>
+                <label>Mortalidad / Población: <input type="number" step="0.1" bind:value={newItem.population_death_rate} data-testid="create-population-death-rate" required /></label>
+                <label>Mortalidad / Vehículos: <input type="number" step="0.1" bind:value={newItem.vehicle_death_rate} data-testid="create-vehicle-death-rate" /></label>
+                <label>Mortalidad / Distancia: <input type="number" step="0.1" bind:value={newItem.distance_death_rate} data-testid="create-distance-death-rate" /></label>
             </div>
             
             <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
-                <button type="submit">Guardar Datos</button>
-                <button type="button" onclick={() => showCreateForm = false}>Cancelar</button>
+                <button type="submit" data-testid="create-submit">Guardar Datos</button>
+                <button type="button" data-testid="create-cancel" onclick={() => showCreateForm = false}>Cancelar</button>
             </div>
         </form>
     </div>
@@ -314,9 +314,9 @@
 
 {#if roadFatalities.length > 0}
     <h2>Registros Guardados</h2>
-    <ul>
+    <ul data-testid="road-fatalities-table">
         {#each roadFatalities as record}
-            <li>
+            <li data-testid="table-row-{record.nation}-{record.year}">
                 <div class="record-info">
                     <strong>{record.nation.toUpperCase()} ({record.year})</strong> - 
                     Total fallecidos: {record.total_death} | 
@@ -324,10 +324,10 @@
                     Conducción por la {record.traffic_side === 'right' ? 'derecha' : 'izquierda'}
                 </div>
                 <div class="record-actions">
-                    <a href="/road-fatalities/{record.nation}/{record.year}" class="btn-edit">
+                    <a href="/road-fatalities/{record.nation}/{record.year}" class="btn-edit" data-testid="edit-btn-{record.nation}-{record.year}">
                         Editar
                     </a>
-                    <button class="btn-delete" onclick={() => deleteRoadFatality(record.nation, record.year)}>Eliminar</button>
+                    <button class="btn-delete" data-testid="delete-btn-{record.nation}-{record.year}" onclick={() => deleteRoadFatality(record.nation, record.year)}>Eliminar</button>
                 </div>
             </li>
         {/each}

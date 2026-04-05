@@ -82,44 +82,44 @@
     }
 </script>
 
-<h1>Modificar datos de {nation.toUpperCase()} ({year})</h1>
+<h1 data-testid="edit-title">Modificar datos de {nation.toUpperCase()} ({year})</h1>
 
 {#if message.text}
-    <div class="message {message.type}">
+    <div class="message {message.type}" data-testid="edit-message">
         {message.text}
     </div>
 {/if}
 
 {#if isLoading}
-    <div class="loading">Cargando datos del accidente...</div>
+    <div class="loading" data-testid="loading-indicator">Cargando datos del accidente...</div>
 {:else}
     <div class="form-container">
-        <form onsubmit={updateRoadFatality}>
+        <form onsubmit={updateRoadFatality} data-testid="edit-form">
             <div class="form-grid">
-                <label>País (No editable): <input type="text" bind:value={record.nation} disabled /></label>
-                <label>Año (No editable): <input type="number" bind:value={record.year} disabled /></label>
-                <label>Muertes Totales: <input type="number" bind:value={record.total_death} required /></label>
+                <label>País (No editable): <input type="text" bind:value={record.nation} data-testid="edit-nation" disabled /></label>
+                <label>Año (No editable): <input type="number" bind:value={record.year} data-testid="edit-year" disabled /></label>
+                <label>Muertes Totales: <input type="number" bind:value={record.total_death} data-testid="edit-total-death" required /></label>
                 <label>Nivel de Ingresos: 
-                    <select bind:value={record.income_level} required>
+                    <select bind:value={record.income_level} data-testid="edit-income-level" required>
                         <option value="high">Alto</option>
                         <option value="middle">Medio</option>
                         <option value="low">Bajo</option>
                     </select>
                 </label>
                 <label>Lado de Conducción: 
-                    <select bind:value={record.traffic_side} required>
+                    <select bind:value={record.traffic_side} data-testid="edit-traffic-side" required>
                         <option value="right">Derecha</option>
                         <option value="left">Izquierda</option>
                     </select>
                 </label>
-                <label>Mortalidad / Población: <input type="number" step="0.1" bind:value={record.population_death_rate} required /></label>
-                <label>Mortalidad / Vehículos: <input type="number" step="0.1" bind:value={record.vehicle_death_rate} /></label>
-                <label>Mortalidad / Distancia: <input type="number" step="0.1" bind:value={record.distance_death_rate} /></label>
+                <label>Mortalidad / Población: <input type="number" step="0.1" bind:value={record.population_death_rate} data-testid="edit-population-death-rate" required /></label>
+                <label>Mortalidad / Vehículos: <input type="number" step="0.1" bind:value={record.vehicle_death_rate} data-testid="edit-vehicle-death-rate" /></label>
+                <label>Mortalidad / Distancia: <input type="number" step="0.1" bind:value={record.distance_death_rate} data-testid="edit-distance-death-rate" /></label>
             </div>
             
             <div style="margin-top: 1.5rem; display: flex; gap: 10px; justify-content: center;">
-                <button type="submit" style="background-color: #10b981; color: white;">Guardar Cambios</button>
-                <button type="button" style="background-color: #6b7280; color: white;" onclick={() => goto('/road-fatalities')}>Cancelar</button>
+                <button type="submit" data-testid="edit-submit" style="background-color: #10b981; color: white;">Guardar Cambios</button>
+                <button type="button" data-testid="edit-cancel" style="background-color: #6b7280; color: white;" onclick={() => goto('/road-fatalities')}>Cancelar</button>
             </div>
         </form>
     </div>
