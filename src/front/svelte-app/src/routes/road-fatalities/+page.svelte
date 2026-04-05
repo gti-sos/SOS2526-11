@@ -157,9 +157,9 @@
 
     // Variables para el formulario de borrado específico
     // svelte-ignore non_reactive_update
-    let deleteNation = '';
+    let deleteNation = $state('');
     // svelte-ignore non_reactive_update
-    let deleteYear = '';
+    let deleteYear = $state('');
 
     async function handleDeleteSpecific() {
         if (!deleteNation || !deleteYear) {
