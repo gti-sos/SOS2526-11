@@ -3,6 +3,9 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = 'http://localhost:5173/road-fatalities';
 
 test.describe('Road Fatalities - Requisitos Funcionales', () => {
+  // EJECUTAR EN SERIE: Esto evita que un test borre la BD mientras otro intenta buscar datos
+  test.describe.configure({ mode: 'serial' });
+
   test.beforeEach(async ({ page }) => {
     await page.goto(BASE_URL);
   });
@@ -50,7 +53,6 @@ test.describe('Road Fatalities - Requisitos Funcionales', () => {
     await page.click('[data-testid="load-initial-data"]');
     await page.waitForSelector('[data-testid="road-fatalities-table"]', { timeout: 15000 });
 
-    
     page.on('dialog', dialog => dialog.accept());
     await page.click('[data-testid="delete-all-resources"]');
     
