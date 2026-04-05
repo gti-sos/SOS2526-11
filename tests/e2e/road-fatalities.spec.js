@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:8080/road-fatalities';
+const BASE_URL = 'http://localhost:5173/road-fatalities';
 
 test.describe('Road Fatalities - Requisitos Funcionales', () => {
   test.beforeEach(async ({ page }) => {
