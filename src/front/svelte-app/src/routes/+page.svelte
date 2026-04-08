@@ -12,10 +12,10 @@
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1a2a4a 100%);
-            color: #e2e8f0;
-            line-height: 1.8;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: #282c34;
+            color: #abb2bf;
+            line-height: 1.6;
             min-height: 100vh;
         }
 
@@ -28,15 +28,16 @@
 
         h1 {
             text-align: center;
-            color: #38bdf8;
+            color: #61afef;
             margin-bottom: 0.5rem;
             font-size: 2.5rem;
-            text-shadow: 0 2px 10px rgba(56, 189, 248, 0.2);
+            text-shadow: none;
+            font-weight: 600;
         }
 
         .subtitle {
             text-align: center;
-            color: #cbd5e1;
+            color: #a6acaf;
             margin-bottom: 2rem;
             font-size: 1.1rem;
             max-width: 600px;
@@ -45,34 +46,36 @@
         }
 
         h2 {
-            color: #93c5fd;
+            color: #61afef;
             margin-top: 1.5rem;
             margin-bottom: 1rem;
             font-size: 1.5rem;
-            border-bottom: 2px solid #334155;
+            border-bottom: 1px solid #3e4451;
             padding-bottom: 0.5rem;
+            font-weight: 600;
         }
 
         h3 {
-            color: #cbd5e1;
+            color: #a6acaf;
             margin-top: 1rem;
             margin-bottom: 0.8rem;
             font-size: 1.1rem;
+            font-weight: 500;
         }
 
         section {
-            background: linear-gradient(180deg, #111827 0%, #1a2a44 100%);
-            border: 1px solid #1f2937;
-            border-radius: 12px;
+            background: #2d3139;
+            border: 1px solid #3e4451;
+            border-radius: 2px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: none;
+            transition: background 0.2s ease;
         }
 
         section:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.1);
+            background: #323a42;
+            box-shadow: none;
         }
 
         ul {
@@ -82,7 +85,7 @@
 
         li {
             padding: 0.8rem 0;
-            border-bottom: 1px solid #2d3748;
+            border-bottom: 1px solid #3e4451;
             display: flex;
             align-items: center;
             gap: 0.8rem;
@@ -94,29 +97,29 @@
 
         li:before {
             content: "▸";
-            color: #38bdf8;
+            color: #56b6c2;
             font-size: 1.2rem;
             flex-shrink: 0;
         }
 
         a {
-            color: #38bdf8;
+            color: #61afef;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: normal;
             transition: color 0.2s ease;
             word-break: break-word;
         }
 
         a:hover {
-            color: #7dd3fc;
+            color: #98c379;
             text-decoration: underline;
         }
 
         .label {
-            color: #fbbf24;
-            background: rgba(251, 191, 36, 0.1);
+            color: #282c34;
+            background: #e5c07b;
             padding: 0.2rem 0.6rem;
-            border-radius: 4px;
+            border-radius: 2px;
             font-size: 0.9rem;
             font-weight: 600;
             white-space: nowrap;
@@ -130,16 +133,16 @@
         }
 
         .team-member {
-            background: rgba(56, 189, 248, 0.05);
-            border: 1px solid #334155;
-            border-radius: 8px;
+            background: #3e4451;
+            border: 1px solid #4e5561;
+            border-radius: 2px;
             padding: 1rem;
             text-align: center;
             transition: background 0.2s ease;
         }
 
         .team-member:hover {
-            background: rgba(56, 189, 248, 0.1);
+            background: #4e5561;
         }
 
         .team-member p {
@@ -158,8 +161,8 @@
 
         hr {
             border: none;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #334155, transparent);
+            height: 1px;
+            background: #3e4451;
             margin: 2rem 0;
         }
 
@@ -180,6 +183,7 @@
             section {
                 padding: 1rem;
                 margin-bottom: 1rem;
+                border-radius: 2px;
             }
 
             .team-grid {
@@ -209,7 +213,7 @@
             }
 
             section {
-                border-radius: 8px;
+                border-radius: 2px;
             }
         }
     </style>

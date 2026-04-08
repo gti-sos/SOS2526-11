@@ -107,15 +107,17 @@
 {/if}
 
 <style>
-    :global(body) { margin: 0; font-family: Inter, sans-serif; background: #0f172a; color: #e2e8f0; }
-    h1 { text-align: center; margin-top: 1rem; color: #e2e8f0; }
-    .message { border-radius: 10px; padding: 0.8rem 1rem; margin: 1rem auto; width: min(95%, 600px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); }
-    .message.success { background: #0f5132; border: 1px solid #21c28a; color: #a7f3d0; }
-    .message.error { background: #5f1f1f; border: 1px solid #f87171; color: #fee2e2; }
-    .form-container { background: linear-gradient(180deg, #111828 0%, #18244b 100%); border: 1px solid #1f2a44; border-radius: 1rem; padding: 1.25rem; margin: 1rem auto; max-width: 600px; width: 95%; }
-    .form-container label { display: flex; flex-direction: column; gap: 0.4rem; margin: 0.7rem 0; color: #cbd5e1; }
-    .form-container input { background: #0b1222; border: 1px solid #334155; color: #e2e8f0; border-radius: 0.5rem; padding: 0.6rem 0.8rem; }
+    :global(body) { margin: 0; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; background: #282c34; color: #abb2bf; }
+    h1 { text-align: center; margin-top: 1rem; color: #61afef; font-weight: 600; }
+    .message { border-radius: 2px; padding: 0.8rem 1rem; margin: 1rem auto; width: min(95%, 600px); box-shadow: none; }
+    .message.success { background: #2d5016; border: 1px solid #56b6c2; color: #98c379; }
+    .message.error { background: #4c1414; border: 1px solid #e86671; color: #e86671; }
+    .form-container { background: #2d3139; border: 1px solid #3e4451; border-radius: 2px; padding: 1.25rem; margin: 1rem auto; max-width: 600px; width: 95%; }
+    .form-container label { display: flex; flex-direction: column; gap: 0.4rem; margin: 0.7rem 0; color: #a6acaf; }
+    .form-container input { background: #21252b; border: 1px solid #3e4451; color: #abb2bf; border-radius: 2px; padding: 0.6rem 0.8rem; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }
     .form-container input:disabled { opacity: 0.5; cursor: not-allowed; }
-    .form-container button { background-color: #2563eb; color: #fff; border: none; border-radius: 0.65rem; padding: 0.75rem 1rem; font-weight: 600; margin-top: 0.8rem; cursor: pointer; }
-    .form-container button[type="button"] { background-color: #4b5563; }
+    .form-container input:focus { outline: none; border-color: #61afef; }
+    .form-container button { background-color: #61afef; color: #282c34; border: 1px solid #3e4451; border-radius: 2px; padding: 0.75rem 1rem; font-weight: 600; margin-top: 0.8rem; cursor: pointer; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }
+    .form-container button[type="button"] { background-color: #3e4451; color: #abb2bf; }
+    .form-container button:hover { opacity: 0.9; }
 </style>

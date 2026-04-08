@@ -126,24 +126,25 @@
 {/if}
 
 <style>
-    /* Estilo*/
+    /* Estilo - Atom IDE Theme */
     :global(body) { 
-        background: #0f172a; 
-        color: #e2e8f0; 
-        font-family: Inter, sans-serif; 
+        background: #282c34; 
+        color: #abb2bf; 
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; 
     }
     
     h1 { 
         text-align: center; 
         margin-top: 2rem; 
-        color: #e2e8f0; 
+        color: #61afef;
+        font-weight: 600;
     }
 
     .loading {
         text-align: center;
         margin-top: 2rem;
         font-size: 1.2rem;
-        color: #94a3b8;
+        color: #a6acaf;
         font-weight: 500;
         animation: pulse 1.5s infinite;
     }
@@ -154,34 +155,35 @@
     }
     
     .message { 
-        border-radius: 10px; 
+        border-radius: 2px; 
         padding: 0.8rem 1rem; 
         margin: 1rem auto; 
         width: min(95%, 800px); 
-        text-align: center; 
+        text-align: center;
+        box-shadow: none;
     }
     
     .message.success { 
-        background: #0f5132; 
-        border: 1px solid #21c28a; 
-        color: #a7f3d0; 
+        background: #2d5016; 
+        border: 1px solid #56b6c2; 
+        color: #98c379; 
     }
     
     .message.error { 
-        background: #5f1f1f; 
-        border: 1px solid #f87171; 
-        color: #fee2e2; 
+        background: #4c1414; 
+        border: 1px solid #e86671; 
+        color: #e86671; 
     }
 
     .form-container { 
-        background: linear-gradient(180deg, #111828 0%, #18244b 100%); 
-        border: 1px solid #1f2a44; 
-        border-radius: 1rem; 
+        background: #2d3139; 
+        border: 1px solid #3e4451; 
+        border-radius: 2px; 
         padding: 1.5rem; 
         margin: 1rem auto; 
         max-width: 800px; 
         width: 95%; 
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4); 
+        box-shadow: none; 
     }
     
     .form-grid { 
@@ -194,34 +196,41 @@
         display: flex; 
         flex-direction: column; 
         gap: 0.4rem; 
-        color: #cbd5e1; 
+        color: #a6acaf; 
         font-weight: 500;
     }
     
     input, select { 
-        background: #0b1222; 
-        border: 1px solid #334155; 
-        color: #e2e8f0; 
-        border-radius: 0.5rem; 
-        padding: 0.6rem 0.8rem; 
+        background: #21252b; 
+        border: 1px solid #3e4451; 
+        color: #abb2bf; 
+        border-radius: 2px; 
+        padding: 0.6rem 0.8rem;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
     
     input:disabled { 
-        background: #1e293b; 
-        color: #94a3b8; 
+        background: #1a1f26; 
+        color: #7d8590; 
         cursor: not-allowed; 
+    }
+
+    input:focus, select:focus {
+        outline: none;
+        border-color: #61afef;
     }
     
     button { 
-        border: none; 
-        border-radius: 0.65rem; 
+        border: 1px solid #3e4451; 
+        border-radius: 2px; 
         padding: 0.75rem 1.5rem; 
-        font-weight: bold; 
+        font-weight: 600; 
         cursor: pointer; 
-        transition: transform 0.2s ease; 
+        transition: background-color 0.2s ease;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
     
     button:hover { 
-        transform: translateY(-2px); 
+        opacity: 0.9;
     }
 </style>

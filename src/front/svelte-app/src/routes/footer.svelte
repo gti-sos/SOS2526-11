@@ -1,10 +1,10 @@
 <style>
     footer {
-        background: linear-gradient(90deg, #0f172a 0%, #1a2a4a 100%);
-        border-top: 2px solid #334155;
+        background: #282c34;
+        border-top: 1px solid #3e4451;
         padding: 2rem;
         margin-top: 3rem;
-        color: #cbd5e1;
+        color: #a6acaf;
     }
 
     .footer-content {
@@ -20,12 +20,14 @@
     }
 
     .footer-section h3 {
-        color: #38bdf8;
+        color: #61afef;
         margin-bottom: 1rem;
         font-size: 1.1rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        font-weight: 600;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
     .footer-section ul {
@@ -42,28 +44,29 @@
 
     .footer-section li:before {
         content: "▸";
-        color: #38bdf8;
+        color: #56b6c2;
         position: absolute;
         left: 0;
     }
 
     .footer-section a {
-        color: #38bdf8;
+        color: #61afef;
         text-decoration: none;
         transition: color 0.2s ease;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
     .footer-section a:hover {
-        color: #7dd3fc;
+        color: #98c379;
         text-decoration: underline;
     }
 
     .footer-bottom {
-        border-top: 1px solid #334155;
+        border-top: 1px solid #3e4451;
         padding-top: 1.5rem;
         text-align: center;
         font-size: 0.9rem;
-        color: #94a3b8;
+        color: #a6acaf;
     }
 
     .footer-bottom p {
@@ -86,11 +89,12 @@
     }
 
     .team-member strong {
-        color: #93c5fd;
+        color: #61afef;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
     .team-member small {
-        color: #fbbf24;
+        color: #e5c07b;
         font-weight: 600;
     }
 

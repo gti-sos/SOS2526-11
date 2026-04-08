@@ -350,39 +350,41 @@
 {/if}
 
 <style>
-    :global(body) { margin: 0; font-family: Inter, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; }
-    h1 { text-align: center; margin-top: 1rem; color: #e2e8f0; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); }
-    h2, h3 { color: #cbd5e1; }
+    :global(body) { margin: 0; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; background: #282c34; color: #abb2bf; }
+    h1 { text-align: center; margin-top: 1rem; color: #61afef; text-shadow: none; font-weight: 600; }
+    h2, h3 { color: #61afef; font-weight: 600; }
     
-    .message { border-radius: 10px; padding: 0.8rem 1rem; margin: 1rem auto; width: min(95%, 1000px); font-size: 0.95rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); }
-    .message.success { background: #0f5132; border: 1px solid #21c28a; color: #a7f3d0; }
-    .message.error { background: #5f1f1f; border: 1px solid #f87171; color: #fee2e2; }
+    .message { border-radius: 2px; padding: 0.8rem 1rem; margin: 1rem auto; width: min(95%, 1000px); font-size: 0.95rem; box-shadow: none; }
+    .message.success { background: #2d5016; border: 1px solid #56b6c2; color: #98c379; }
+    .message.error { background: #4c1414; border: 1px solid #e86671; color: #e86671; }
     
     .actions { margin: 1.5rem auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; max-width: 1000px; width: 95%; }
-    .actions button, .form-container button, li button, .search-buttons button { border: 1px solid transparent; border-radius: 0.65rem; padding: 0.75rem 1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease; }
-    .actions button { background-color: #2f3a56; color: #f8fafc; }
-    .actions button:hover { transform: translateY(-1px); border-color: #7c3aed; }
+    .actions button, .form-container button, li button, .search-buttons button { border: 1px solid #3e4451; border-radius: 2px; padding: 0.75rem 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }
+    .actions button { background-color: #3e4451; color: #abb2bf; }
+    .actions button:hover { background-color: #4e5561; border-color: #61afef; }
     
-    .form-container, .search-container { background: linear-gradient(180deg, #111828 0%, #18244b 100%); border: 1px solid #1f2a44; border-radius: 1rem; padding: 1.25rem; margin: 1rem auto; max-width: 1000px; width: 95%; }
-    .form-container label, .search-grid label { display: flex; flex-direction: column; gap: 0.4rem; margin: 0.7rem 0; color: #cbd5e1; }
-    .form-container input, .search-grid input { background: #0b1222; border: 1px solid #334155; color: #e2e8f0; border-radius: 0.5rem; padding: 0.6rem 0.8rem; }
-    .form-container button { background-color: #2563eb; color: #fff; margin-top: 0.8rem; }
-    .form-container button[type="button"] { background-color: #4b5563; }
+    .form-container, .search-container { background: #2d3139; border: 1px solid #3e4451; border-radius: 2px; padding: 1.25rem; margin: 1rem auto; max-width: 1000px; width: 95%; }
+    .form-container label, .search-grid label { display: flex; flex-direction: column; gap: 0.4rem; margin: 0.7rem 0; color: #a6acaf; }
+    .form-container input, .search-grid input { background: #21252b; border: 1px solid #3e4451; color: #abb2bf; border-radius: 2px; padding: 0.6rem 0.8rem; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }
+    .form-container button { background-color: #61afef; color: #282c34; margin-top: 0.8rem; }
+    .form-container button[type="button"] { background-color: #3e4451; color: #abb2bf; }
     
     .search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.6rem; }
     .search-buttons { display: flex; gap: 0.8rem; margin-top: 1rem; }
-    .search-buttons button[type="submit"] { background-color: #059669; color: white; }
-    .search-buttons button[type="button"] { background-color: #64748b; color: white; }
+    .search-buttons button[type="submit"] { background-color: #98c379; color: #282c34; }
+    .search-buttons button[type="button"] { background-color: #3e4451; color: #abb2bf; }
 
-    .delete-specific { max-width: 1000px; width: 95%; margin: 1rem auto; background: #111a30; border: 1px solid #2f3b54; border-radius: 0.75rem; padding: 1rem; }
+    .delete-specific { max-width: 1000px; width: 95%; margin: 1rem auto; background: #2d3139; border: 1px solid #3e4451; border-radius: 2px; padding: 1rem; }
+    .delete-specific h3 { color: #61afef; }
     .delete-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.6rem; }
-    .delete-form input { border: 1px solid #334155; border-radius: 0.5rem; padding: 0.6rem 0.7rem; background: #0b1222; color: #e2e8f0; }
-    .delete-form button { background-color: #ef4444; color: #fff; border: none; border-radius: 0.6rem; padding: 0.7rem; font-weight: 600; cursor: pointer; }
-    .delete-form button:hover { background-color: #dc2626; transform: translateY(-1px); }
+    .delete-form input { border: 1px solid #3e4451; border-radius: 2px; padding: 0.6rem 0.7rem; background: #21252b; color: #abb2bf; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }
+    .delete-form button { background-color: #e86671; color: #282c34; border: none; border-radius: 2px; padding: 0.7rem; font-weight: 600; cursor: pointer; }
+    .delete-form button:hover { background-color: #d04444; opacity: 0.9; }
 
     ul { max-width: 1000px; width: 95%; margin: 0.8rem auto 2rem; padding: 0; list-style: none; }
-    li { border: 1px solid #334155; background: linear-gradient(180deg, #181f33 0%, #1d2a44 100%); padding: 0.85rem 0.95rem; border-radius: 0.75rem; margin-top: 0.6rem; color: #e2e8f0; display: flex; justify-content: space-between; align-items: center; gap: 0.8rem; }
-    li button { padding: 0.5rem 0.8rem; font-size: 0.85rem; margin-left: 0.3rem; }
+    li { border: 1px solid #3e4451; background: #2d3139; padding: 0.85rem 0.95rem; border-radius: 2px; margin-top: 0.6rem; color: #abb2bf; display: flex; justify-content: space-between; align-items: center; gap: 0.8rem; }
+    li button { padding: 0.5rem 0.8rem; font-size: 0.85rem; margin-left: 0.3rem; background-color: #e5c07b; color: #282c34; border: none; border-radius: 2px; font-weight: 600; }
+    li button:hover { background-color: #d4ae4f; }
 
     @media (max-width: 640px) {
         .form-container, .actions, ul, .search-container { width: 98%; }

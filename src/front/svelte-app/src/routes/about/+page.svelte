@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOS2526 - Grupo 11</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 30px; line-height: 1.7; max-width: 900px; background: #0f172a; color: #e2e8f0; }
-        h1, h2, h3 { color: #93c5fd; }
-        h1 { border-bottom: 2px solid #374151; padding-bottom: 10px; }
-        section { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        body { font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; margin: 30px; line-height: 1.7; max-width: 900px; background: #282c34; color: #abb2bf; }
+        h1, h2, h3 { color: #61afef; font-weight: 600; }
+        h1 { border-bottom: 1px solid #3e4451; padding-bottom: 10px; }
+        section { background: #2d3139; border: 1px solid #3e4451; border-radius: 2px; padding: 20px; margin-bottom: 20px; }
         ul { list-style-type: disc; margin-left: 20px; }
-        a { color: #38bdf8; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .label { color: #cbd5e1; font-weight: bold; }
+        a { color: #61afef; text-decoration: none; }
+        a:hover { text-decoration: underline; color: #98c379; }
+        .label { color: #282c34; background: #e5c07b; font-weight: bold; padding: 2px 6px; border-radius: 2px; }
     </style>
 </head>
 <body>

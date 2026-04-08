@@ -1,12 +1,12 @@
 <style>
     header {
-        background: linear-gradient(90deg, #0f172a 0%, #1a2a4a 100%);
-        border-bottom: 2px solid #334155;
+        background: #282c34;
+        border-bottom: 1px solid #3e4451;
         padding: 1rem 2rem;
         position: sticky;
         top: 0;
         z-index: 100;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        box-shadow: none;
     }
 
     .header-content {
@@ -30,16 +30,17 @@
     }
 
     .brand-text {
-        color: #38bdf8;
+        color: #61afef;
         font-weight: 700;
         font-size: 1.4rem;
-        text-shadow: 0 2px 8px rgba(56, 189, 248, 0.2);
+        text-shadow: none;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
     .brand-text small {
         display: block;
         font-size: 0.7rem;
-        color: #cbd5e1;
+        color: #a6acaf;
         text-shadow: none;
         font-weight: 500;
         margin-top: 0.2rem;
@@ -53,16 +54,17 @@
     }
 
     nav a {
-        color: #cbd5e1;
+        color: #a6acaf;
         text-decoration: none;
         font-weight: 500;
         transition: all 0.3s ease;
         position: relative;
         padding: 0.5rem 0;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
     nav a:hover {
-        color: #38bdf8;
+        color: #61afef;
     }
 
     nav a::after {
@@ -71,8 +73,8 @@
         bottom: 0;
         left: 0;
         width: 0;
-        height: 2px;
-        background: #38bdf8;
+        height: 1px;
+        background: #61afef;
         transition: width 0.3s ease;
     }
 
@@ -139,7 +141,6 @@
             <a href="/literacy-rates">Alfabetización</a>
             <a href="/alcohol-consumptions-per-capita">Alcohol</a>
             <a href="/road-fatalities">Tráfico</a>
-            <a href="/about">Acerca de</a>
         </nav>
     </div>
 </header>

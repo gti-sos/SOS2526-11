@@ -335,41 +335,42 @@
 {/if}
 
 <style>
-    /* Estilos */
+    /* Estilos - Atom IDE Theme */
     :global(body) {
         margin: 0;
-        font-family: Inter, "Segoe UI", Roboto, sans-serif;
-        background: #0f172a;
-        color: #e2e8f0;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        background: #282c34;
+        color: #abb2bf;
     }
 
     h1, h2 {
         text-align: center;
         margin-top: 1rem;
-        color: #e2e8f0;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        color: #61afef;
+        text-shadow: none;
+        font-weight: 600;
     }
 
     .message {
-        border-radius: 10px;
+        border-radius: 2px;
         padding: 0.8rem 1rem;
         margin: 1rem auto;
         width: min(95%, 1000px);
         font-size: 0.95rem;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        box-shadow: none;
         text-align: center;
     }
 
     .message.success {
-        background: #0f5132;
-        border: 1px solid #21c28a;
-        color: #a7f3d0;
+        background: #2d5016;
+        border: 1px solid #56b6c2;
+        color: #98c379;
     }
 
     .message.error {
-        background: #5f1f1f;
-        border: 1px solid #f87171;
-        color: #fee2e2;
+        background: #4c1414;
+        border: 1px solid #e86671;
+        color: #e86671;
     }
 
     .actions {
@@ -384,33 +385,34 @@
     .actions button,
     .form-container button,
     .delete-form button {
-        border: 1px solid transparent;
-        border-radius: 0.65rem;
+        border: 1px solid #3e4451;
+        border-radius: 2px;
         padding: 0.75rem 1rem;
         font-weight: 600;
         letter-spacing: 0.02em;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        box-shadow: none;
         cursor: pointer;
-        transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
     .actions button {
-        background-color: #2f3a56;
-        color: #f8fafc;
+        background-color: #3e4451;
+        color: #abb2bf;
     }
 
     .actions button:hover {
-        transform: translateY(-1px);
-        border-color: #7c3aed;
+        background-color: #4e5561;
+        border-color: #61afef;
     }
 
     .form-container {
-        background: linear-gradient(180deg, #111828 0%, #18244b 100%);
-        border: 1px solid #1f2a44;
-        border-radius: 1rem;
+        background: #2d3139;
+        border: 1px solid #3e4451;
+        border-radius: 2px;
         padding: 1.25rem;
         margin: 1rem auto;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        box-shadow: none;
         max-width: 1000px;
         width: 95%;
     }
@@ -425,38 +427,39 @@
         display: flex;
         flex-direction: column;
         gap: 0.4rem;
-        color: #cbd5e1;
+        color: #a6acaf;
     }
 
     .form-container input, .form-container select {
-        background: #0b1222;
-        border: 1px solid #334155;
-        color: #e2e8f0;
-        border-radius: 0.5rem;
+        background: #21252b;
+        border: 1px solid #3e4451;
+        color: #abb2bf;
+        border-radius: 2px;
         padding: 0.6rem 0.8rem;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: border-color 0.2s ease;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
     .form-container input:focus, .form-container select:focus {
         outline: none;
-        border-color: #7c3aed;
-        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.3);
+        border-color: #61afef;
+        box-shadow: none;
     }
 
-    .form-container button[type="submit"] { background-color: #2563eb; color: #fff; }
-    .form-container button[type="button"] { background-color: #4b5563; color: #fff; }
+    .form-container button[type="submit"] { background-color: #61afef; color: #282c34; }
+    .form-container button[type="button"] { background-color: #3e4451; color: #abb2bf; }
 
     .delete-specific {
         max-width: 1000px;
         width: 95%;
         margin: 1rem auto;
-        background: #111a30;
-        border: 1px solid #2f3b54;
-        border-radius: 0.75rem;
+        background: #2d3139;
+        border: 1px solid #3e4451;
+        border-radius: 2px;
         padding: 1rem;
     }
 
-    .delete-specific h3 { margin: 0 0 0.5rem; color: #cbd5e1; }
+    .delete-specific h3 { margin: 0 0 0.5rem; color: #61afef; font-weight: 600; }
 
     .delete-form {
         display: grid;
@@ -465,15 +468,16 @@
     }
 
     .delete-form input {
-        border: 1px solid #334155;
-        border-radius: 0.5rem;
+        border: 1px solid #3e4451;
+        border-radius: 2px;
         padding: 0.6rem 0.7rem;
-        background: #0b1222;
-        color: #e2e8f0;
+        background: #21252b;
+        color: #abb2bf;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
-    .delete-form button { background-color: #ef4444; color: #fff; }
-    .delete-form button:hover { background-color: #dc2626; transform: translateY(-1px); }
+    .delete-form button { background-color: #e86671; color: #282c34; }
+    .delete-form button:hover { background-color: #d04444; opacity: 0.9; }
 
     ul {
         max-width: 1000px;
@@ -484,12 +488,12 @@
     }
 
     li {
-        border: 1px solid #334155;
-        background: linear-gradient(180deg, #181f33 0%, #1d2a44 100%);
+        border: 1px solid #3e4451;
+        background: #2d3139;
         padding: 0.85rem 0.95rem;
-        border-radius: 0.75rem;
+        border-radius: 2px;
         margin-top: 0.6rem;
-        color: #e2e8f0;
+        color: #abb2bf;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -503,33 +507,33 @@
         gap: 8px;
     }
 
-    /* Estilos para los botones de la lista */
     .btn-edit, .btn-delete {
-        border: 1px solid transparent;
-        border-radius: 0.65rem;
+        border: 1px solid #3e4451;
+        border-radius: 2px;
         padding: 0.6rem 1rem;
         font-weight: 600;
         letter-spacing: 0.02em;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        box-shadow: none;
         cursor: pointer;
-        transition: transform 0.2s ease, background-color 0.2s ease;
-        text-decoration: none; /* Quita el subrayado del enlace */
+        transition: background-color 0.2s ease;
+        text-decoration: none;
         font-size: 0.9rem;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
 
     .btn-edit {
-        background-color: #3b82f6; /* Azul */
-        color: #fff;
+        background-color: #61afef;
+        color: #282c34;
     }
     
-    .btn-edit:hover { background-color: #2563eb; transform: translateY(-1px); }
+    .btn-edit:hover { background-color: #4fa3e0; }
 
     .btn-delete {
-        background-color: #ef4444; /* Rojo */
-        color: #fff;
+        background-color: #e86671;
+        color: #282c34;
     }
 
-    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+    .btn-delete:hover { background-color: #d04444; }
 
     @media (max-width: 640px) {
         .delete-form { grid-template-columns: 1fr; }
