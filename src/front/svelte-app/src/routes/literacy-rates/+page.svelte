@@ -52,7 +52,7 @@
     }
 
     onMount(async () => {
-        await loadInitialData();
+        await listLiteracyRates();
     });
 
     async function createLiteracyRate() {
