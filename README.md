@@ -1,4 +1,5 @@
 ## SOS2526-11
+![Snyk Vulnerability Badge](https://snyk.io/test/github/gti-sos/sos2526-11/badge.svg)
 
 - **Team**
   - [Tomás Gutiérrez García](https://github.com/tomgutgar)
