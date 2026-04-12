@@ -1,11 +1,39 @@
 import Datastore from "nedb";
-
+import jwt from "jsonwebtoken"; // 1. Importamos la librería
 
 export const BASE_URL_API_MRG_V2 = "/api/v2/alcohol-consumptions-per-capita";
+
+// 2. Definimos tu clave secreta
+const SECRET_KEY = "contraseñaMiguel"; 
 
 export function loadBackendMRGv2(app) {
 
     const db = new Datastore({ filename: './data/alcohol-consumptions-per-capita-v2.db', autoload: true });
+
+    // --- MIDDLEWARE DE VERIFICACIÓN ---
+    // Este es el "portero" que revisa el token antes de entrar a las rutas protegidas
+    function verifyToken(req, res, next) {
+        const authHeader = req.headers['authorization'];
+        
+        if (!authHeader) {
+            return res.status(403).json({ error: "No se ha proporcionado un token de autenticación." });
+        }
+
+        // El formato esperado es "Bearer <TOKEN>"
+        const token = authHeader.split(" ")[1];
+
+        if (!token) {
+            return res.status(403).json({ error: "Formato de token incorrecto." });
+        }
+
+        jwt.verify(token, SECRET_KEY, (err, decoded) => {
+            if (err) {
+                return res.status(401).json({ error: "Token inválido o caducado." });
+            }
+            req.user = decoded;
+            next(); // Si todo está bien, pasamos a la función de la API
+        });
+    }
 
     function isValidAlcoholStats(body) {
         const expectedKeys = ["nation", "date_year", "alcohol_litre", "recorded_consumption", "unrecorded_consumption"];
@@ -16,6 +44,19 @@ export function loadBackendMRGv2(app) {
         }
         return true;
     }
+
+    // --- RUTA DE LOGIN ---
+    // Ruta para obtener el token. Usuario: admin / Pass: admin
+    app.post(BASE_URL_API_MRG_V2 + "/login", (req, res) => {
+        const { username, password } = req.body;
+
+        if (username === "admin" && password === "admin") {
+            const token = jwt.sign({ user: username }, SECRET_KEY, { expiresIn: "1h" });
+            return res.status(200).json({ token: token });
+        } else {
+            return res.status(401).json({ error: "Usuario o contraseña incorrectos." });
+        }
+    });
 
     
     app.get(BASE_URL_API_MRG_V2 + "/docs", (req, res) => {
@@ -52,7 +93,7 @@ export function loadBackendMRGv2(app) {
         });
     });
 
-    // GET a toda la colección (Con búsquedas y paginación)
+    // GET a toda la colección (PÚBLICO)
     app.get(BASE_URL_API_MRG_V2, (req, res) => {
         let query = {};
         let offset = 0;
@@ -74,7 +115,7 @@ export function loadBackendMRGv2(app) {
     });
     
 
-    // GET a recurso concreto
+    // GET a recurso concreto (PÚBLICO)
     app.get(BASE_URL_API_MRG_V2 + "/:nation/:date_year", (req, res) => {
         const nationParam = req.params.nation;
         const yearParam = parseInt(req.params.date_year);
@@ -85,8 +126,8 @@ export function loadBackendMRGv2(app) {
         });
     });
 
-    // POST a la colección
-    app.post(BASE_URL_API_MRG_V2, (req, res) => {
+    // POST a la colección (PROTEGIDO)
+    app.post(BASE_URL_API_MRG_V2, verifyToken, (req, res) => {
         const newData = req.body;
 
         if (!isValidAlcoholStats(newData)) {
@@ -112,8 +153,8 @@ export function loadBackendMRGv2(app) {
         res.status(405).json({ error: "Method Not Allowed: No se puede actualizar la lista completa" });
     });
 
-    // DELETE a la colección
-    app.delete(BASE_URL_API_MRG_V2, (req, res) => {
+    // DELETE a la colección (PROTEGIDO)
+    app.delete(BASE_URL_API_MRG_V2, verifyToken, (req, res) => {
         db.remove({}, { multi: true }, (err, numRemoved) => {
             if (err) return res.status(500).json({ error: "Error interno del servidor" });
             res.status(200).json({ message: "OK: Todos los recursos han sido eliminados." });
@@ -125,8 +166,8 @@ export function loadBackendMRGv2(app) {
         res.status(405).json({ error: "Method Not Allowed: No se puede hacer POST a un recurso concreto." });
     });
 
-    // PUT a recurso concreto
-    app.put(BASE_URL_API_MRG_V2 + "/:nation/:date_year", (req, res) => {
+    // PUT a recurso concreto (PROTEGIDO)
+    app.put(BASE_URL_API_MRG_V2 + "/:nation/:date_year", verifyToken, (req, res) => {
         const nationParam = req.params.nation;
         const yearParam = parseInt(req.params.date_year);
         const body = req.body;
@@ -150,8 +191,8 @@ export function loadBackendMRGv2(app) {
         });
     });
 
-    // DELETE a recurso concreto
-    app.delete(BASE_URL_API_MRG_V2 + "/:nation/:date_year", (req, res) => {
+    // DELETE a recurso concreto (PROTEGIDO)
+    app.delete(BASE_URL_API_MRG_V2 + "/:nation/:date_year", verifyToken, (req, res) => {
         const nationParam = req.params.nation;
         const yearParam = parseInt(req.params.date_year);
 
