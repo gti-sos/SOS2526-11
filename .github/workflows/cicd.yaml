@@ -38,6 +38,12 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
 
+      - name: Start API Server in background
+        run: npm start & 
+
+      - name: Wait for Server to be ready
+        run: npx wait-on http://localhost:8080 --timeout 30000
+
       - name: Run Newman API tests con cobertura
         run: npm run test
 
@@ -52,4 +58,3 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-          
