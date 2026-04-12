@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies (frontend)
         working-directory: src/front/svelte-app
         run: npm ci
-     
+      
       - name: Snyk Security Scan
         uses: snyk/actions/node@master
         env:
@@ -41,6 +41,11 @@ jobs:
       - name: Run Newman API tests
         run: npm run test
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+    
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
