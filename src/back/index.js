@@ -5,6 +5,9 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import {handler} from "../front/svelte-app/build/handler.js";
 
+//Imports tareas extra
+import jwt from 'jsonwebtoken';
+
 // IMPORTAMOS API
 import { loadBackendMRG } from "./api/api-MRG.js";
 import { loadBackendTGG } from './api/api-TGG.js'; 
@@ -25,14 +28,10 @@ app.use(cors());
 //app.use('/', express.static('public'));
 app.use(express.json());
 
-// Ruta estática
-// app.get('/about', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public/about.html'));
-// });
-// Ruta estática
-/* app.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/about.html'));
-}); */
+// Puntos extra Miguel 
+
+//clave "Secreta" Miguel Ridao
+const SECRET_KEY = "contraseñaMiguel";
 
 
 
