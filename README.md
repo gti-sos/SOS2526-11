@@ -1,5 +1,5 @@
 ## SOS2526-11
-![Snyk Vulnerability Badge](https://snyk.io/test/github/gti-sos/sos2526-11/badge.svg)
+[![Known Vulnerabilities](https://snyk.io/test/github/gti-sos/sos2526-11/badge.svg)](https://snyk.io/test/github/gti-sos/sos2526-11)
 [![Codecov Coverage](https://codecov.io/gh/gti-sos/sos2526-11/graph/badge.svg)](https://codecov.io/gh/gti-sos/sos2526-11)
 
 - **Team**
