@@ -2,21 +2,19 @@
     import { onMount } from 'svelte';
     import Highcharts from 'highcharts';
 
-    let error = "";
-    let loading = true;
+    let error = $state("");
+    let loading = $state(true);
 
     onMount(async () => {
         try {
-            // Hacemos peticiones a la v2 tal como acordado para la evaluación
-            const [resMRG, resTGG, resJFM] = await Promise.all([
-                fetch('/api/v2/alcohol-consumptions-per-capita'),
-                fetch('/api/v2/literacy-rates'),
-                fetch('/api/v2/road-fatalities')
-            ]);
+            let dataMRG = [];
+            let dataTGG = [];
+            let dataJFM = [];
 
-            const dataMRG = await resMRG.json();
-            const dataTGG = await resTGG.json();
-            const dataJFM = await resJFM.json();
+            // Peticiones aisladas: Si la API de un compañero se cae, no bloquea el resto
+            try { const r1 = await fetch('/api/v2/alcohol-consumptions-per-capita'); if(r1.ok) dataMRG = await r1.json(); } catch(e){ console.warn("API alcohol fallida"); }
+            try { const r2 = await fetch('/api/v2/literacy-rates'); if(r2.ok) dataTGG = await r2.json(); } catch(e){ console.warn("API literacy fallida"); }
+            try { const r3 = await fetch('/api/v2/road-fatalities'); if(r3.ok) dataJFM = await r3.json(); } catch(e){ console.warn("API road fallida"); }
 
             // Mapa para cruzar datos usando el nombre del país como pivote
             const countriesMap = {};

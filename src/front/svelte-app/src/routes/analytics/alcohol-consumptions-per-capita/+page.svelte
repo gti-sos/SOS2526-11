@@ -2,8 +2,8 @@
     import { onMount } from 'svelte';
     import Highcharts from 'highcharts';
 
-    let error = "";
-    let loading = true;
+    let error = $state("");
+    let loading = $state(true);
 
     onMount(async () => {
         try {

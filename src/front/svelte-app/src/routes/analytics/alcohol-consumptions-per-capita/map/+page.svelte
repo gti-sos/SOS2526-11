@@ -4,8 +4,8 @@
 
     let mapElement;
     let map;
-    let error = "";
-    let loading = true;
+    let error = $state("");
+    let loading = $state(true);
 
     // Diccionario de caché local (ultra-rápido) para los países por defecto
     const coordsCache = {
