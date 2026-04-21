@@ -168,11 +168,11 @@
         <div class="error">{error}</div>
     {/if}
 
-    {#if loading}
-        <div class="loading">Cargando datos de alcohol...</div>
-    {:else}
-        <div class="chart-box">
-            <div id="individual-chart-container"></div>
-        </div>
-    {/if}
+    <div class="loading" style="display: {loading && !error ? 'block' : 'none'};">
+        Cargando datos de alcohol...
+    </div>
+
+    <div class="chart-box" style="display: {loading || error ? 'none' : 'block'};">
+        <div id="individual-chart-container"></div>
+    </div>
 </main>

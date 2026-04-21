@@ -174,11 +174,11 @@
         <div class="error">{error}</div>
     {/if}
 
-    {#if loading}
-        <div class="loading">Cargando datos globales de las 3 APIs...</div>
-    {:else}
-        <div class="chart-box">
-            <div id="chart-container"></div>
-        </div>
-    {/if}
+    <div class="loading" style="display: {loading && !error ? 'block' : 'none'};">
+        Cargando datos globales de las 3 APIs...
+    </div>
+
+    <div class="chart-box" style="display: {loading || error ? 'none' : 'block'};">
+        <div id="chart-container"></div>
+    </div>
 </main>
