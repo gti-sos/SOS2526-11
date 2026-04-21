@@ -141,6 +141,7 @@
             <a href="/literacy-rates">Alfabetización</a>
             <a href="/alcohol-consumptions-per-capita">Alcohol</a>
             <a href="/road-fatalities">Tráfico</a>
+            <a href="/analytics">Analíticas</a>
         </nav>
     </div>
 </header>

@@ -286,6 +286,7 @@
     <button onclick={listAlcoholData} data-testid="list-alcohol-data">Listar Datos de Alcohol</button>
     <button onclick={() => showCreateForm = !showCreateForm} data-testid="toggle-create-form">Crear Nuevo Recurso</button>
     <button onclick={deleteAllAlcoholData} data-testid="delete-all-resources">Eliminar Todos los Recursos</button>
+    <button onclick={() => goto('/analytics/alcohol-consumptions-per-capita')} style="background-color: #61afef; color: #282c34;">Ver Gráfico (Highcharts)</button>
 </div>
 
 <div class="search-container">
