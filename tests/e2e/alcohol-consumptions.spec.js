@@ -11,9 +11,16 @@ test.describe('Alcohol Consumptions - Requisitos Funcionales', () => {
   test.afterEach(async ({ request }) => {
     // Limpiar la base de datos después de cada test
     try {
-      await request.delete('http://localhost:8080/api/v2/alcohol-consumptions-per-capita');
+      const loginRes = await request.post('http://localhost:8080/api/v2/alcohol-consumptions-per-capita/login', {
+        data: { username: 'admin', password: 'admin' }
+      });
+      if (loginRes.ok()) {
+        const loginData = await loginRes.json();
+        await request.delete('http://localhost:8080/api/v2/alcohol-consumptions-per-capita', {
+          headers: { 'Authorization': `Bearer ${loginData.token}` }
+        });
+      }
     } catch (err) {
-      // Ignorar errores en la limpieza
       console.log('Error limpiando base de datos:', err);
     }
   });

@@ -54,7 +54,24 @@
         }
     }
 
+    let token = "";
+
+    async function login() {
+        try {
+            const res = await fetch('/api/v2/alcohol-consumptions-per-capita/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: "admin", password: "admin" })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                token = data.token;
+            }
+        } catch(e) { console.error("Login failed"); }
+    }
+
     onMount(async () => {
+        await login();
         await listAlcoholData();
     });
 
@@ -72,7 +89,10 @@
             };
             const res = await fetch('/api/v2/alcohol-consumptions-per-capita', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
                 body: JSON.stringify(data)
             });
             if (res.ok || res.status === 201) {
@@ -94,7 +114,10 @@
         try {
             const res = await fetch('/api/v2/alcohol-consumptions-per-capita', {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
             });
             if (res.ok) {
                 setMessage('Todos los recursos han sido eliminados.', 'success');
@@ -114,7 +137,10 @@
         try {
             const res = await fetch(`/api/v2/alcohol-consumptions-per-capita/${nation}/${year}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
             });
             if (res.ok) {
                 setMessage('Recurso eliminado exitosamente.', 'success');
