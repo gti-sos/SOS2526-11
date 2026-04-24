@@ -5,7 +5,12 @@ const BASE_URL = 'http://localhost:8080/alcohol-consumptions-per-capita';
 test.describe('Alcohol Consumptions - Requisitos Funcionales', () => {
   
   test.beforeEach(async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto('http://localhost:8080/login');
+    await page.waitForSelector('[data-testid="login-submit"]', { timeout: 10000 });
+    await page.fill('[data-testid="login-username"]', 'admin');
+    await page.fill('[data-testid="login-password"]', 'admin');
+    await page.click('[data-testid="login-submit"]');
+    await page.waitForURL('**/alcohol-consumptions-per-capita', { timeout: 15000 });
   });
 
   test.afterEach(async ({ request }) => {

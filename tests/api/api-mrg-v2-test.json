@@ -8,6 +8,52 @@
   },
   "item": [
     {
+      "name": "POST Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const json = pm.response.json();",
+              "pm.environment.set(\"token\", json.token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v2/alcohol-consumptions-per-capita/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v2",
+            "alcohol-consumptions-per-capita",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "DELETE All (Preparar DB)",
       "event": [
         {
@@ -26,7 +72,12 @@
       ],
       "request": {
         "method": "DELETE",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
         "url": {
           "raw": "{{base_url}}/api/v2/alcohol-consumptions-per-capita",
           "host": [
@@ -289,6 +340,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
           }
         ],
         "body": {
@@ -336,6 +391,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
           }
         ],
         "body": {
@@ -383,6 +442,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
           }
         ],
         "body": {
@@ -426,6 +489,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
           }
         ],
         "body": {
@@ -467,7 +534,12 @@
       ],
       "request": {
         "method": "PUT",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
         "url": {
           "raw": "{{base_url}}/api/v2/alcohol-consumptions-per-capita",
           "host": [
@@ -501,7 +573,12 @@
       ],
       "request": {
         "method": "DELETE",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
         "url": {
           "raw": "{{base_url}}/api/v2/alcohol-consumptions-per-capita/France/2022",
           "host": [
@@ -537,7 +614,12 @@
       ],
       "request": {
         "method": "DELETE",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
         "url": {
           "raw": "{{base_url}}/api/v2/alcohol-consumptions-per-capita",
           "host": [

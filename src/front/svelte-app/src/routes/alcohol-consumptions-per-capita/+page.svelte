@@ -54,24 +54,7 @@
         }
     }
 
-    let token = "";
-
-    async function login() {
-        try {
-            const res = await fetch('/api/v2/alcohol-consumptions-per-capita/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: "admin", password: "admin" })
-            });
-            if (res.ok) {
-                const data = await res.json();
-                token = data.token;
-            }
-        } catch(e) { console.error("Login failed"); }
-    }
-
     onMount(async () => {
-        await login();
         await listAlcoholData();
     });
 
@@ -91,7 +74,7 @@
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + (typeof window !== 'undefined' ? sessionStorage.getItem('token') : '')
                 },
                 body: JSON.stringify(data)
             });
@@ -116,7 +99,7 @@
                 method: 'DELETE',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + (typeof window !== 'undefined' ? sessionStorage.getItem('token') : '')
                 }
             });
             if (res.ok) {
@@ -139,7 +122,7 @@
                 method: 'DELETE',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + (typeof window !== 'undefined' ? sessionStorage.getItem('token') : '')
                 }
             });
             if (res.ok) {

@@ -142,6 +142,11 @@
             <a href="/alcohol-consumptions-per-capita">Alcohol</a>
             <a href="/road-fatalities">Tráfico</a>
             <a href="/analytics">Analíticas</a>
+            {#if typeof window !== 'undefined' && sessionStorage.getItem('token')}
+                <a href="/" onclick={(e) => { e.preventDefault(); sessionStorage.removeItem('token'); window.location.href = '/login'; }} style="color: #e86671;">Logout</a>
+            {:else}
+                <a href="/login" style="color: #98c379;">Login</a>
+            {/if}
         </nav>
     </div>
 </header>
