@@ -29,6 +29,26 @@
     </section>
 
     <section>
+        <h2>Analíticas e Visualizaciones</h2>
+        <h3>Visualización Global (Integrada)</h3>
+        <ul>
+            <li><a href="/analytics" target="_blank">Dashboard Integrado</a> - Comparativa de los 3 recursos (Column Chart)</li>
+        </ul>
+        <h3>Visualizaciones Individuales - Gráficos</h3>
+        <ul>
+            <li><a href="/analytics/literacy-rates" target="_blank">Literacy Rates - Gráfico Individual</a> (TGG) - <span class="label">Bar Chart</span></li>
+            <li><a href="/analytics/alcohol-consumptions-per-capita" target="_blank">Alcohol Consumptions - Gráfico Individual</a> (MRG) - <span class="label">Area Chart</span></li>
+            <li><a href="/analytics/road-fatalities" target="_blank">Road Fatalities - Gráfico Individual</a> (JFM) - <span class="label">En desarrollo</span></li>
+        </ul>
+        <h3>Visualizaciones Geoespaciales - Mapas</h3>
+        <ul>
+            <li><a href="/analytics/literacy-rates/map" target="_blank">Literacy Rates - Mapa Interactivo</a> (TGG) - Distribución mundial de tasas de alfabetización</li>
+            <li><a href="/analytics/alcohol-consumptions-per-capita/map" target="_blank">Alcohol Consumptions - Mapa Interactivo</a> (MRG) - Distribución mundial de consumo de alcohol</li>
+            <li><a href="/analytics/road-fatalities/map" target="_blank">Road Fatalities - Mapa Interactivo</a> (JFM) - <span class="label">En desarrollo</span></li>
+        </ul>
+    </section>
+
+    <section>
         <h2>Enlaces de APIs</h2>
         <h3>APIs v1</h3>
         <ul>
