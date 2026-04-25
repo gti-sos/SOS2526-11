@@ -27,13 +27,25 @@
                 return `${n.charAt(0).toUpperCase() + n.slice(1)} (${d.year})`;
             });
 
-            // Generar las series 
+            // Generar las series pasando el valor numérico (y) y los datos categóricos
             // @ts-ignore
-            const populationDeathRateData = data.map(d => d.population_death_rate || 0);
+            const populationDeathRateData = data.map(d => ({
+                y: d.population_death_rate || 0,
+                income_level: d.income_level || 'N/A',
+                traffic_side: d.traffic_side || 'N/A'
+            }));
             // @ts-ignore
-            const vehicleDeathRateData = data.map(d => d.vehicle_death_rate || 0);
+            const vehicleDeathRateData = data.map(d => ({
+                y: d.vehicle_death_rate || 0,
+                income_level: d.income_level || 'N/A',
+                traffic_side: d.traffic_side || 'N/A'
+            }));
             // @ts-ignore
-            const distanceDeathRateData = data.map(d => d.distance_death_rate || 0);
+            const distanceDeathRateData = data.map(d => ({
+                y: d.distance_death_rate || 0,
+                income_level: d.income_level || 'N/A',
+                traffic_side: d.traffic_side || 'N/A'
+            }));
 
             // @ts-ignore
             Highcharts.chart('individual-chart-container', {
@@ -60,8 +72,27 @@
                 },
                 tooltip: {
                     shared: true,
-                    valueSuffix: ' (tasa)',
-                    crosshairs: true
+                    crosshairs: true,
+                    useHTML: true,
+                    formatter: function () {
+                        // Obtenemos los datos extra del primer punto 
+                        // @ts-ignore
+                        let pointData = this.points[0].point;
+                        
+                        let tooltipHTML = `<div style="font-size: 12px;">`;
+                        tooltipHTML += `<strong>${this.x}</strong><br/>`;
+                        tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Nivel de Ingresos: <b>${pointData.income_level}</b></span><br/>`;
+                        tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Lado de Conducción: <b>${pointData.traffic_side}</b></span><br/>`;
+                        tooltipHTML += `<hr style="margin: 5px 0; border-color: #3e4451;">`;
+                        
+                        // @ts-ignore
+                        this.points.forEach(p => {
+                            tooltipHTML += `<span style="color:${p.color}">●</span> ${p.series.name}: <b>${p.y}</b> (tasa)<br/>`;
+                        });
+                        
+                        tooltipHTML += `</div>`;
+                        return tooltipHTML;
+                    }
                 },
                 plotOptions: {
                     spline: {
