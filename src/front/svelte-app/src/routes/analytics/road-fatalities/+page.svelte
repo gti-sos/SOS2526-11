@@ -32,19 +32,22 @@
             const populationDeathRateData = data.map(d => ({
                 y: d.population_death_rate || 0,
                 income_level: d.income_level || 'N/A',
-                traffic_side: d.traffic_side || 'N/A'
+                traffic_side: d.traffic_side || 'N/A',
+                total_death: d.total_death || 0  
             }));
             // @ts-ignore
             const vehicleDeathRateData = data.map(d => ({
                 y: d.vehicle_death_rate || 0,
                 income_level: d.income_level || 'N/A',
-                traffic_side: d.traffic_side || 'N/A'
+                traffic_side: d.traffic_side || 'N/A',
+                total_death: d.total_death || 0  
             }));
             // @ts-ignore
             const distanceDeathRateData = data.map(d => ({
                 y: d.distance_death_rate || 0,
                 income_level: d.income_level || 'N/A',
-                traffic_side: d.traffic_side || 'N/A'
+                traffic_side: d.traffic_side || 'N/A',
+                total_death: d.total_death || 0  
             }));
 
             // @ts-ignore
@@ -75,7 +78,6 @@
                     crosshairs: true,
                     useHTML: true,
                     formatter: function () {
-                        // Obtenemos los datos extra del primer punto 
                         // @ts-ignore
                         let pointData = this.points[0].point;
                         
@@ -83,6 +85,7 @@
                         tooltipHTML += `<strong>${this.points?.[0]?.key}</strong><br/>`;
                         tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Nivel de Ingresos: <b>${pointData.income_level}</b></span><br/>`;
                         tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Lado de Conducción: <b>${pointData.traffic_side}</b></span><br/>`;
+                        tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Muertes Totales: <b>${pointData.total_death}</b></span><br/>`; // <--- AÑADIDO
                         tooltipHTML += `<hr style="margin: 5px 0; border-color: #3e4451;">`;
                         
                         // @ts-ignore
