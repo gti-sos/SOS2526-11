@@ -80,7 +80,7 @@
                         let pointData = this.points[0].point;
                         
                         let tooltipHTML = `<div style="font-size: 12px;">`;
-                        tooltipHTML += `<strong>${this.x}</strong><br/>`;
+                        tooltipHTML += `<strong>${this.points?.[0]?.key}</strong><br/>`;
                         tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Nivel de Ingresos: <b>${pointData.income_level}</b></span><br/>`;
                         tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Lado de Conducción: <b>${pointData.traffic_side}</b></span><br/>`;
                         tooltipHTML += `<hr style="margin: 5px 0; border-color: #3e4451;">`;
