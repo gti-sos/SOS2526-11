@@ -306,13 +306,13 @@
             <ul>
                 <li><a href="/analytics/literacy-rates">Tasas de Alfabetización - Gráfico Individual</a> (TGG) - <span class="label">Bar Chart</span></li>
                 <li><a href="/analytics/alcohol-consumptions-per-capita">Consumo de Alcohol - Gráfico Individual</a> (MRG) - <span class="label">Area Chart</span></li>
-                <li><a href="/analytics/road-fatalities">Muertes en Tráfico - Gráfico Individual</a> (JFM) - <span class="label">En desarrollo</span></li>
+                <li><a href="/analytics/road-fatalities">Muertes por Accidentes de Tráfico - Gráfico Individual</a> (JFM) - <span class="label">Spline Chart</span></li>
             </ul>
             <h3>Mapas Geoespaciales</h3>
             <ul>
                 <li><a href="/analytics/literacy-rates/map">Tasas de Alfabetización - Mapa Interactivo</a> (TGG) - Distribución mundial</li>
                 <li><a href="/analytics/alcohol-consumptions-per-capita/map">Consumo de Alcohol - Mapa Interactivo</a> (MRG) - Distribución mundial</li>
-                <li><a href="/analytics/road-fatalities/map">Muertes en Tráfico - Mapa Interactivo</a> (JFM) - <span class="label">En desarrollo</span></li>
+                <li><a href="/analytics/road-fatalities/map">Muertes por Accidentes de Tráfico - Mapa Interactivo</a> (JFM) - Distribución mundial</li>
             </ul>
         </section>
 
