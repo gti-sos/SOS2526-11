@@ -26,23 +26,84 @@
             padding: 2rem 0;
         }
 
-        h1 {
-            text-align: center;
+        h2 {
             color: #61afef;
-            margin-bottom: 0.5rem;
-            font-size: 2.5rem;
-            text-shadow: none;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            border-bottom: 1px solid #3e4451;
+            padding-bottom: 0.5rem;
             font-weight: 600;
         }
 
-        .subtitle {
-            text-align: center;
+        h3 {
             color: #a6acaf;
-            margin-bottom: 2rem;
+            margin-top: 1rem;
+            margin-bottom: 0.8rem;
             font-size: 1.1rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            font-weight: 500;
+        }
+
+        section {
+            background: #2d3139;
+            border: 1px solid #3e4451;
+            border-radius: 2px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: none;
+            transition: background 0.2s ease;
+        }
+
+        section:hover {
+            background: #323a42;
+            box-shadow: none;
+        }
+
+        ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #3e4451;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        li:before {
+            content: "▸";
+            color: #56b6c2;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        a {
+            color: #61afef;
+            text-decoration: none;
+            font-weight: normal;
+            transition: color 0.2s ease;
+            word-break: break-word;
+        }
+
+        a:hover {
+            color: #98c379;
+            text-decoration: underline;
+        }
+
+        .label {
+            color: #282c34;
+            background: #e5c07b;
+            padding: 0.2rem 0.6rem;
+            border-radius: 2px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
         }
 
         h2 {
@@ -232,6 +293,26 @@
                 <li><a href="/literacy-rates">Tasas de Alfabetización</a> - <span class="label">literacy-rates</span></li>
                 <li><a href="/alcohol-consumptions-per-capita">Consumo de Alcohol per Cápita</a> - <span class="label">alcohol-consumptions-per-capita</span></li>
                 <li><a href="/road-fatalities">Muertes por Accidentes de Tráfico</a> - <span class="label">road-fatalities</span></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>📊 Analíticas e Visualizaciones</h2>
+            <h3>Dashboard Global (Integrado)</h3>
+            <ul>
+                <li><a href="/analytics">Dashboard Integrado</a> - Comparativa de los 3 recursos (Column Chart)</li>
+            </ul>
+            <h3>Gráficos Individuales</h3>
+            <ul>
+                <li><a href="/analytics/literacy-rates">Tasas de Alfabetización - Gráfico Individual</a> (TGG) - <span class="label">Bar Chart</span></li>
+                <li><a href="/analytics/alcohol-consumptions-per-capita">Consumo de Alcohol - Gráfico Individual</a> (MRG) - <span class="label">Area Chart</span></li>
+                <li><a href="/analytics/road-fatalities">Muertes en Tráfico - Gráfico Individual</a> (JFM) - <span class="label">En desarrollo</span></li>
+            </ul>
+            <h3>Mapas Geoespaciales</h3>
+            <ul>
+                <li><a href="/analytics/literacy-rates/map">Tasas de Alfabetización - Mapa Interactivo</a> (TGG) - Distribución mundial</li>
+                <li><a href="/analytics/alcohol-consumptions-per-capita/map">Consumo de Alcohol - Mapa Interactivo</a> (MRG) - Distribución mundial</li>
+                <li><a href="/analytics/road-fatalities/map">Muertes en Tráfico - Mapa Interactivo</a> (JFM) - <span class="label">En desarrollo</span></li>
             </ul>
         </section>
 
