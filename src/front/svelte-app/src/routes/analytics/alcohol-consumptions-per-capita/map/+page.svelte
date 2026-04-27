@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
 
+    // @ts-ignore
     let mapElement;
     let map;
     let error = $state("");
@@ -24,8 +25,10 @@
     };
 
     // Función asíncrona para obtener coordenadas: intenta en caché, si no, usa API externa
+    // @ts-ignore
     async function getCoordinates(nation) {
         let n = nation.toLowerCase().trim();
+        // @ts-ignore
         if (coordsCache[n]) return coordsCache[n];
 
         // Fallback: Llamada a restcountries para países creados por el usuario
@@ -34,6 +37,7 @@
             if (res.ok) {
                 const data = await res.json();
                 if (data && data.length > 0 && data[0].latlng) {
+                    // @ts-ignore
                     coordsCache[n] = data[0].latlng; // Guardamos en caché local para próximas veces
                     return data[0].latlng;
                 }
@@ -48,13 +52,22 @@
         if (!browser) return; // Leaflet requiere correr estrictamente en el cliente (browser)
 
         try {
+            // Verificar que el elemento existe
+            // @ts-ignore
+            if (!mapElement) {
+                throw new Error("El contenedor del mapa no está disponible");
+            }
+
             // Importar leaflet dinámicamente para que no choque con Server-Side Rendering
+            // @ts-ignore
             const L = (await import('leaflet')).default;
             // Se debe importar los estilos base de la librería si no están globales
-            import('leaflet/dist/leaflet.css');
+            await import('leaflet/dist/leaflet.css');
 
             // Reparar icono de leaflet roto dinámicamente
+            // @ts-ignore
             delete L.Icon.Default.prototype._getIconUrl;
+            // @ts-ignore
             L.Icon.Default.mergeOptions({
                 iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
                 iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
@@ -62,9 +75,11 @@
             });
 
             // 1. Instanciamos el mapa
+            // @ts-ignore
             map = L.map(mapElement).setView([20, 0], 2);
 
             // 2. Cargamos tiles libres de OpenStreetMap
+            // @ts-ignore
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors',
                 maxZoom: 18
@@ -72,15 +87,23 @@
 
             // 3. Obtenemos nuestros datos de la API v2
             const res = await fetch('/api/v2/alcohol-consumptions-per-capita');
-            if(!res.ok) throw new Error("Error al obtener la lista de datos");
+            if(!res.ok) throw new Error("Error al obtener la lista de datos: " + res.statusText);
             const rawData = await res.json();
+
+            if (!Array.isArray(rawData)) {
+                throw new Error("Los datos retornados no son un array válido");
+            }
 
             // Agruparemos por país (mostrando solo el año más reciente de cada uno para no duplicar marcadores)
             let groupedData = {};
             rawData.forEach(item => {
-                let n = (item.nation || "Desconocido").toLowerCase();
-                if (!groupedData[n] || item.date_year > groupedData[n].date_year) {
-                    groupedData[n] = item;
+                if (item.nation && item.date_year !== undefined) {
+                    let n = item.nation.toLowerCase().trim();
+                    // @ts-ignore
+                    if (!groupedData[n] || item.date_year > groupedData[n].date_year) {
+                        // @ts-ignore
+                        groupedData[n] = item;
+                    }
                 }
             });
 
@@ -88,26 +111,30 @@
             for (const [nat, item] of Object.entries(groupedData)) {
                 let coords = await getCoordinates(nat);
                 if (coords) {
-                    let total = item.alcohol_litre || 0;
+                    let total = parseFloat(item.alcohol_litre) || 0;
+                    let recorded = parseFloat(item.recorded_consumption) || 0;
+                    let unrecorded = parseFloat(item.unrecorded_consumption) || 0;
                     let cap = nat.charAt(0).toUpperCase() + nat.slice(1);
                     
                     // Elegir un radio dinámico basado en litros (opcional)
-                    let radiusSize = Math.max(total * 2, 5); 
+                    let radiusSize = Math.max(Math.min(total * 2, 30), 5); 
 
-                    // Dibujar un CircleMarker para estética analítica o un Marker tradicional
+                    // Dibujar un CircleMarker para estética analítica
+                    // @ts-ignore
                     L.circleMarker(coords, {
                         color: '#e06c75', // borde rojo
                         fillColor: '#f59e0b', // relleno naranja
                         fillOpacity: 0.7,
-                        radius: radiusSize
+                        radius: radiusSize,
+                        weight: 2
                     }).addTo(map)
                       .bindPopup(`
-                        <div style="text-align:center;">
+                        <div style="text-align:center; font-size: 12px;">
                             <strong>${cap}</strong> (${item.date_year})<br/>
                             <hr style="margin:5px 0;">
-                            Consumo Total: <b>${total} L</b><br/>
-                            Registrado: ${item.recorded_consumption} L<br/>
-                            No Registrado: ${item.unrecorded_consumption} L
+                            Consumo Total: <b>${total.toFixed(2)} L</b><br/>
+                            Registrado: ${recorded.toFixed(2)} L<br/>
+                            No Registrado: ${unrecorded.toFixed(2)} L
                         </div>
                       `);
                 }
@@ -193,7 +220,7 @@
 <main>
     <a href="/alcohol-consumptions-per-capita" class="back-btn">← Volver a Datos</a>
     
-    <h1>Distribución Mundial (Siniestralidad y Alcohol)</h1>
+    <h1>Distribución Mundial (Consumo de Alcohol)</h1>
     
     {#if error}
         <div class="error">{error}</div>
