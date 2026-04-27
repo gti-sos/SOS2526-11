@@ -128,6 +128,11 @@
                 }
             }
 
+            // Recalcular tamaño del mapa después de que sea visible
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 100);
+
             loading = false;
         } catch(err) {
             console.error("Error en mapa de literacy-rates:", err);

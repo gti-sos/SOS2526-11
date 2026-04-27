@@ -140,6 +140,12 @@
                 }
             }
 
+            // Recalcular tamaño del mapa después de que sea visible
+            setTimeout(() => {
+                // @ts-ignore
+                map.invalidateSize();
+            }, 100);
+
             loading = false;
         } catch(err) {
             console.error(err);
