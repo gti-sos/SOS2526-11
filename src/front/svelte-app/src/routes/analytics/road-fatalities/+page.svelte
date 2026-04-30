@@ -137,6 +137,48 @@
             error = err.message;
             loading = false;
         }
+
+        // ---- Widgets OAuth2 (JFM: Azure Maps, HERE, TomTom) ----
+        try {
+            await import('highcharts/modules/heatmap');
+        } catch (e) { console.warn('Highcharts modules', e); }
+
+        // 1. Azure Maps -> pie
+        fetch('/api/integrations/jfm/azure-fatalities').then(r => r.json()).then(d => {
+            Highcharts.chart('oauth-pie', {
+                chart: { type: 'pie', backgroundColor: 'transparent' },
+                title: { text: 'Mortalidad por nivel de ingresos (Azure + DB propia)', style: { color: '#e5c07b' } },
+                tooltip: { pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})' },
+                series: [{ name: 'Muertes', colorByPoint: true, data: d.series }],
+                legend: { itemStyle: { color: '#abb2bf' } }
+            });
+        }).catch(e => console.error('pie', e));
+
+        // 2. HERE Traffic -> scatter
+        fetch('/api/integrations/jfm/here-traffic').then(r => r.json()).then(d => {
+            Highcharts.chart('oauth-scatter', {
+                chart: { type: 'scatter', backgroundColor: 'transparent', zoomType: 'xy' },
+                title: { text: 'Mortalidad vehículos vs población (HERE + DB propia)', style: { color: '#e5c07b' } },
+                xAxis: { title: { text: 'Vehicle death rate', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
+                yAxis: { title: { text: 'Population death rate', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
+                tooltip: { pointFormat: '<b>{point.name}</b><br>x={point.x}, y={point.y}' },
+                series: d.series,
+                legend: { itemStyle: { color: '#abb2bf' } }
+            });
+        }).catch(e => console.error('scatter', e));
+
+        // 3. TomTom -> heatmap
+        fetch('/api/integrations/jfm/tomtom-traffic').then(r => r.json()).then(d => {
+            Highcharts.chart('oauth-heatmap', {
+                chart: { type: 'heatmap', backgroundColor: 'transparent' },
+                title: { text: 'Muertes año/nación (TomTom + DB propia)', style: { color: '#e5c07b' } },
+                xAxis: { categories: d.xCategories || [], title: { text: 'Año', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
+                yAxis: { categories: d.yCategories || [], title: { text: 'Nación', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
+                colorAxis: { min: 0, minColor: '#1c1f24', maxColor: '#e06c75' },
+                tooltip: { formatter: function () { return `<b>${this.series.yAxis.categories[this.point.y]}</b> (${this.series.xAxis.categories[this.point.x]}): <b>${this.point.value}</b>`; } },
+                series: [{ name: 'Muertes', data: d.data, borderWidth: 1 }]
+            });
+        }).catch(e => console.error('heatmap', e));
     });
 </script>
 
@@ -166,6 +208,11 @@
     #individual-chart-container {
         width: 100%;
         height: 600px;
+    }
+
+    .oauth-chart {
+        width: 100%;
+        height: 420px;
     }
 
     .error {
@@ -220,4 +267,9 @@
     <div class="chart-box" style="display: {loading || error ? 'none' : 'block'};">
         <div id="individual-chart-container"></div>
     </div>
+
+    <h1 style="margin-top: 3rem;">Integraciones OAuth2 (3 APIs externas)</h1>
+    <div class="chart-box"><div id="oauth-pie" class="oauth-chart"></div></div>
+    <div class="chart-box"><div id="oauth-scatter" class="oauth-chart"></div></div>
+    <div class="chart-box"><div id="oauth-heatmap" class="oauth-chart"></div></div>
 </main>

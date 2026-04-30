@@ -15,6 +15,9 @@ import { loadBackendJFM } from "./api/api-JFM.js";
 import { loadBackendMRGv2 } from "./api/api-MRG-v2.js";
 import { loadBackendTGGv2 } from './api/api-TGG-v2.js';
 import { loadBackendJFMv2 } from './api/api-JFM-v2.js';
+import { loadBackendIntegrationsJFM } from './api/integrations-JFM.js';
+import { loadBackendIntegrationsMRG } from './api/integrations-MRG.js';
+import { loadBackendIntegrationsTGG } from './api/integrations-TGG.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -55,6 +58,11 @@ loadBackendTGG(app);
 
 // API TGG v2
 loadBackendTGGv2(app);
+
+// Integraciones OAuth2 (3 widgets por persona)
+loadBackendIntegrationsJFM(app);
+loadBackendIntegrationsMRG(app);
+loadBackendIntegrationsTGG(app);
 
 // =====================================
 // CARGAR SVELTEKIT HANDLER PRIMERO

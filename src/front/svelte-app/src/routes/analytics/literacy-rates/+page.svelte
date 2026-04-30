@@ -93,6 +93,47 @@
             error = "Hubo un error cargando el gráfico individual: " + err.message;
             loading = false;
         }
+
+        // ---- Widgets OAuth2 (TGG: MS Graph, Google, LinkedIn) ----
+        try {
+            await import('highcharts/modules/funnel');
+            await import('highcharts/modules/variable-pie');
+        } catch (e) { console.warn('Highcharts modules', e); }
+
+        // 1. MS Graph -> funnel
+        fetch('/api/integrations/tgg/msgraph-education').then(r => r.json()).then(d => {
+            Highcharts.chart('oauth-funnel', {
+                chart: { type: 'funnel', backgroundColor: 'transparent' },
+                title: { text: 'Embudo educativo (MS Graph + DB propia)', style: { color: '#e5c07b' } },
+                tooltip: { pointFormat: '<b>{point.name}</b>: {point.y}' },
+                plotOptions: { series: { dataLabels: { enabled: true, format: '<b>{point.name}</b> ({point.y})', style: { color: '#abb2bf' } }, neckWidth: '30%', neckHeight: '25%' } },
+                series: d.series,
+                legend: { itemStyle: { color: '#abb2bf' } }
+            });
+        }).catch(e => console.error('funnel', e));
+
+        // 2. Google -> pyramid
+        fetch('/api/integrations/tgg/google-literacy').then(r => r.json()).then(d => {
+            Highcharts.chart('oauth-pyramid', {
+                chart: { type: 'pyramid', backgroundColor: 'transparent' },
+                title: { text: 'Alfabetización por tramos (Google + DB propia)', style: { color: '#e5c07b' } },
+                tooltip: { pointFormat: '<b>{point.name}</b>: {point.y}' },
+                plotOptions: { series: { dataLabels: { enabled: true, format: '<b>{point.name}</b> ({point.y})', style: { color: '#abb2bf' } } } },
+                series: d.series,
+                legend: { itemStyle: { color: '#abb2bf' } }
+            });
+        }).catch(e => console.error('pyramid', e));
+
+        // 3. LinkedIn -> variablepie
+        fetch('/api/integrations/tgg/linkedin-edu').then(r => r.json()).then(d => {
+            Highcharts.chart('oauth-variablepie', {
+                chart: { type: 'variablepie', backgroundColor: 'transparent' },
+                title: { text: 'Alfabetización + brecha (LinkedIn + DB propia)', style: { color: '#e5c07b' } },
+                tooltip: { headerFormat: '', pointFormat: '<b>{point.name}</b><br>Total: {point.y}<br>Inverso brecha: {point.z}' },
+                series: [{ minPointSize: 10, innerSize: '20%', zMin: 0, name: 'Países', data: d.series[0].data }],
+                legend: { itemStyle: { color: '#abb2bf' } }
+            });
+        }).catch(e => console.error('variablepie', e));
     });
 </script>
 
@@ -122,6 +163,11 @@
     #individual-chart-container {
         width: 100%;
         height: 600px;
+    }
+
+    .oauth-chart {
+        width: 100%;
+        height: 420px;
     }
 
     .error {
@@ -176,4 +222,9 @@
     <div class="chart-box" style="display: {loading || error ? 'none' : 'block'};">
         <div id="individual-chart-container"></div>
     </div>
+
+    <h1 style="margin-top: 3rem;">Integraciones OAuth2 (3 APIs externas)</h1>
+    <div class="chart-box"><div id="oauth-funnel" class="oauth-chart"></div></div>
+    <div class="chart-box"><div id="oauth-pyramid" class="oauth-chart"></div></div>
+    <div class="chart-box"><div id="oauth-variablepie" class="oauth-chart"></div></div>
 </main>
