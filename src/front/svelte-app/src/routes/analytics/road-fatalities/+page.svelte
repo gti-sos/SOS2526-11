@@ -138,21 +138,24 @@
             loading = false;
         }
 
-        // ---- Widgets OAuth2 (JFM: UPS, Copernicus, FedEx) ----
+        // ---- Widgets OAuth2 (JFM: Mastodon, Copernicus, FedEx) ----
         try {
             const Heatmap = (await import('highcharts/modules/heatmap')).default;
+            // @ts-ignore
             Heatmap(Highcharts);
         } catch (e) { console.warn('Highcharts modules', e); }
 
-        // 1. UPS CIE -> pie
-        fetch('/api/integrations/jfm/ups-fatalities').then(async r => {
+        // 1. Mastodon API -> pie (señal social de seguridad vial)
+        fetch('/api/integrations/jfm/mastodon-fatalities').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
             Highcharts.chart('oauth-pie', {
                 chart: { type: 'pie', backgroundColor: 'transparent' },
-                title: { text: 'Mortalidad por nivel de ingresos (UPS + DB propia)', style: { color: '#e5c07b' } },
-                tooltip: { pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})' },
-                series: [{ name: 'Muertes', colorByPoint: true, data: d.series }],
+                title: { text: 'Mastodon road safety social signal', style: { color: '#e5c07b' } },
+                subtitle: { text: 'Conteo de publicaciones públicas por hashtag relacionado con seguridad vial y accidentes de tráfico.', style: { color: '#abb2bf' } },
+                tooltip: { pointFormat: '{series.name}: <b>{point.y}</b> publicaciones ({point.percentage:.1f}%)' },
+                // @ts-ignore
+                series: [{ name: 'Publicaciones', colorByPoint: true, data: d.hashtags.map(h => ({ name: h.tag, y: h.count })) }],
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
         }).catch(e => console.error('pie:', e.message));
@@ -161,6 +164,7 @@
         fetch('/api/integrations/jfm/copernicus-fatalities').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
+            // @ts-ignore
             Highcharts.chart('oauth-scatter', {
                 chart: { type: 'scatter', backgroundColor: 'transparent', zoomType: 'xy' },
                 title: { text: 'Mortalidad vehículos vs población (Copernicus ESA + DB propia)', style: { color: '#e5c07b' } },
@@ -182,6 +186,7 @@
                 xAxis: { categories: d.xCategories || [], title: { text: 'Año', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
                 yAxis: { categories: d.yCategories || [], title: { text: 'Nación', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
                 colorAxis: { min: 0, minColor: '#1c1f24', maxColor: '#e06c75' },
+                // @ts-ignore
                 tooltip: { formatter: function () { return `<b>${this.series.yAxis.categories[this.point.y]}</b> (${this.series.xAxis.categories[this.point.x]}): <b>${this.point.value}</b>`; } },
                 series: [{ name: 'Muertes', data: d.data, borderWidth: 1 }]
             });

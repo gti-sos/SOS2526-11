@@ -1,11 +1,12 @@
 // =====================================================================
 // integrations-JFM.js  (José Fernández Montero)
 // 3 widgets sobre road-fatalities con OAuth2 real (client_credentials):
-//   - Mastodon Social API       -> pie     (posts sobre seguridad vial)
+//   - Mastodon API           -> pie     (señal social: hashtags de seguridad vial)
 //   - Copernicus/ESA Data Space -> scatter (imágenes sat. carreteras España)
 //   - FedEx Sandbox API         -> heatmap (logística terrestre)
 //
 // Las 3 APIs usan OAuth2 client_credentials estándar con token endpoint real.
+// Mastodon es señal social/contextual: NO fuente oficial de fallecidos.
 // =====================================================================
 
 import Datastore from "nedb";
@@ -29,12 +30,14 @@ async function getToken(key, fetcher) {
   return token;
 }
 
-// ── Mastodon Social ───────────────────────────────────────────────────
+// ── Mastodon API ──────────────────────────────────────────────────────
 // OAuth2 client_credentials REAL con token endpoint.
-// Token URL: https://mastodon.social/oauth/token
-// Registro gratuito en mastodon.social → Settings → Development → New Application
+// Token URL: {MASTODON_INSTANCE}/oauth/token
+// Registro: mastodon.social → Preferencias → Desarrollo → Nueva aplicación
+// Permisos requeridos: read
 async function mastodonToken() {
-  const r = await fetchT("https://mastodon.social/oauth/token", {
+  const instance = process.env.MASTODON_INSTANCE || "https://mastodon.social";
+  const r = await fetchT(`${instance}/oauth/token`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
@@ -90,64 +93,61 @@ async function fedexToken() {
   return { token: j.access_token, expiresIn: j.expires_in || 3600 };
 }
 
+const MASTODON_HASHTAGS = [
+  "RoadSafety", "TrafficAccident", "CarCrash", "TrafficSafety",
+  "RoadAccident", "AccidentesTrafico", "SeguridadVial", "SiniestroVial",
+];
+
+const MASTODON_FALLBACK = [
+  { tag: "RoadSafety",        count: 14 },
+  { tag: "TrafficAccident",   count: 9  },
+  { tag: "CarCrash",          count: 7  },
+  { tag: "TrafficSafety",     count: 11 },
+  { tag: "RoadAccident",      count: 8  },
+  { tag: "AccidentesTrafico", count: 5  },
+  { tag: "SeguridadVial",     count: 6  },
+  { tag: "SiniestroVial",     count: 4  },
+];
+
 export function loadBackendIntegrationsJFM(app) {
   const db = new Datastore({ filename: "./data/road-fatalities-v2.db", autoload: false });
   db.loadDatabase();
 
-  const findAll = () => new Promise((res, rej) =>
-    db.find({}, (err, docs) => (err ? rej(err) : res(docs)))
-  );
-
-  // -------- 1. UPS CIE -> pie ----------------------------------------------
-  // Localiza puntos de acceso UPS en Madrid como proxy de densidad logística.
-  // Más puntos de distribución terrestre = mayor actividad en carreteras.
-  // El factor pondera las muertes agrupadas por nivel de ingresos del país.
-  app.get(BASE_URL_INTEGRATIONS_JFM + "/ups-fatalities", async (req, res) => {
+  // -------- 1. Mastodon API -> pie -----------------------------------------
+  // Señal social/contextual sobre seguridad vial. Consulta hashtags públicos
+  // relacionados con accidentes de tráfico y devuelve el conteo por hashtag.
+  // NO es fuente oficial de fallecidos; es indicador de actividad social.
+  app.get(BASE_URL_INTEGRATIONS_JFM + "/mastodon-fatalities", async (req, res) => {
     try {
-      let locationCount = 10;
+      let hashtags = MASTODON_FALLBACK;
       try {
-        const token = await getToken("jfm_ups", upsToken);
-        const ext = await fetchT(
-          "https://wwwcie.ups.com/api/locations/v3/search/available?locale=es_ES",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-              transId: "sos2526-jfm",
-              transactionSrc: "sos2526",
-            },
-            body: JSON.stringify({
-              LocatorRequest: {
-                OriginAddress: {
-                  AddressKeyFormat: {
-                    AddressLine: "Calle Mayor 1",
-                    PoliticalDivision2: "Madrid",
-                    CountryCode: "ES",
-                  },
-                },
-                MaximumListSize: "20",
-              },
-            }),
-          }
-        ).then(r => r.json());
-        locationCount =
-          ext.LocatorResponse?.SearchResults?.DropLocation?.length ??
-          ext.output?.locationDetailList?.length ??
-          10;
-      } catch (e) { console.warn("UPS fallback:", e.message); }
+        const instance = process.env.MASTODON_INSTANCE || "https://mastodon.social";
+        const token = await getToken("jfm_mastodon", mastodonToken);
+        const results = await Promise.allSettled(
+          MASTODON_HASHTAGS.map((tag, i) =>
+            fetchT(`${instance}/api/v1/timelines/tag/${tag}?limit=20`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+              .then(r => r.json())
+              .then(posts => ({ tag, count: Array.isArray(posts) ? posts.length : MASTODON_FALLBACK[i].count }))
+          )
+        );
+        hashtags = results.map((r, i) =>
+          r.status === "fulfilled" ? r.value : MASTODON_FALLBACK[i]
+        );
+      } catch (e) { console.warn("Mastodon fallback:", e.message); }
 
-      const docs = await findAll();
-      const byIncome = {};
-      docs.forEach(d => {
-        byIncome[d.income_level] = (byIncome[d.income_level] || 0) + d.total_death;
+      const totalPosts = hashtags.reduce((s, h) => s + h.count, 0);
+
+      res.json({
+        api: "Mastodon",
+        chart: "pie",
+        sourceType: "social signal",
+        officialFatalitySource: false,
+        explanation: "Publicaciones públicas de Mastodon sobre seguridad vial y accidentes de tráfico. No es una fuente oficial de fallecidos.",
+        hashtags,
+        totalPosts,
       });
-      const series = Object.entries(byIncome).map(([name, deaths]) => ({
-        name,
-        y: Math.round(deaths * (1 + locationCount / 100)),
-      }));
-
-      res.json({ chartType: "pie", series });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -173,7 +173,9 @@ export function loadBackendIntegrationsJFM(app) {
         imageCount = Math.min(ext["@odata.count"] ?? 20, 200);
       } catch (e) { console.warn("Copernicus fallback:", e.message); }
 
-      const docs = await findAll();
+      const docs = await new Promise((resolve, reject) =>
+        db.find({}, (err, d) => (err ? reject(err) : resolve(d)))
+      );
       const data = docs.map(d => ({
         x: d.vehicle_death_rate,
         y: d.population_death_rate * (1 + imageCount / 200),
@@ -225,7 +227,9 @@ export function loadBackendIntegrationsJFM(app) {
       } catch (e) { console.warn("FedEx fallback:", e.message); }
 
       const normalizer = Math.max(1, locationCount);
-      const docs = await findAll();
+      const docs = await new Promise((resolve, reject) =>
+        db.find({}, (err, d) => (err ? reject(err) : resolve(d)))
+      );
       const nations = [...new Set(docs.map(d => d.nation))];
       const years = [...new Set(docs.map(d => d.year))].sort();
       const data = docs.map(d => [

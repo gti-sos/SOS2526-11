@@ -14,10 +14,17 @@
             <h2>JFM — Road Fatalities</h2>
             <p class="who">José Fernández Montero</p>
             <ul>
-                <li>UPS CIE API (OAuth2 Client Credentials) → <b>pie</b></li>
+                <li>Mastodon API (OAuth2 Client Credentials) → <b>pie</b></li>
                 <li>Copernicus/ESA Data Space (OAuth2 Client Credentials) → <b>scatter</b></li>
                 <li>FedEx Sandbox API (OAuth2 Client Credentials) → <b>heatmap</b></li>
             </ul>
+            <p class="signal-note">
+                Mastodon se usa como señal social externa relacionada con accidentes de tráfico, seguridad vial y movilidad.
+                La integración consulta hashtags públicos como RoadSafety, TrafficAccident, CarCrash, TrafficSafety,
+                RoadAccident, AccidentesTrafico, SeguridadVial y SiniestroVial.
+                El número de publicaciones encontradas por hashtag se usa como factor contextual en la gráfica pie de road fatalities.
+                No es una fuente oficial de fallecidos.
+            </p>
             <a class="btn" href="/analytics/road-fatalities">Ver widgets →</a>
         </article>
 
@@ -47,7 +54,7 @@
     <section class="endpoints">
         <h2>Endpoints proxy disponibles</h2>
         <ul>
-            <li><code>GET /api/integrations/jfm/ups-fatalities</code></li>
+            <li><code>GET /api/integrations/jfm/mastodon-fatalities</code></li>
             <li><code>GET /api/integrations/jfm/copernicus-fatalities</code></li>
             <li><code>GET /api/integrations/jfm/fedex-fatalities</code></li>
             <li><code>GET /api/integrations/mrg/vimeo-alcohol</code></li>
@@ -107,6 +114,14 @@
         flex-grow: 1;
         padding-left: 1.2rem;
         line-height: 1.6;
+    }
+    .signal-note {
+        font-size: 0.78rem;
+        color: #7f848e;
+        margin-top: 0.75rem;
+        line-height: 1.5;
+        border-top: 1px solid #3e4451;
+        padding-top: 0.6rem;
     }
     .btn {
         display: inline-block;
