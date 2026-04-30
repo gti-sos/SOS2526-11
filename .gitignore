@@ -149,3 +149,5 @@ vite.config.ts.timestamp-*
 *.db
 data/*.db
 
+.claude
+
