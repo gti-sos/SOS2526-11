@@ -7,33 +7,34 @@
 
     onMount(async () => {
         try {
-            // Obtenemos solo los datos de TGG (Literacy Rates)
             const res = await fetch('/api/v2/literacy-rates');
             let data = await res.json();
             
             if(!res.ok) throw new Error(data.error || "No se encontraron datos");
 
-            // Ordenar por país primero, y luego por año internamente
+            // @ts-ignore
             data.sort((a, b) => {
                 if (a.country < b.country) return -1;
                 if (a.country > b.country) return 1;
                 return a.year - b.year;
             });
 
-            // Generar las etiquetas del Eje X: País (Año)
+            // @ts-ignore
             const categories = data.map(d => {
                 let c = d.country || "Unknown";
                 return `${c.charAt(0).toUpperCase() + c.slice(1)} (${d.year})`;
             });
 
-            // Generar las series
+            // @ts-ignore
             const totalData = data.map(d => d.total || 0);
+            // @ts-ignore
             const maleData = data.map(d => d.male || 0);
+            // @ts-ignore
             const femaleData = data.map(d => d.female || 0);
 
             Highcharts.chart('individual-chart-container', {
                 chart: {
-                    type: 'bar', // Distinto a line, column y area
+                    type: 'bar',
                     backgroundColor: 'transparent'
                 },
                 title: {
@@ -46,7 +47,6 @@
                 },
                 xAxis: {
                     categories: categories,
-                    title: { enabled: false },
                     labels: { style: { color: '#abb2bf' } }
                 },
                 yAxis: {
@@ -57,91 +57,79 @@
                     shared: true,
                     valueSuffix: ' %'
                 },
-                plotOptions: {
-                    bar: {
-                        dataLabels: {
-                            enabled: false
-                        }
-                    }
-                },
                 series: [
-                    {
-                        name: 'Alfabetización Femenina',
-                        data: femaleData,
-                        color: '#e06c75'
-                    },
-                    {
-                        name: 'Alfabetización Total',
-                        data: totalData,
-                        color: '#98c379'
-                    },
-                    {
-                        name: 'Alfabetización Masculina',
-                        data: maleData,
-                        color: '#61afef'
-                    }
-                ],
-                legend: {
-                    itemStyle: { color: '#abb2bf' },
-                    itemHoverStyle: { color: '#ffffff' }
-                }
+                    { name: 'Alfabetización Femenina', data: femaleData, color: '#e06c75' },
+                    { name: 'Alfabetización Total', data: totalData, color: '#98c379' },
+                    { name: 'Alfabetización Masculina', data: maleData, color: '#61afef' }
+                ]
             });
 
             loading = false;
         } catch(err) {
             console.error(err);
+            // @ts-ignore
             error = "Hubo un error cargando el gráfico individual: " + err.message;
             loading = false;
         }
 
-        // ---- Widgets OAuth2 (TGG: NewsAPI, Google, LinkedIn) ----
+        // ---- Cargar módulos ----
         try {
             const Funnel = (await import('highcharts/modules/funnel')).default;
             const VariablePie = (await import('highcharts/modules/variable-pie')).default;
+            // @ts-ignore
             Funnel(Highcharts);
+            // @ts-ignore
             VariablePie(Highcharts);
-        } catch (e) { console.warn('Highcharts modules', e); }
+        } catch (e) { 
+            console.warn('Highcharts modules', e); 
+        }
 
-        // 1. NewsAPI -> funnel
-        fetch('/api/integrations/tgg/newsapi-education').then(async r => {
+        // ---- OAuth charts ----
+
+        // 1. NewsAPI
+        fetch('/api/integrations/tgg/newsapi-education')
+        .then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
+
             Highcharts.chart('oauth-funnel', {
                 chart: { type: 'funnel', backgroundColor: 'transparent' },
                 title: { text: 'Embudo educativo (NewsAPI + DB propia)', style: { color: '#e5c07b' } },
-                tooltip: { pointFormat: '<b>{point.name}</b>: {point.y}' },
-                plotOptions: { series: { dataLabels: { enabled: true, format: '<b>{point.name}</b> ({point.y})', style: { color: '#abb2bf' } }, neckWidth: '30%', neckHeight: '25%' } },
-                series: d.series,
-                legend: { itemStyle: { color: '#abb2bf' } }
+                series: d.series
             });
-        }).catch(e => console.error('funnel:', e.message));
+        })
+        .catch(e => console.error('funnel:', e.message));
 
-        // 2. Google -> pyramid
-        fetch('/api/integrations/tgg/google-literacy').then(async r => {
+
+        // 2. Spotify
+        fetch('/api/integrations/tgg/spotify-literacy')
+        .then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
+
             Highcharts.chart('oauth-pyramid', {
                 chart: { type: 'pyramid', backgroundColor: 'transparent' },
-                title: { text: 'Alfabetización por tramos (Google + DB propia)', style: { color: '#e5c07b' } },
-                tooltip: { pointFormat: '<b>{point.name}</b>: {point.y}' },
-                plotOptions: { series: { dataLabels: { enabled: true, format: '<b>{point.name}</b> ({point.y})', style: { color: '#abb2bf' } } } },
-                series: d.series,
-                legend: { itemStyle: { color: '#abb2bf' } }
+                title: { text: 'Spotify vs Literacy', style: { color: '#e5c07b' } },
+                series: d.series
             });
-        }).catch(e => console.error('pyramid:', e.message));
+        })
+        .catch(e => console.error('spotify:', e.message));
 
-        // 3. LinkedIn -> variablepie
-        fetch('/api/integrations/tgg/linkedin-edu').then(async r => {
+
+        // 3. GitHub
+        fetch('/api/integrations/tgg/github-literacy')
+        .then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
+
             Highcharts.chart('oauth-variablepie', {
-                chart: { type: 'variablepie', backgroundColor: 'transparent' },
-                title: { text: 'Alfabetización + brecha (LinkedIn + DB propia)', style: { color: '#e5c07b' } },
-                tooltip: { headerFormat: '', pointFormat: '<b>{point.name}</b><br>Total: {point.y}<br>Inverso brecha: {point.z}' },
-                series: [{ minPointSize: 10, innerSize: '20%', zMin: 0, name: 'Países', data: d.series[0].data }],
-                legend: { itemStyle: { color: '#abb2bf' } }
+                chart: { type: 'column', backgroundColor: 'transparent' },
+                title: { text: 'GitHub vs Literacy', style: { color: '#e5c07b' } },
+                xAxis: { categories: d.categories },
+                series: d.series
             });
-        }).catch(e => console.error('variablepie:', e.message));
+        })
+        .catch(e => console.error('github:', e.message));
     });
 </script>
 
@@ -193,7 +181,7 @@
         font-size: 1.2rem;
         padding: 3rem;
     }
-    
+
     .back-btn {
         display: inline-block;
         margin-bottom: 1rem;
@@ -204,7 +192,7 @@
         border-radius: 4px;
         transition: all 0.3s ease;
     }
-    
+
     .back-btn:hover {
         background: rgba(97, 175, 239, 0.1);
     }
@@ -232,7 +220,16 @@
     </div>
 
     <h1 style="margin-top: 3rem;">Integraciones OAuth2 (3 APIs externas)</h1>
-    <div class="chart-box"><div id="oauth-funnel" class="oauth-chart"></div></div>
-    <div class="chart-box"><div id="oauth-pyramid" class="oauth-chart"></div></div>
-    <div class="chart-box"><div id="oauth-variablepie" class="oauth-chart"></div></div>
+
+    <div class="chart-box">
+        <div id="oauth-funnel" class="oauth-chart"></div>
+    </div>
+
+    <div class="chart-box">
+        <div id="oauth-pyramid" class="oauth-chart"></div>
+    </div>
+
+    <div class="chart-box">
+        <div id="oauth-variablepie" class="oauth-chart"></div>
+    </div>
 </main>
