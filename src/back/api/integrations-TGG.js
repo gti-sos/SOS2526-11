@@ -4,13 +4,11 @@
 //   - NewsAPI -> funnel
 // =====================================================================
 
-import Datastore from "nedb";
+import { dbLiteracy as db } from "./db.js";
 
 export const BASE_URL_INTEGRATIONS_TGG = "/api/integrations/tgg";
 
 export function loadBackendIntegrationsTGG(app) {
-  const db = new Datastore({ filename: "./data/literacy-rates-v2.db", autoload: false });
-  db.loadDatabase();
 
   const findAll = () => new Promise((res, rej) =>
     db.find({}, (err, docs) => (err ? rej(err) : res(docs)))

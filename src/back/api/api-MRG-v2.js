@@ -1,4 +1,4 @@
-import Datastore from "nedb";
+import { dbAlcohol as db } from "./db.js";
 import jwt from "jsonwebtoken"; // 1. Importamos la librería
 
 export const BASE_URL_API_MRG_V2 = "/api/v2/alcohol-consumptions-per-capita";
@@ -8,8 +8,6 @@ const SECRET_KEY = "contraseñaMiguel";
 
 export function loadBackendMRGv2(app) {
 
-    const db = new Datastore({ filename: './data/alcohol-consumptions-per-capita-v2.db', autoload: false });
-    db.loadDatabase();
 
     // --- MIDDLEWARE DE VERIFICACIÓN ---
     // Este es el "portero" que revisa el token antes de entrar a las rutas protegidas

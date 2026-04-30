@@ -7,7 +7,7 @@
 // Combina los datos externos con la DB propia alcohol-consumptions-per-capita-v2.db.
 // =====================================================================
 
-import Datastore from "nedb";
+import { dbAlcohol as db } from "./db.js";
 
 export const BASE_URL_INTEGRATIONS_MRG = "/api/integrations/mrg";
 
@@ -76,9 +76,6 @@ async function discordToken() {
 }
 
 export function loadBackendIntegrationsMRG(app) {
-  const db = new Datastore({ filename: "./data/alcohol-consumptions-per-capita-v2.db", autoload: false });
-  db.loadDatabase();
-
   const findAll = () => new Promise((res, rej) =>
     db.find({}, (err, docs) => (err ? rej(err) : res(docs)))
   );

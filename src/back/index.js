@@ -1,11 +1,13 @@
+import "dotenv/config";
+
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import {handler} from "../front/svelte-app/build/handler.js";
+import { handler } from "../front/svelte-app/build/handler.js";
 
-//Imports tareas extra
+// Imports tareas extra
 import jwt from 'jsonwebtoken';
 
 // IMPORTAMOS API
@@ -19,24 +21,21 @@ import { loadBackendIntegrationsJFM } from './api/integrations-JFM.js';
 import { loadBackendIntegrationsMRG } from './api/integrations-MRG.js';
 import { loadBackendIntegrationsTGG } from './api/integrations-TGG.js';
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.use(cors());
+console.log("MASTODON_CLIENT_ID cargado:", !!process.env.MASTODON_CLIENT_ID);
+console.log("COPERNICUS_USERNAME cargado:", !!process.env.COPERNICUS_USERNAME);
+console.log("FEDEX_CLIENT_ID cargado:", !!process.env.FEDEX_CLIENT_ID);
 
-//app.use('/', express.static('public'));
+app.use(cors());
 app.use(express.json());
 
 // Puntos extra Miguel 
-
-//clave "Secreta" Miguel Ridao
 const SECRET_KEY = "contraseñaMiguel";
-
-
 
 // =====================================
 // CARGAR APIs
@@ -44,6 +43,7 @@ const SECRET_KEY = "contraseñaMiguel";
 
 // API MRG (Miguel Ridao)
 loadBackendMRG(app);
+
 // API MRG v2
 loadBackendMRGv2(app);
 
@@ -59,13 +59,13 @@ loadBackendTGG(app);
 // API TGG v2
 loadBackendTGGv2(app);
 
-// Integraciones OAuth2 (3 widgets por persona)
+// Integraciones OAuth2
 loadBackendIntegrationsJFM(app);
 loadBackendIntegrationsMRG(app);
 loadBackendIntegrationsTGG(app);
 
 // =====================================
-// CARGAR SVELTEKIT HANDLER PRIMERO
+// CARGAR SVELTEKIT HANDLER
 // =====================================
 app.use(handler);
 
@@ -73,6 +73,6 @@ app.use(handler);
 // ARRANQUE DEL SERVIDOR
 // =====================================
 app.listen(port, () => {
-    console.log(`Servidor funcionando en el puerto ${port}`);
+  console.log(`Servidor funcionando en el puerto ${port}`);
 });
 

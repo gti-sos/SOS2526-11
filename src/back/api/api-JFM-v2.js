@@ -1,11 +1,8 @@
-import Datastore from "nedb";
+import { dbRoadFatalities as db } from "./db.js";
 
 export const BASE_URL_API_JFM_V2 = "/api/v2/road-fatalities";
 
 export function loadBackendJFMv2(app) {
-    // Base de datos independiente para la v2
-    const db = new Datastore({ filename: './data/road-fatalities-v2.db', autoload: false });
-    db.loadDatabase();
 
     // Función auxiliar de validación 
     function isValidRoadFatalities(body) {
