@@ -1,0 +1,95 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "📊 SOS2526-11 Análisis Integrado" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: 📊
+        - generic [ref=e7]:
+          - text: SOS2526-11
+          - generic [ref=e8]: Análisis Integrado
+      - navigation [ref=e9]:
+        - link "Inicio" [ref=e10] [cursor=pointer]:
+          - /url: /
+        - link "Alfabetización" [ref=e11] [cursor=pointer]:
+          - /url: /literacy-rates
+        - link "Alcohol" [ref=e12] [cursor=pointer]:
+          - /url: /alcohol-consumptions-per-capita
+        - link "Tráfico" [ref=e13] [cursor=pointer]:
+          - /url: /road-fatalities
+        - link "Analíticas" [ref=e14] [cursor=pointer]:
+          - /url: /analytics
+        - link "Integraciones" [ref=e15] [cursor=pointer]:
+          - /url: /integrations
+        - link "Login" [ref=e16] [cursor=pointer]:
+          - /url: /login
+  - main [ref=e17]:
+    - link "← Volver a Datos" [ref=e18] [cursor=pointer]:
+      - /url: /literacy-rates
+    - heading "Visualización Individual (Literacy Rates)" [level=1] [ref=e19]
+    - generic [ref=e20]: Cargando datos de alfabetización...
+    - heading "Integraciones OAuth2 (3 APIs externas)" [level=1] [ref=e21]
+  - contentinfo [ref=e28]:
+    - generic [ref=e29]:
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - heading "📚 Sobre el Proyecto" [level=3] [ref=e32]
+          - list [ref=e33]:
+            - listitem [ref=e34]:
+              - text: ▸
+              - link "Inicio" [ref=e35] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e36]:
+              - text: ▸
+              - link "Acerca de Nosotros" [ref=e37] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e38]:
+              - text: ▸
+              - link "Repositorio GitHub" [ref=e39] [cursor=pointer]:
+                - /url: https://github.com/gti-sos/SOS2526-11
+            - listitem [ref=e40]:
+              - text: ▸
+              - link "App Desplegada" [ref=e41] [cursor=pointer]:
+                - /url: https://sos2526-11.onrender.com
+        - generic [ref=e42]:
+          - heading "🔗 Recursos" [level=3] [ref=e43]
+          - list [ref=e44]:
+            - listitem [ref=e45]:
+              - text: ▸
+              - link "Tasas de Alfabetización" [ref=e46] [cursor=pointer]:
+                - /url: /literacy-rates
+            - listitem [ref=e47]:
+              - text: ▸
+              - link "Consumo de Alcohol" [ref=e48] [cursor=pointer]:
+                - /url: /alcohol-consumptions-per-capita
+            - listitem [ref=e49]:
+              - text: ▸
+              - link "Muertes por Tráfico" [ref=e50] [cursor=pointer]:
+                - /url: /road-fatalities
+        - generic [ref=e51]:
+          - heading "📖 Documentación" [level=3] [ref=e52]
+          - list [ref=e53]:
+            - listitem [ref=e54]:
+              - text: ▸
+              - link "API Literacy Rates" [ref=e55] [cursor=pointer]:
+                - /url: https://documenter.getpostman.com/view/52263638/2sBXijJBnr
+            - listitem [ref=e56]:
+              - text: ▸
+              - link "API Alcohol Consumptions" [ref=e57] [cursor=pointer]:
+                - /url: https://documenter.getpostman.com/view/52263638/2sBXigMDfw
+            - listitem [ref=e58]:
+              - text: ▸
+              - link "API Road Fatalities" [ref=e59] [cursor=pointer]:
+                - /url: https://documenter.getpostman.com/view/52276616/2sBXijJC24
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - strong [ref=e63]: Tomás Gutiérrez García
+            - generic [ref=e64]: literacy-rates
+          - generic [ref=e65]:
+            - strong [ref=e66]: Miguel Ridao Gallardo
+            - generic [ref=e67]: alcohol-consumptions-per-capita
+          - generic [ref=e68]:
+            - strong [ref=e69]: José Fernández Montero
+            - generic [ref=e70]: road-fatalities
+        - paragraph [ref=e71]: © 2024-2026 Grupo 11 - SOS2526. Todos los derechos reservados.
+        - paragraph [ref=e72]: Análisis Integrado de Datos Socioeconómicos y de Seguridad Vial

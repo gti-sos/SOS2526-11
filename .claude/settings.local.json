@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/api/integrations/tgg/google-literacy)",
+      "Bash(curl -s http://localhost:8080/api/integrations/tgg/google-literacy)",
+      "PowerShell(try { \\(Invoke-WebRequest -Uri \"http://localhost:8080/api/integrations/tgg/google-literacy\" -UseBasicParsing\\).Content } catch { $_.Exception.Message })",
+      "Bash(node ./src/back/index.js)",
+      "Bash(curl -s http://localhost:8080/api/integrations/tgg/newsapi-education)",
+      "Bash(curl -s http://localhost:8080/api/integrations/tgg/linkedin-edu)",
+      "PowerShell(Start-Sleep -Seconds 2; try { \\(Invoke-WebRequest -Uri \"http://localhost:8080/api/integrations/tgg/google-literacy\" -UseBasicParsing -TimeoutSec 30\\).Content } catch { $_.Exception.Message }22)",
+      "PowerShell(try { \\(Invoke-WebRequest -Uri \"http://localhost:8080/api/integrations/tgg/newsapi-education\" -UseBasicParsing -TimeoutSec 30\\).Content.Substring\\(0, [Math]::Min\\(500, \\(Invoke-WebRequest -Uri \"http://localhost:8080/api/integrations/tgg/newsapi-education\" -UseBasicParsing -TimeoutSec 30\\).Content.Length\\)\\) } catch { $_.Exception.Message })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:8080/api/v2/literacy-rates\" -UseBasicParsing -TimeoutSec 10; $r.StatusCode; $r.Content.Substring\\(0, [Math]::Min\\(200, $r.Content.Length\\)\\) } catch { $_.Exception.Message })",
+      "PowerShell($ErrorActionPreference = 'Continue'; try { $r = Invoke-WebRequest -Uri \"http://localhost:8080/api/integrations/tgg/linkedin-edu\" -UseBasicParsing -TimeoutSec 60; \"Status: $\\($r.StatusCode\\)\"; $r.Content.Substring\\(0, [Math]::Min\\(300, $r.Content.Length\\)\\) } catch { \"ERROR: $\\($_.Exception.Message\\)\" })",
+      "Bash(curl -s -m 5 \"http://localhost:8080/api/integrations/jfm/ups-fatalities\")",
+      "Bash(node -e ' *)",
+      "Bash(curl -s -m 3 \"http://localhost:8080/\")",
+      "Bash(curl -s -m 8 \"http://localhost:8080/api/integrations/tgg/google-literacy\")",
+      "PowerShell(Get-NetTCPConnection *)",
+      "Bash(disown)",
+      "Bash(curl -s -m 10 \"http://localhost:8080/api/integrations/tgg/google-literacy\")",
+      "Bash(curl -s -m 10 \"http://localhost:8080/api/integrations/tgg/newsapi-education\")",
+      "Bash(curl -s -m 10 \"http://localhost:8080/api/integrations/tgg/linkedin-edu\")",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_evaluate"
+    ]
+  }
+}
