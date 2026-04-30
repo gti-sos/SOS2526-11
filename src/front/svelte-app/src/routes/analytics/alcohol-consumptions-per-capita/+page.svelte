@@ -93,46 +93,54 @@
             loading = false;
         }
 
-        // ---- Widgets externos (MRG: Nutritionix, USDA, API-Ninjas) ----
+        // ---- Widgets OAuth2 (MRG: Vimeo, Dailymotion, Discord) ----
         try {
-            await import('highcharts/highcharts-more');
-            await import('highcharts/modules/treemap');
+            const More = (await import('highcharts/highcharts-more')).default;
+            More(Highcharts);
+            const Treemap = (await import('highcharts/modules/treemap')).default;
+            Treemap(Highcharts);
         } catch (e) { console.warn('Highcharts modules', e); }
 
-        // 1. Nutritionix -> bubble
-        fetch('/api/integrations/mrg/nutritionix-activity').then(r => r.json()).then(d => {
+        // 1. Vimeo -> bubble
+        fetch('/api/integrations/mrg/vimeo-alcohol').then(async r => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
             Highcharts.chart('oauth-bubble', {
                 chart: { type: 'bubble', backgroundColor: 'transparent', plotBorderWidth: 1, zoomType: 'xy' },
-                title: { text: 'Alcohol vs salud (Nutritionix + DB propia)', style: { color: '#e5c07b' } },
+                title: { text: 'Alcohol vs salud (Vimeo + DB propia)', style: { color: '#e5c07b' } },
                 xAxis: { title: { text: 'Consumo alcohol', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
                 yAxis: { title: { text: 'Esperanza vida (proxy)', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
-                tooltip: { useHTML: true, pointFormat: '<b>{point.name}</b><br>Alcohol: {point.x}<br>Vida: {point.y}<br>Cal/10: {point.z}' },
+                tooltip: { useHTML: true, pointFormat: '<b>{point.name}</b><br>Alcohol: {point.x}<br>Vida: {point.y}' },
                 series: d.series,
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
-        }).catch(e => console.error('bubble', e));
+        }).catch(e => console.error('bubble:', e.message));
 
-        // 2. USDA FoodData -> treemap
-        fetch('/api/integrations/mrg/usda-health').then(r => r.json()).then(d => {
+        // 2. Dailymotion -> treemap
+        fetch('/api/integrations/mrg/dailymotion-alcohol').then(async r => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
             Highcharts.chart('oauth-treemap', {
                 chart: { backgroundColor: 'transparent' },
-                title: { text: 'Consumo año/país (USDA + DB propia)', style: { color: '#e5c07b' } },
+                title: { text: 'Consumo año/país (Dailymotion + DB propia)', style: { color: '#e5c07b' } },
                 tooltip: { pointFormat: '<b>{point.name}</b>: {point.value}' },
                 series: [{ type: 'treemap', layoutAlgorithm: 'squarified', allowTraversingTree: true, data: d.data }]
             });
-        }).catch(e => console.error('treemap', e));
+        }).catch(e => console.error('treemap:', e.message));
 
-        // 3. API-Ninjas Nutrition -> packedbubble
-        fetch('/api/integrations/mrg/apininjas-nutrition').then(r => r.json()).then(d => {
+        // 3. Discord -> packedbubble
+        fetch('/api/integrations/mrg/discord-alcohol').then(async r => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
             Highcharts.chart('oauth-packedbubble', {
                 chart: { type: 'packedbubble', backgroundColor: 'transparent' },
-                title: { text: 'Consumo agrupado por país (API-Ninjas + DB propia)', style: { color: '#e5c07b' } },
+                title: { text: 'Consumo agrupado por país (Discord + DB propia)', style: { color: '#e5c07b' } },
                 tooltip: { useHTML: true, pointFormat: '<b>{point.name}</b>: {point.value}' },
                 plotOptions: { packedbubble: { minSize: '20%', maxSize: '100%', layoutAlgorithm: { gravitationalConstant: 0.05 } } },
                 series: d.series,
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
-        }).catch(e => console.error('packedbubble', e));
+        }).catch(e => console.error('packedbubble:', e.message));
     });
 </script>
 

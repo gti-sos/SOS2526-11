@@ -4,7 +4,15 @@
       "Bash(grep -v \"//\")",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(node index.js)",
+      "Bash(curl -s http://localhost:8080/api/integrations/tgg/newsapi-education)",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); console.log\\('chartType:', j.chartType\\); console.log\\('series[0].name:', j.series?.[0]?.name\\); console.log\\('data length:', j.series?.[0]?.data?.length\\); if\\(j.error\\) console.log\\('ERROR:', j.error\\);\")",
+      "Bash(powershell *)",
+      "PowerShell(Invoke-RestMethod -Uri 'http://localhost:8080/api/integrations/tgg/newsapi-education' | ConvertTo-Json -Depth 5)",
+      "PowerShell($r1 = Invoke-WebRequest -Uri 'http://localhost:8080/api/integrations/tgg/newsapi-education' -UseBasicParsing; Write-Output \"newsapi status: $\\($r1.StatusCode\\)\"; $r1.Content | ConvertFrom-Json | ConvertTo-Json -Depth 3)",
+      "Bash(node -e ' *)",
+      "Bash(node *)"
     ]
   }
 }

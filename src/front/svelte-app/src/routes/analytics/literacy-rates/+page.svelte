@@ -94,14 +94,18 @@
             loading = false;
         }
 
-        // ---- Widgets OAuth2 (TGG: MS Graph, Google, LinkedIn) ----
+        // ---- Widgets OAuth2 (TGG: NewsAPI, Google, LinkedIn) ----
         try {
-            await import('highcharts/modules/funnel');
-            await import('highcharts/modules/variable-pie');
+            const Funnel = (await import('highcharts/modules/funnel')).default;
+            const VariablePie = (await import('highcharts/modules/variable-pie')).default;
+            Funnel(Highcharts);
+            VariablePie(Highcharts);
         } catch (e) { console.warn('Highcharts modules', e); }
 
         // 1. NewsAPI -> funnel
-        fetch('/api/integrations/tgg/newsapi-education').then(r => r.json()).then(d => {
+        fetch('/api/integrations/tgg/newsapi-education').then(async r => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
             Highcharts.chart('oauth-funnel', {
                 chart: { type: 'funnel', backgroundColor: 'transparent' },
                 title: { text: 'Embudo educativo (NewsAPI + DB propia)', style: { color: '#e5c07b' } },
@@ -110,10 +114,12 @@
                 series: d.series,
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
-        }).catch(e => console.error('funnel', e));
+        }).catch(e => console.error('funnel:', e.message));
 
         // 2. Google -> pyramid
-        fetch('/api/integrations/tgg/google-literacy').then(r => r.json()).then(d => {
+        fetch('/api/integrations/tgg/google-literacy').then(async r => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
             Highcharts.chart('oauth-pyramid', {
                 chart: { type: 'pyramid', backgroundColor: 'transparent' },
                 title: { text: 'Alfabetización por tramos (Google + DB propia)', style: { color: '#e5c07b' } },
@@ -122,10 +128,12 @@
                 series: d.series,
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
-        }).catch(e => console.error('pyramid', e));
+        }).catch(e => console.error('pyramid:', e.message));
 
         // 3. LinkedIn -> variablepie
-        fetch('/api/integrations/tgg/linkedin-edu').then(r => r.json()).then(d => {
+        fetch('/api/integrations/tgg/linkedin-edu').then(async r => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
             Highcharts.chart('oauth-variablepie', {
                 chart: { type: 'variablepie', backgroundColor: 'transparent' },
                 title: { text: 'Alfabetización + brecha (LinkedIn + DB propia)', style: { color: '#e5c07b' } },
@@ -133,7 +141,7 @@
                 series: [{ minPointSize: 10, innerSize: '20%', zMin: 0, name: 'Países', data: d.series[0].data }],
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
-        }).catch(e => console.error('variablepie', e));
+        }).catch(e => console.error('variablepie:', e.message));
     });
 </script>
 

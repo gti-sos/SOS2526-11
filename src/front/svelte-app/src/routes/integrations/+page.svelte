@@ -14,9 +14,9 @@
             <h2>JFM — Road Fatalities</h2>
             <p class="who">José Fernández Montero</p>
             <ul>
-                <li>Geoapify Places (API key) → <b>pie</b></li>
-                <li>HERE Traffic (Client Credentials) → <b>scatter</b></li>
-                <li>TomTom Traffic → <b>heatmap</b></li>
+                <li>UPS CIE API (OAuth2 Client Credentials) → <b>pie</b></li>
+                <li>Copernicus/ESA Data Space (OAuth2 Client Credentials) → <b>scatter</b></li>
+                <li>FedEx Sandbox API (OAuth2 Client Credentials) → <b>heatmap</b></li>
             </ul>
             <a class="btn" href="/analytics/road-fatalities">Ver widgets →</a>
         </article>
@@ -25,9 +25,9 @@
             <h2>MRG — Alcohol Consumption</h2>
             <p class="who">Miguel Ridao</p>
             <ul>
-                <li>Nutritionix (API key) → <b>bubble</b></li>
-                <li>USDA FoodData Central (API key) → <b>treemap</b></li>
-                <li>API-Ninjas Nutrition (API key) → <b>packedbubble</b></li>
+                <li>Vimeo (Client Credentials) → <b>bubble</b></li>
+                <li>Dailymotion (Client Credentials) → <b>treemap</b></li>
+                <li>Discord (Client Credentials) → <b>packedbubble</b></li>
             </ul>
             <a class="btn" href="/analytics/alcohol-consumptions-per-capita">Ver widgets →</a>
         </article>
@@ -47,12 +47,12 @@
     <section class="endpoints">
         <h2>Endpoints proxy disponibles</h2>
         <ul>
-            <li><code>GET /api/integrations/jfm/geoapify-fatalities</code></li>
-            <li><code>GET /api/integrations/jfm/here-traffic</code></li>
-            <li><code>GET /api/integrations/jfm/tomtom-traffic</code></li>
-            <li><code>GET /api/integrations/mrg/nutritionix-activity</code></li>
-            <li><code>GET /api/integrations/mrg/usda-health</code></li>
-            <li><code>GET /api/integrations/mrg/apininjas-nutrition</code></li>
+            <li><code>GET /api/integrations/jfm/ups-fatalities</code></li>
+            <li><code>GET /api/integrations/jfm/copernicus-fatalities</code></li>
+            <li><code>GET /api/integrations/jfm/fedex-fatalities</code></li>
+            <li><code>GET /api/integrations/mrg/vimeo-alcohol</code></li>
+            <li><code>GET /api/integrations/mrg/dailymotion-alcohol</code></li>
+            <li><code>GET /api/integrations/mrg/discord-alcohol</code></li>
             <li><code>GET /api/integrations/tgg/newsapi-education</code></li>
             <li><code>GET /api/integrations/tgg/google-literacy</code></li>
             <li><code>GET /api/integrations/tgg/linkedin-edu</code></li>
