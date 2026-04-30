@@ -4,7 +4,8 @@ export const BASE_URL_API_TGG_V2 = "/api/v2/literacy-rates";
 
 export function loadBackendTGGv2(app) {
     // Inicializamos NeDB con persistencia en archivo
-    const db = new Datastore({ filename: './data/literacy-rates-v2.db', autoload: true });
+    const db = new Datastore({ filename: './data/literacy-rates-v2.db', autoload: false });
+    db.loadDatabase();
 
     // Función auxiliar para validar JSON de literacy rates
     function isValidLiteracyStats(body) {

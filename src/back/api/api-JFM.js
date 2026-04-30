@@ -4,7 +4,8 @@ export const BASE_URL_API_JFM = "/api/v1/road-fatalities";
 
 export function loadBackendJFM(app) {
     // Inicializamos NeDB con persistencia en archivo
-    const db = new Datastore({ filename: './data/road-fatalities.db', autoload: true });
+    const db = new Datastore({ filename: './data/road-fatalities.db', autoload: false });
+    db.loadDatabase();
 
     // Función auxiliar estricta para validar JSON (Requisito: devolver 400 si no tiene la estructura exacta)
     function isValidRoadFatalities(body) {

@@ -8,7 +8,8 @@ const SECRET_KEY = "contraseñaMiguel";
 
 export function loadBackendMRGv2(app) {
 
-    const db = new Datastore({ filename: './data/alcohol-consumptions-per-capita-v2.db', autoload: true });
+    const db = new Datastore({ filename: './data/alcohol-consumptions-per-capita-v2.db', autoload: false });
+    db.loadDatabase();
 
     // --- MIDDLEWARE DE VERIFICACIÓN ---
     // Este es el "portero" que revisa el token antes de entrar a las rutas protegidas

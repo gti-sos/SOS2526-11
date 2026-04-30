@@ -4,7 +4,8 @@ export const BASE_URL_API_MRG = "/api/v1/alcohol-consumptions-per-capita";
 
 export function loadBackendMRG(app) {
     // Inicializamos NeDB con persistencia en archivo
-    const db = new Datastore({ filename: './data/alcohol-consumptions-per-capita.db', autoload: true });
+    const db = new Datastore({ filename: './data/alcohol-consumptions-per-capita.db', autoload: false });
+    db.loadDatabase();
 
     // Función auxiliar estricta para validar JSON
     function isValidAlcoholStats(body) {

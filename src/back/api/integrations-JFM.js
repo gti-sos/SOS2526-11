@@ -41,7 +41,8 @@ async function clientCredentials({ tokenUrl, clientId, clientSecret, scope }) {
 }
 
 export function loadBackendIntegrationsJFM(app) {
-  const db = new Datastore({ filename: "./data/road-fatalities-v2.db", autoload: true });
+  const db = new Datastore({ filename: "./data/road-fatalities-v2.db", autoload: false });
+  db.loadDatabase();
 
   const findAll = () => new Promise((res, rej) =>
     db.find({}, (err, docs) => (err ? rej(err) : res(docs)))
