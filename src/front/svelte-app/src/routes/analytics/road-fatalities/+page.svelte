@@ -143,11 +143,11 @@
             await import('highcharts/modules/heatmap');
         } catch (e) { console.warn('Highcharts modules', e); }
 
-        // 1. Azure Maps -> pie
-        fetch('/api/integrations/jfm/azure-fatalities').then(r => r.json()).then(d => {
+        // 1. Geoapify Places -> pie
+        fetch('/api/integrations/jfm/geoapify-fatalities').then(r => r.json()).then(d => {
             Highcharts.chart('oauth-pie', {
                 chart: { type: 'pie', backgroundColor: 'transparent' },
-                title: { text: 'Mortalidad por nivel de ingresos (Azure + DB propia)', style: { color: '#e5c07b' } },
+                title: { text: 'Mortalidad por nivel de ingresos (Geoapify + DB propia)', style: { color: '#e5c07b' } },
                 tooltip: { pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})' },
                 series: [{ name: 'Muertes', colorByPoint: true, data: d.series }],
                 legend: { itemStyle: { color: '#abb2bf' } }

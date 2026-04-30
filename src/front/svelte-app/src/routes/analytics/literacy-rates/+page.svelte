@@ -100,11 +100,11 @@
             await import('highcharts/modules/variable-pie');
         } catch (e) { console.warn('Highcharts modules', e); }
 
-        // 1. MS Graph -> funnel
-        fetch('/api/integrations/tgg/msgraph-education').then(r => r.json()).then(d => {
+        // 1. NewsAPI -> funnel
+        fetch('/api/integrations/tgg/newsapi-education').then(r => r.json()).then(d => {
             Highcharts.chart('oauth-funnel', {
                 chart: { type: 'funnel', backgroundColor: 'transparent' },
-                title: { text: 'Embudo educativo (MS Graph + DB propia)', style: { color: '#e5c07b' } },
+                title: { text: 'Embudo educativo (NewsAPI + DB propia)', style: { color: '#e5c07b' } },
                 tooltip: { pointFormat: '<b>{point.name}</b>: {point.y}' },
                 plotOptions: { series: { dataLabels: { enabled: true, format: '<b>{point.name}</b> ({point.y})', style: { color: '#abb2bf' } }, neckWidth: '30%', neckHeight: '25%' } },
                 series: d.series,

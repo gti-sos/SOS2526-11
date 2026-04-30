@@ -14,7 +14,7 @@
             <h2>JFM — Road Fatalities</h2>
             <p class="who">José Fernández Montero</p>
             <ul>
-                <li>Azure Maps (Client Credentials) → <b>pie</b></li>
+                <li>Geoapify Places (API key) → <b>pie</b></li>
                 <li>HERE Traffic (Client Credentials) → <b>scatter</b></li>
                 <li>TomTom Traffic → <b>heatmap</b></li>
             </ul>
@@ -25,9 +25,9 @@
             <h2>MRG — Alcohol Consumption</h2>
             <p class="who">Miguel Ridao</p>
             <ul>
-                <li>Fitbit (Refresh Token) → <b>bubble</b></li>
-                <li>Withings (Refresh Token) → <b>treemap</b></li>
-                <li>Apple Health (Bridge OAuth2) → <b>packedbubble</b></li>
+                <li>Nutritionix (API key) → <b>bubble</b></li>
+                <li>USDA FoodData Central (API key) → <b>treemap</b></li>
+                <li>API-Ninjas Nutrition (API key) → <b>packedbubble</b></li>
             </ul>
             <a class="btn" href="/analytics/alcohol-consumptions-per-capita">Ver widgets →</a>
         </article>
@@ -36,7 +36,7 @@
             <h2>TGG — Literacy Rates</h2>
             <p class="who">Tomás Gutiérrez García</p>
             <ul>
-                <li>Microsoft Graph (Client Credentials) → <b>funnel</b></li>
+                <li>NewsAPI (API key) → <b>funnel</b></li>
                 <li>Google Public Data (Client Credentials) → <b>pyramid</b></li>
                 <li>LinkedIn (Refresh Token) → <b>variablepie</b></li>
             </ul>
@@ -47,13 +47,13 @@
     <section class="endpoints">
         <h2>Endpoints proxy disponibles</h2>
         <ul>
-            <li><code>GET /api/integrations/jfm/azure-fatalities</code></li>
+            <li><code>GET /api/integrations/jfm/geoapify-fatalities</code></li>
             <li><code>GET /api/integrations/jfm/here-traffic</code></li>
             <li><code>GET /api/integrations/jfm/tomtom-traffic</code></li>
-            <li><code>GET /api/integrations/mrg/fitbit-activity</code></li>
-            <li><code>GET /api/integrations/mrg/withings-health</code></li>
-            <li><code>GET /api/integrations/mrg/apple-health</code></li>
-            <li><code>GET /api/integrations/tgg/msgraph-education</code></li>
+            <li><code>GET /api/integrations/mrg/nutritionix-activity</code></li>
+            <li><code>GET /api/integrations/mrg/usda-health</code></li>
+            <li><code>GET /api/integrations/mrg/apininjas-nutrition</code></li>
+            <li><code>GET /api/integrations/tgg/newsapi-education</code></li>
             <li><code>GET /api/integrations/tgg/google-literacy</code></li>
             <li><code>GET /api/integrations/tgg/linkedin-edu</code></li>
         </ul>

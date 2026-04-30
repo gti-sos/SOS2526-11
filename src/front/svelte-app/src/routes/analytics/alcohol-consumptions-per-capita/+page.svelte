@@ -93,40 +93,40 @@
             loading = false;
         }
 
-        // ---- Widgets OAuth2 (MRG: Fitbit, Withings, Apple Health) ----
+        // ---- Widgets externos (MRG: Nutritionix, USDA, API-Ninjas) ----
         try {
             await import('highcharts/highcharts-more');
             await import('highcharts/modules/treemap');
         } catch (e) { console.warn('Highcharts modules', e); }
 
-        // 1. Fitbit -> bubble
-        fetch('/api/integrations/mrg/fitbit-activity').then(r => r.json()).then(d => {
+        // 1. Nutritionix -> bubble
+        fetch('/api/integrations/mrg/nutritionix-activity').then(r => r.json()).then(d => {
             Highcharts.chart('oauth-bubble', {
                 chart: { type: 'bubble', backgroundColor: 'transparent', plotBorderWidth: 1, zoomType: 'xy' },
-                title: { text: 'Alcohol vs salud (Fitbit + DB propia)', style: { color: '#e5c07b' } },
+                title: { text: 'Alcohol vs salud (Nutritionix + DB propia)', style: { color: '#e5c07b' } },
                 xAxis: { title: { text: 'Consumo alcohol', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
                 yAxis: { title: { text: 'Esperanza vida (proxy)', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
-                tooltip: { useHTML: true, pointFormat: '<b>{point.name}</b><br>Alcohol: {point.x}<br>Vida: {point.y}<br>Pasos: {point.z}' },
+                tooltip: { useHTML: true, pointFormat: '<b>{point.name}</b><br>Alcohol: {point.x}<br>Vida: {point.y}<br>Cal/10: {point.z}' },
                 series: d.series,
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
         }).catch(e => console.error('bubble', e));
 
-        // 2. Withings -> treemap
-        fetch('/api/integrations/mrg/withings-health').then(r => r.json()).then(d => {
+        // 2. USDA FoodData -> treemap
+        fetch('/api/integrations/mrg/usda-health').then(r => r.json()).then(d => {
             Highcharts.chart('oauth-treemap', {
                 chart: { backgroundColor: 'transparent' },
-                title: { text: 'Consumo año/país (Withings + DB propia)', style: { color: '#e5c07b' } },
+                title: { text: 'Consumo año/país (USDA + DB propia)', style: { color: '#e5c07b' } },
                 tooltip: { pointFormat: '<b>{point.name}</b>: {point.value}' },
                 series: [{ type: 'treemap', layoutAlgorithm: 'squarified', allowTraversingTree: true, data: d.data }]
             });
         }).catch(e => console.error('treemap', e));
 
-        // 3. Apple Health -> packedbubble
-        fetch('/api/integrations/mrg/apple-health').then(r => r.json()).then(d => {
+        // 3. API-Ninjas Nutrition -> packedbubble
+        fetch('/api/integrations/mrg/apininjas-nutrition').then(r => r.json()).then(d => {
             Highcharts.chart('oauth-packedbubble', {
                 chart: { type: 'packedbubble', backgroundColor: 'transparent' },
-                title: { text: 'Consumo agrupado por país (Apple Health + DB propia)', style: { color: '#e5c07b' } },
+                title: { text: 'Consumo agrupado por país (API-Ninjas + DB propia)', style: { color: '#e5c07b' } },
                 tooltip: { useHTML: true, pointFormat: '<b>{point.name}</b>: {point.value}' },
                 plotOptions: { packedbubble: { minSize: '20%', maxSize: '100%', layoutAlgorithm: { gravitationalConstant: 0.05 } } },
                 series: d.series,

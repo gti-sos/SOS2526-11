@@ -63,21 +63,14 @@ export function loadBackendIntegrationsTGG(app) {
     db.find({}, (err, docs) => (err ? rej(err) : res(docs)))
   );
 
-  // -------- 1. Microsoft Graph -> funnel --------------------------------
-  app.get(BASE_URL_INTEGRATIONS_TGG + "/msgraph-education", async (req, res) => {
+  // -------- 1. NewsAPI -> funnel ----------------------------------------
+  app.get(BASE_URL_INTEGRATIONS_TGG + "/newsapi-education", async (req, res) => {
     try {
-      const token = await getToken("tgg_msgraph", () => clientCredentials({
-        tokenUrl: `https://login.microsoftonline.com/${process.env.MS_TENANT_ID}/oauth2/v2.0/token`,
-        clientId: process.env.MS_CLIENT_ID,
-        clientSecret: process.env.MS_CLIENT_SECRET,
-        scope: "https://graph.microsoft.com/.default",
-      }));
+      const ext = await fetch(
+        `https://newsapi.org/v2/everything?q=literacy+education&pageSize=20&apiKey=${process.env.NEWSAPI_KEY}`
+      ).then(r => r.json());
 
-      const ext = await fetch("https://graph.microsoft.com/v1.0/education/schools", {
-        headers: { Authorization: `Bearer ${token}` },
-      }).then(r => r.json());
-
-      const schools = (ext.value || []).length || 1;
+      const schools = (ext.articles || []).length || 1;
 
       // Funnel: alfabetización media global -> hombres -> mujeres -> aprueban (estimado)
       const docs = await findAll();

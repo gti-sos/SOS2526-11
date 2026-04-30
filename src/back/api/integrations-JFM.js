@@ -47,24 +47,16 @@ export function loadBackendIntegrationsJFM(app) {
     db.find({}, (err, docs) => (err ? rej(err) : res(docs)))
   );
 
-  // -------- 1. Azure Maps -> pie ----------------------------------------
-  app.get(BASE_URL_INTEGRATIONS_JFM + "/azure-fatalities", async (req, res) => {
+  // -------- 1. Geoapify Places -> pie -----------------------------------
+  app.get(BASE_URL_INTEGRATIONS_JFM + "/geoapify-fatalities", async (req, res) => {
     try {
-      const token = await getToken("jfm_azure", () => clientCredentials({
-        tokenUrl: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/oauth2/v2.0/token`,
-        clientId: process.env.AZURE_CLIENT_ID,
-        clientSecret: process.env.AZURE_CLIENT_SECRET,
-        scope: "https://atlas.microsoft.com/.default",
-      }));
-
       const ext = await fetch(
-        "https://atlas.microsoft.com/traffic/incident/json?api-version=1.0&boundingbox=-10,35,5,44",
-        { headers: { Authorization: `Bearer ${token}` } }
+        `https://api.geoapify.com/v2/places?categories=service.vehicle&filter=rect:-10,35,5,44&limit=20&apiKey=${process.env.GEOAPIFY_KEY}`
       ).then(r => r.json());
 
-      // Distribución por nivel de ingresos (DB propia) ponderada por nº de incidentes Azure
+      // Distribución por nivel de ingresos (DB propia) ponderada por nº de POIs Geoapify
       const docs = await findAll();
-      const incidents = (ext.tm?.poi || []).length || 1;
+      const incidents = (ext.features || []).length || 1;
       const byIncome = {};
       docs.forEach(d => {
         byIncome[d.income_level] = (byIncome[d.income_level] || 0) + d.total_death;
