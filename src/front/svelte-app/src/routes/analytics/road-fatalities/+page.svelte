@@ -171,14 +171,26 @@
                 subtitle: { text: subtitle, style: { color: '#abb2bf', fontSize: '11px' } },
                 // @ts-ignore
                 tooltip: {
+                    useHTML: true,
                     formatter: function (this: any) {
                         const p: any = this.point;
+                        const avg = p.avgDeathRate ?? 'N/A';
+                        const ws = p.weightedScore ?? (avg !== 'N/A' ? Math.round(p.y * avg) : 'N/A');
                         const limitText = p.limitReached
-                            ? `<br/>Límite alcanzado: máximo ${postLimit} posts solicitados`
+                            ? `<br/><em>Límite alcanzado: máx. ${postLimit} posts solicitados</em>`
+                            : '';
+                        const fallbackText = p.dataSource !== 'api'
+                            ? `<br/><em style="color:#f87171">Aviso: usando fallback local (Mastodon no respondió)</em>`
                             : '';
                         return `<b>${p.name}</b><br/>` +
-                               `Posts recuperados: <b>${p.y}</b> (${this.percentage?.toFixed(1)}%)${limitText}<br/>` +
-                               `No representa el total histórico de Mastodon.`;
+                               `Posts recuperados de Mastodon: <b>${p.y}</b> (${this.percentage?.toFixed(1)}%)${limitText}<br/>` +
+                               `No representa el total histórico de Mastodon.<br/>` +
+                               `<hr style="margin:4px 0;border-color:#374151"/>` +
+                               `API propia: <b>road-fatalities-v2</b><br/>` +
+                               `Datos propios: <code>population_death_rate</code>, <code>total_death</code>, <code>income_level</code><br/>` +
+                               `API externa: <b>Mastodon API</b> mediante OAuth2<br/>` +
+                               `Operación: <code>posts_recuperados × avgDeathRate</code><br/>` +
+                               `Cálculo: ${p.y} × ${avg} = <b>${ws}</b>${fallbackText}`;
                     },
                 },
                 series: [{
@@ -188,6 +200,9 @@
                         name: h.tag,
                         y: h.count,
                         limitReached: h.limitReached,
+                        weightedScore: h.weightedScore,
+                        avgDeathRate: d?.dbContext?.avgDeathRate,
+                        dataSource: d.dataSource,
                     })),
                 }],
                 legend: { itemStyle: { color: '#abb2bf' } }
@@ -213,7 +228,29 @@
                 subtitle: { text: scatterSubtitle, style: { color: '#abb2bf', fontSize: '11px' } },
                 xAxis: { title: { text: 'Vehicle death rate', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
                 yAxis: { title: { text: 'Population death rate (ajustada)', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
-                tooltip: { pointFormat: '<b>{point.name}</b><br>x={point.x}, y={point.y:.4f}' },
+                // @ts-ignore
+                tooltip: {
+                    useHTML: true,
+                    formatter: function (this: any) {
+                        const p: any = this.point;
+                        const origPDR = p.originalPopulationDeathRate ?? p.y;
+                        const origVDR = p.originalVehicleDeathRate ?? p.x;
+                        const ic = imageCount;
+                        const adjusted = (Number(origPDR) * (1 + Number(ic) / 200)).toFixed(4);
+                        const fallbackText = d.dataSource !== 'api'
+                            ? `<br/><em style="color:#f87171">Aviso: usando fallback local (Copernicus no respondió)</em>`
+                            : '';
+                        return `<b>${p.name}</b><br/>` +
+                               `API propia: <b>road-fatalities-v2</b><br/>` +
+                               `<code>vehicle_death_rate</code>: <b>${origVDR}</b><br/>` +
+                               `<code>population_death_rate</code> original: <b>${origPDR}</b><br/>` +
+                               `<hr style="margin:4px 0;border-color:#374151"/>` +
+                               `API externa: <b>Copernicus Data Space API</b> mediante OAuth2 password grant<br/>` +
+                               `Productos Sentinel-2 usados: <b>${ic}</b><br/>` +
+                               `Operación: <code>population_death_rate × (1 + imageCount / 200)</code><br/>` +
+                               `Cálculo: ${origPDR} × (1 + ${ic} / 200) = <b>${adjusted}</b>${fallbackText}`;
+                    },
+                },
                 series: d.series,
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
@@ -260,14 +297,25 @@
                 colorAxis: { min: 0, minColor: '#1c1f24', maxColor: '#e06c75' },
                 // @ts-ignore
                 tooltip: {
-                    // El tooltip muestra la fórmula: total_death / locationCount_de_FedEx
+                    useHTML: true,
                     formatter: function (this: any) {
                         const point = this.point;
-                        const year    = d.xCategories?.[point.x] ?? 'N/A';
-                        const nation  = d.yCategories?.[point.y] ?? 'N/A';
+                        const year   = d.xCategories?.[point.x] ?? 'N/A';
+                        const nation = d.yCategories?.[point.y] ?? 'N/A';
+                        const lc = Number(locationCount);
+                        const totalDeathApprox = isNaN(lc) ? '?' : Math.round(point.value * lc);
+                        const fallbackText = d.dataSource !== 'api'
+                            ? `<br/><em style="color:#f87171">Aviso: usando fallback local (FedEx no respondió)</em>`
+                            : '';
                         return `<b>${nation}</b> (${year})<br/>` +
-                               `Valor: <b>${point.value}</b><br/>` +
-                               `Muertes registradas / ${locationCount} puntos FedEx`;
+                               `Valor representado: <b>${point.value}</b><br/>` +
+                               `<hr style="margin:4px 0;border-color:#374151"/>` +
+                               `API propia: <b>road-fatalities-v2</b><br/>` +
+                               `Datos propios: <code>total_death</code>, <code>nation</code>, <code>year</code><br/>` +
+                               `API externa: <b>FedEx Locations API</b> mediante OAuth2<br/>` +
+                               `Localizaciones FedEx usadas: <b>${locationCount}</b><br/>` +
+                               `Operación: <code>total_death / locationCount</code><br/>` +
+                               `Cálculo aprox: ${totalDeathApprox} / ${locationCount} = <b>${point.value}</b>${fallbackText}`;
                     }
                 },
                 // Los datos vienen del backend: cada punto es [idxAño, idxNación, total_death/locationCount]
