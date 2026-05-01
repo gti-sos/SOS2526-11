@@ -8,6 +8,7 @@
     let fedexData: any = $state(null);
     let copernicusData: any = $state(null);
     let sos12Data: any = $state(null);
+    let sos14Data: any = $state(null);
     let sos20Data: any = $state(null);
     let sos21Data: any = $state(null);
 
@@ -329,7 +330,12 @@
             .then(async r => { const d = await r.json(); sos12Data = d; })
             .catch(e => { sos12Data = { api: 'SOS2526-12', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
 
-        // 5. SOS2526-20 -> spice-stats (proxy SOS)
+        // 5. SOS2526-14 -> meteorite-landings (proxy SOS)
+        fetch('/api/integrations/jfm/sos14-meteorite-landings')
+            .then(async r => { const d = await r.json(); sos14Data = d; })
+            .catch(e => { sos14Data = { api: 'SOS2526-14', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
+
+        // 6. SOS2526-20 -> spice-stats (proxy SOS)
         fetch('/api/integrations/jfm/sos20-spice-stats')
             .then(async r => { const d = await r.json(); sos20Data = d; })
             .catch(e => { sos20Data = { api: 'SOS2526-20', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
@@ -586,6 +592,39 @@
                         <tbody>
                             {#each sos12Data.data as row}
                                 <tr>{#each headers12 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>
+                            {/each}
+                        </tbody>
+                    </table>
+                </div>
+            {/if}
+        </div>
+        {/if}
+
+        {#if sos14Data}
+        <div class="sos-integration-card">
+            <h2>{sos14Data.api}</h2>
+            <p><strong>Grupo:</strong> {sos14Data.group}</p>
+            <p><strong>Integrado por:</strong> {sos14Data.integratedBy}</p>
+            <p><strong>Fuente:</strong> {sos14Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'}</p>
+            <p><strong>Registros recibidos:</strong> {sos14Data.count}</p>
+            <p><strong>URL externa:</strong> <code>{sos14Data.sourceUrl}</code></p>
+            <p>{sos14Data.explanation}</p>
+
+            {#if sos14Data.apiError}
+                <p class="api-error">Error: {sos14Data.apiError}</p>
+            {/if}
+
+            {#if sos14Data.data?.length}
+                {@const headers14 = sos14Data.fieldsShown?.length ? sos14Data.fieldsShown : Object.keys(sos14Data.data[0]).slice(0, 6)}
+                <p class="sos-table-info">Mostrando {sos14Data.data.length} de {sos14Data.count} registros recibidos.</p>
+                <div class="sos-table-scroll">
+                    <table class="sos-table">
+                        <thead>
+                            <tr>{#each headers14 as key}<th>{key}</th>{/each}</tr>
+                        </thead>
+                        <tbody>
+                            {#each sos14Data.data as row}
+                                <tr>{#each headers14 as key}<td>{row[key] ?? 'N/A'}</td>{/each}</tr>
                             {/each}
                         </tbody>
                     </table>

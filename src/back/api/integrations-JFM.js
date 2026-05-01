@@ -267,6 +267,7 @@ export function loadBackendIntegrationsJFM(app) {
           BASE_URL_INTEGRATIONS_JFM + "/copernicus-fatalities",
           BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities",
           BASE_URL_INTEGRATIONS_JFM + "/sos12-birth-death-growth",
+          BASE_URL_INTEGRATIONS_JFM + "/sos14-meteorite-landings",
           BASE_URL_INTEGRATIONS_JFM + "/sos20-spice-stats",
           BASE_URL_INTEGRATIONS_JFM + "/sos21-aids-deaths-stats",
         ],
@@ -789,7 +790,69 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   });
 
   // -------------------------------------------------------------------
-  // 5. SOS2526-20 -> spice-stats (proxy SOS)
+  // 5. SOS2526-14 -> meteorite-landings (proxy SOS)
+  // -------------------------------------------------------------------
+  app.get(BASE_URL_INTEGRATIONS_JFM + "/sos14-meteorite-landings", async (req, res) => {
+    const SOURCE_URL = "https://meteorite-landings-tvcf.onrender.com/api/v2/meteorite-landings";
+    const FIELDS_SHOWN = ["name", "year", "mass", "country", "geolocation", "id"];
+    try {
+      const r = await fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 45000);
+      const text = await r.text();
+      let json;
+      try {
+        json = text ? JSON.parse(text) : [];
+      } catch {
+        throw new Error(`Respuesta no JSON desde SOS14. HTTP ${r.status}: ${text.slice(0, 300)}`);
+      }
+      if (!r.ok) throw new Error(`HTTP ${r.status} desde SOS14: ${text.slice(0, 300)}`);
+
+      const rows = extractArrayPayload(json);
+      const normalizedRows = rows.map(row => ({
+        name:        row.name,
+        year:        row.year,
+        mass:        row.mass,
+        country:     row.country,
+        geolocation: row.geolocation,
+        id:          row.id,
+      }));
+      const visibleLimit = Math.min(normalizedRows.length, 50);
+
+      res.json({
+        api: "SOS2526-14 meteorite-landings",
+        sourceUrl: SOURCE_URL,
+        dataSource: "api",
+        apiError: null,
+        externalApiUsed: true,
+        sosApi: true,
+        group: "SOS2526-14",
+        integratedBy: "JFM",
+        fetchedAt: new Date().toISOString(),
+        count: rows.length,
+        fieldsShown: FIELDS_SHOWN,
+        explanation: "API de alumno SOS2526-14 integrada mediante proxy propio. Se reciben datos JSON sobre aterrizajes de meteoritos y se muestran en HTML.",
+        data: normalizedRows.slice(0, visibleLimit),
+      });
+    } catch (e) {
+      res.json({
+        api: "SOS2526-14 meteorite-landings",
+        sourceUrl: SOURCE_URL,
+        dataSource: "api-error",
+        apiError: e.message,
+        externalApiUsed: false,
+        sosApi: true,
+        group: "SOS2526-14",
+        integratedBy: "JFM",
+        fetchedAt: new Date().toISOString(),
+        count: 0,
+        fieldsShown: [],
+        explanation: "No se pudo consultar la API SOS2526-14 externa.",
+        data: [],
+      });
+    }
+  });
+
+  // -------------------------------------------------------------------
+  // 6. SOS2526-20 -> spice-stats (proxy SOS)
   // -------------------------------------------------------------------
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos20-spice-stats", async (req, res) => {
     const SOURCE_URL = "https://sos2526-20-stable.onrender.com/api/v2/spice-stats/";
