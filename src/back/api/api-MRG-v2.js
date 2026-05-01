@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"; // 1. Importamos la librería
 export const BASE_URL_API_MRG_V2 = "/api/v2/alcohol-consumptions-per-capita";
 
 // 2. Definimos tu clave secreta
-const SECRET_KEY = "contraseñaMiguel"; 
+const SECRET_KEY = "contraseñaMiguel";
 
 export function loadBackendMRGv2(app) {
 
@@ -13,7 +13,7 @@ export function loadBackendMRGv2(app) {
     // Este es el "portero" que revisa el token antes de entrar a las rutas protegidas
     function verifyToken(req, res, next) {
         const authHeader = req.headers['authorization'];
-        
+
         if (!authHeader) {
             return res.status(403).json({ error: "No se ha proporcionado un token de autenticación." });
         }
@@ -57,7 +57,7 @@ export function loadBackendMRGv2(app) {
         }
     });
 
-    
+
     app.get(BASE_URL_API_MRG_V2 + "/docs", (req, res) => {
         res.redirect("https://documenter.getpostman.com/view/52276603/2sBXijJBwi");
     });
@@ -66,21 +66,23 @@ export function loadBackendMRGv2(app) {
     app.get(BASE_URL_API_MRG_V2 + "/loadInitialData", (req, res) => {
         db.find({}, (err, docs) => {
             if (err) return res.status(500).json({ error: "Error interno del servidor" });
-            
+
             if (docs.length > 0) {
                 return res.status(400).json({ error: "Bad Request: Data already exists" });
             } else {
                 const initialData = [
                     { nation: "Albania", date_year: 2016, alcohol_litre: 7.5, recorded_consumption: 4.4, unrecorded_consumption: 0.7 },
-                    { nation: "Angola", date_year: 2016, alcohol_litre: 8.8, recorded_consumption: 4.8, unrecorded_consumption: 0.9 },
-                    { nation: "Argentina", date_year: 2016, alcohol_litre: 9.8, recorded_consumption: 5.6, unrecorded_consumption: 1.0 },
-                    { nation: "Armenia", date_year: 2016, alcohol_litre: 5.5, recorded_consumption: 2.9, unrecorded_consumption: 0.5 },
-                    { nation: "Australia", date_year: 2016, alcohol_litre: 10.6, recorded_consumption: 6.8, unrecorded_consumption: 1.1 },
-                    { nation: "Austria", date_year: 2016, alcohol_litre: 11.6, recorded_consumption: 7.2, unrecorded_consumption: 1.2 },
-                    { nation: "Belgium", date_year: 2016, alcohol_litre: 12.1, recorded_consumption: 10.4, unrecorded_consumption: 1.7 },
-                    { nation: "Brazil", date_year: 2016, alcohol_litre: 7.8, recorded_consumption: 6.1, unrecorded_consumption: 1.7 },
-                    { nation: "Canada", date_year: 2016, alcohol_litre: 8.9, recorded_consumption: 6.9, unrecorded_consumption: 2.0 },
-                    { nation: "Chile", date_year: 2016, alcohol_litre: 9.3, recorded_consumption: 7.7, unrecorded_consumption: 1.6 }
+                    { nation: "Albania", date_year: 1996, alcohol_litre: 2.59, recorded_consumption: 4.4, unrecorded_consumption: 0.7 },
+                    { nation: "Albania", date_year: 2019, alcohol_litre: 5.1, recorded_consumption: 4.4, unrecorded_consumption: 0.7 },
+                    { nation: "Brazil", date_year: 2016, alcohol_litre: 7.8, recorded_consumption: 6.3, unrecorded_consumption: 1.4 },
+                    { nation: "Brazil", date_year: 2019, alcohol_litre: 7.7, recorded_consumption: 6.3, unrecorded_consumption: 1.4 },
+                    { nation: "Andorra", date_year: 2019, alcohol_litre: 11.3, recorded_consumption: 11.1, unrecorded_consumption: 0.4 },
+                    { nation: "Angola", date_year: 2016, alcohol_litre: 6.4, recorded_consumption: 5.3, unrecorded_consumption: 0.9 },
+                    { nation: "Argentina", date_year: 2019, alcohol_litre: 8.0, recorded_consumption: 7.6, unrecorded_consumption: 0.4 },
+                    { nation: "Armenia", date_year: 2016, alcohol_litre: 5.5, recorded_consumption: 4.1, unrecorded_consumption: 0.9 },
+                    { nation: "Austria", date_year: 2016, alcohol_litre: 11.6, recorded_consumption: 11.7, unrecorded_consumption: 0.4 },
+                    { nation: "Australia", date_year: 2016, alcohol_litre: 10.6, recorded_consumption: 9.5, unrecorded_consumption: 0.4 },
+                    { nation: "Denmark", date_year: 2016, alcohol_litre: 10.4, recorded_consumption: 9.2, unrecorded_consumption: 0.4 }
                 ];
 
                 db.insert(initialData, (err, newDocs) => {
@@ -112,7 +114,7 @@ export function loadBackendMRGv2(app) {
             res.status(200).json(docs);
         });
     });
-    
+
 
     // GET a recurso concreto (PÚBLICO)
     app.get(BASE_URL_API_MRG_V2 + "/:nation/:date_year", (req, res) => {
@@ -135,7 +137,7 @@ export function loadBackendMRGv2(app) {
 
         db.find({ nation: newData.nation, date_year: newData.date_year }, (err, docs) => {
             if (err) return res.status(500).json({ error: "Error interno del servidor" });
-            
+
             if (docs.length > 0) {
                 return res.status(409).json({ error: "Conflict: Ya existe una entrada para ese país y año" });
             } else {
