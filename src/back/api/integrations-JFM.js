@@ -216,6 +216,33 @@ const MASTODON_HASHTAGS = [
   "SiniestroVial",
 ];
 
+// ── Helpers para endpoints SOS ────────────────────────────────────────
+
+function extractArrayPayload(json) {
+  if (Array.isArray(json)) return json;
+  if (Array.isArray(json?.data)) return json.data;
+  if (Array.isArray(json?.results)) return json.results;
+  if (Array.isArray(json?.items)) return json.items;
+  if (Array.isArray(json?.records)) return json.records;
+  return [];
+}
+
+function pickFields(rows, preferredFields = [], maxFields = 5) {
+  if (!rows.length || typeof rows[0] !== "object") return [];
+  const keys = Object.keys(rows[0]);
+  const preferred = preferredFields.filter(k => keys.includes(k));
+  const remaining = keys.filter(k => !preferred.includes(k));
+  return [...preferred, ...remaining].slice(0, maxFields);
+}
+
+function projectRows(rows, fields, limit = 10) {
+  return rows.slice(0, limit).map(row => {
+    const projected = {};
+    fields.forEach(f => { projected[f] = row?.[f]; });
+    return projected;
+  });
+}
+
 export function loadBackendIntegrationsJFM(app) {
   const dbFindAll = () =>
     new Promise((resolve, reject) => {
@@ -239,6 +266,8 @@ export function loadBackendIntegrationsJFM(app) {
           BASE_URL_INTEGRATIONS_JFM + "/mastodon-fatalities",
           BASE_URL_INTEGRATIONS_JFM + "/copernicus-fatalities",
           BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities",
+          BASE_URL_INTEGRATIONS_JFM + "/sos12-birth-death-growth",
+          BASE_URL_INTEGRATIONS_JFM + "/sos20-spice-stats",
         ],
       });
     } catch (e) {
@@ -687,4 +716,135 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
     });
   }
 });
+
+  // -------------------------------------------------------------------
+  // 4. SOS2526-12 -> birth-death-growth-rates (proxy SOS)
+  // -------------------------------------------------------------------
+  // Timeout 60s: Render free tier puede tardar ~50s en arrancar tras inactividad.
+  app.get(BASE_URL_INTEGRATIONS_JFM + "/sos12-birth-death-growth", async (req, res) => {
+    const SOURCE_URL = "https://sos2526-12.onrender.com/api/v2/birth-death-growth-rates";
+    try {
+      const r = await fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000);
+      const text = await r.text();
+      let json;
+      try {
+        json = text ? JSON.parse(text) : [];
+      } catch {
+        throw new Error(`Respuesta no JSON desde SOS12. HTTP ${r.status}: ${text.slice(0, 300)}`);
+      }
+      if (!r.ok) throw new Error(`HTTP ${r.status} desde SOS12: ${text.slice(0, 300)}`);
+
+      const items = extractArrayPayload(json);
+
+      // Detecta dinámicamente qué campo contiene la tasa de muerte en esta API.
+      const firstKeys = items.length ? Object.keys(items[0]) : [];
+      const deathField = ["crude_death_rate", "death_rate", "mortality_rate", "death"]
+        .find(f => firstKeys.includes(f)) ?? null;
+
+      const sos12Preferred = [
+        "country_name", "country", "nation",
+        "year",
+        "crude_birth_rate", "birth_rate",
+        deathField,
+        "growth_rate",
+        "country_code",
+      ].filter(Boolean);
+
+      const fields = pickFields(items, sos12Preferred, 6);
+      const projected = projectRows(items, fields, 10);
+
+      res.json({
+        api: "SOS2526-12 birth-death-growth-rates",
+        sourceUrl: SOURCE_URL,
+        dataSource: "api",
+        apiError: null,
+        externalApiUsed: true,
+        sosApi: true,
+        group: "SOS2526-12",
+        integratedBy: "JFM",
+        fetchedAt: new Date().toISOString(),
+        count: items.length,
+        fieldsShown: fields,
+        explanation: "Tasas de nacimiento, muerte y crecimiento por país y año, obtenidas desde la API SOS2526-12 mediante proxy propio y mostradas como tabla HTML.",
+        data: projected,
+      });
+    } catch (e) {
+      res.json({
+        api: "SOS2526-12 birth-death-growth-rates",
+        sourceUrl: SOURCE_URL,
+        dataSource: "api-error",
+        apiError: e.message,
+        externalApiUsed: false,
+        sosApi: true,
+        group: "SOS2526-12",
+        integratedBy: "JFM",
+        fetchedAt: new Date().toISOString(),
+        count: 0,
+        fieldsShown: [],
+        explanation: "No se pudo consultar la API SOS externa.",
+        data: [],
+      });
+    }
+  });
+
+  // -------------------------------------------------------------------
+  // 5. SOS2526-20 -> spice-stats (proxy SOS)
+  // -------------------------------------------------------------------
+  app.get(BASE_URL_INTEGRATIONS_JFM + "/sos20-spice-stats", async (req, res) => {
+    const SOURCE_URL = "https://sos2526-20-stable.onrender.com/api/v2/spice-stats/";
+    try {
+      const r = await fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 30000);
+      const text = await r.text();
+      let json;
+      try {
+        json = text ? JSON.parse(text) : [];
+      } catch {
+        throw new Error(`Respuesta no JSON desde SOS20. HTTP ${r.status}: ${text.slice(0, 300)}`);
+      }
+      if (!r.ok) throw new Error(`HTTP ${r.status} desde SOS20: ${text.slice(0, 300)}`);
+
+      const items = extractArrayPayload(json);
+
+      // Prioriza métricas económicas reales; evita códigos internos (domain_code, area_code, element_code).
+      const sos20Preferred = [
+        "area", "item", "year",
+        "import", "export", "production", "consumption",
+        "unit",
+      ];
+      const fields = pickFields(items, sos20Preferred, 7);
+      const projected = projectRows(items, fields, 10);
+
+      res.json({
+        api: "SOS2526-20 spice-stats",
+        sourceUrl: SOURCE_URL,
+        dataSource: "api",
+        apiError: null,
+        externalApiUsed: true,
+        sosApi: true,
+        group: "SOS2526-20",
+        integratedBy: "JFM",
+        fetchedAt: new Date().toISOString(),
+        count: items.length,
+        fieldsShown: fields,
+        explanation: "Estadísticas de especias por país, producto y año. La API SOS2526-20 aporta importación, exportación, producción y consumo, recibidos en JSON mediante proxy propio y mostrados como tabla HTML.",
+        data: projected,
+      });
+    } catch (e) {
+      res.json({
+        api: "SOS2526-20 spice-stats",
+        sourceUrl: SOURCE_URL,
+        dataSource: "api-error",
+        apiError: e.message,
+        externalApiUsed: false,
+        sosApi: true,
+        group: "SOS2526-20",
+        integratedBy: "JFM",
+        fetchedAt: new Date().toISOString(),
+        count: 0,
+        fieldsShown: [],
+        explanation: "No se pudo consultar la API SOS externa.",
+        data: [],
+      });
+    }
+  });
 }

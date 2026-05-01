@@ -7,6 +7,8 @@
     let mastodonData: any = $state(null);
     let fedexData: any = $state(null);
     let copernicusData: any = $state(null);
+    let sos12Data: any = $state(null);
+    let sos20Data: any = $state(null);
 
     onMount(async () => {
         try {
@@ -272,6 +274,16 @@
                 series: [{ name: 'total_death / locationCount', data: d.data, borderWidth: 1 }]
             });
         }).catch(e => console.error('heatmap:', e.message));
+
+        // 4. SOS2526-12 -> birth-death-growth-rates (proxy SOS)
+        fetch('/api/integrations/jfm/sos12-birth-death-growth')
+            .then(async r => { const d = await r.json(); sos12Data = d; })
+            .catch(e => { sos12Data = { api: 'SOS2526-12', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
+
+        // 5. SOS2526-20 -> spice-stats (proxy SOS)
+        fetch('/api/integrations/jfm/sos20-spice-stats')
+            .then(async r => { const d = await r.json(); sos20Data = d; })
+            .catch(e => { sos20Data = { api: 'SOS2526-20', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
     });
 </script>
 
@@ -362,6 +374,53 @@
     .back-btn:hover {
         background: rgba(224, 108, 117, 0.1);
     }
+
+    .sos-integration-section {
+        margin-top: 2rem;
+    }
+
+    .sos-integration-card {
+        background: #111827;
+        color: #d1d5db;
+        border-left: 4px solid #60a5fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .sos-integration-card h2 {
+        color: #e5c07b;
+        margin-top: 0;
+        font-size: 1.2rem;
+    }
+
+    .sos-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .sos-table th,
+    .sos-table td {
+        border: 1px solid #374151;
+        padding: 0.5rem;
+        text-align: left;
+    }
+
+    .sos-table th {
+        background: #1f2937;
+        color: #fbbf24;
+    }
+
+    .sos-table td {
+        color: #e5e7eb;
+    }
+
+    .api-error {
+        color: #f87171;
+        font-weight: 600;
+    }
 </style>
 
 <svelte:head>
@@ -429,4 +488,87 @@
         El valor representado es <code>total_death / locationCount</code>.
     </div>
     {/if}
+
+    <!-- ================================================================
+         Integraciones con APIs SOS de otros grupos (JFM)
+         ================================================================ -->
+    <h1 style="margin-top: 3rem;">Integraciones con APIs SOS de otros grupos</h1>
+
+    <section class="sos-integration-section">
+
+        {#if sos12Data}
+        <div class="sos-integration-card">
+            <h2>{sos12Data.api}</h2>
+            <p><strong>Grupo:</strong> {sos12Data.group}</p>
+            <p><strong>Integrado por:</strong> {sos12Data.integratedBy}</p>
+            <p><strong>Fuente:</strong> {sos12Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'}</p>
+            <p><strong>Registros recibidos:</strong> {sos12Data.count}</p>
+            <p><strong>URL externa:</strong> <code>{sos12Data.sourceUrl}</code></p>
+            <p>{sos12Data.explanation}</p>
+
+            {#if sos12Data.apiError}
+                <p class="api-error">Error: {sos12Data.apiError}</p>
+            {/if}
+
+            {#if sos12Data.data?.length}
+                <table class="sos-table">
+                    <thead>
+                        <tr>
+                            {#each Object.keys(sos12Data.data[0]).slice(0, 5) as key}
+                                <th>{key}</th>
+                            {/each}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each sos12Data.data.slice(0, 5) as row}
+                            <tr>
+                                {#each Object.keys(sos12Data.data[0]).slice(0, 5) as key}
+                                    <td>{row[key]}</td>
+                                {/each}
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            {/if}
+        </div>
+        {/if}
+
+        {#if sos20Data}
+        <div class="sos-integration-card">
+            <h2>{sos20Data.api}</h2>
+            <p><strong>Grupo:</strong> {sos20Data.group}</p>
+            <p><strong>Integrado por:</strong> {sos20Data.integratedBy}</p>
+            <p><strong>Fuente:</strong> {sos20Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'}</p>
+            <p><strong>Registros recibidos:</strong> {sos20Data.count}</p>
+            <p><strong>URL externa:</strong> <code>{sos20Data.sourceUrl}</code></p>
+            <p>{sos20Data.explanation}</p>
+
+            {#if sos20Data.apiError}
+                <p class="api-error">Error: {sos20Data.apiError}</p>
+            {/if}
+
+            {#if sos20Data.data?.length}
+                <table class="sos-table">
+                    <thead>
+                        <tr>
+                            {#each Object.keys(sos20Data.data[0]).slice(0, 5) as key}
+                                <th>{key}</th>
+                            {/each}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each sos20Data.data.slice(0, 5) as row}
+                            <tr>
+                                {#each Object.keys(sos20Data.data[0]).slice(0, 5) as key}
+                                    <td>{row[key]}</td>
+                                {/each}
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            {/if}
+        </div>
+        {/if}
+
+    </section>
 </main>
