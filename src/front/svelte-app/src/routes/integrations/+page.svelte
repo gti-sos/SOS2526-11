@@ -1,29 +1,3 @@
-<script lang="ts">
-    import { onMount } from 'svelte';
-
-    let sos12Data: any = $state(null);
-    let sos20Data: any = $state(null);
-
-    function tableHeaders(d: any): string[] {
-        if (d?.fieldsShown?.length) return d.fieldsShown;
-        if (d?.displayFields?.length) return d.displayFields; // compatibilidad hacia atrás
-        if (d?.data?.length && typeof d.data[0] === 'object') return Object.keys(d.data[0]).slice(0, 7);
-        return [];
-    }
-
-    onMount(() => {
-        fetch('/api/integrations/jfm/sos12-birth-death-growth')
-            .then(r => r.json())
-            .then(d => { sos12Data = d; })
-            .catch(e => { sos12Data = { api: 'SOS2526-12 birth-death-growth-rates', group: 'SOS2526-12', integratedBy: 'JFM', dataSource: 'api-error', apiError: e.message, count: 0, fieldsShown: [], data: [] }; });
-
-        fetch('/api/integrations/jfm/sos20-spice-stats')
-            .then(r => r.json())
-            .then(d => { sos20Data = d; })
-            .catch(e => { sos20Data = { api: 'SOS2526-20 spice-stats', group: 'SOS2526-20', integratedBy: 'JFM', dataSource: 'api-error', apiError: e.message, count: 0, fieldsShown: [], data: [] }; });
-    });
-</script>
-
 <svelte:head>
     <title>Integraciones | SOS2526-11</title>
 </svelte:head>
@@ -43,6 +17,9 @@
                 <li>Mastodon API (OAuth2 Client Credentials) → <b>pie</b></li>
                 <li>Copernicus/ESA Data Space (OAuth2 Client Credentials) → <b>scatter</b></li>
                 <li>FedEx Sandbox API (OAuth2 Client Credentials) → <b>heatmap</b></li>
+                <li>SOS2526-12 birth-death-growth-rates → <b>tabla HTML</b></li>
+                <li>SOS2526-20 spice-stats → <b>tabla HTML</b></li>
+                <li>SOS2526-21 aids-deaths-stats → <b>tabla HTML</b></li>
             </ul>
             <p class="signal-note">
                 Mastodon se usa como señal social externa relacionada con accidentes de tráfico, seguridad vial y movilidad.
@@ -85,6 +62,7 @@
             <li><code>GET /api/integrations/jfm/fedex-fatalities</code></li>
             <li><code>GET /api/integrations/jfm/sos12-birth-death-growth</code></li>
             <li><code>GET /api/integrations/jfm/sos20-spice-stats</code></li>
+            <li><code>GET /api/integrations/jfm/sos21-aids-deaths-stats</code></li>
             <li><code>GET /api/integrations/mrg/vimeo-alcohol</code></li>
             <li><code>GET /api/integrations/mrg/dailymotion-alcohol</code></li>
             <li><code>GET /api/integrations/mrg/discord-alcohol</code></li>
@@ -92,100 +70,6 @@
             <li><code>GET /api/integrations/tgg/google-literacy</code></li>
             <li><code>GET /api/integrations/tgg/linkedin-edu</code></li>
         </ul>
-    </section>
-
-    <!-- ================================================================
-         Integraciones con APIs SOS de otros grupos — datos en vivo
-         ================================================================ -->
-    <section class="sos-section">
-        <h2 class="sos-title">Integraciones con APIs SOS de otros grupos</h2>
-        <p class="sos-intro">
-            Datos obtenidos en tiempo real mediante proxy propio:
-            <code>frontend → /api/integrations/jfm/... → API SOS externa</code>.
-            No se muestra JSON crudo; los datos se renderizan en tablas HTML.
-        </p>
-
-        {#if !sos12Data && !sos20Data}
-            <p class="sos-loading">Cargando integraciones SOS… (puede tardar si el servidor externo está en cold start)</p>
-        {/if}
-
-        {#if sos12Data}
-        <div class="sos-card">
-            <div class="sos-card-header">
-                <h3>{sos12Data.api}</h3>
-                <span class="sos-badge {sos12Data.dataSource === 'api' ? 'badge-ok' : 'badge-err'}">
-                    {sos12Data.dataSource === 'api' ? '✓ API real' : '✗ Error de conexión'}
-                </span>
-            </div>
-            <div class="sos-meta">
-                <span><strong>Grupo:</strong> {sos12Data.group}</span>
-                <span><strong>Integrado por:</strong> {sos12Data.integratedBy}</span>
-                <span><strong>Registros:</strong> {sos12Data.count}</span>
-            </div>
-            <p class="sos-source">Fuente: <code>{sos12Data.sourceUrl}</code></p>
-            <p class="sos-desc">{sos12Data.explanation}</p>
-
-            {#if sos12Data.apiError}
-                <p class="sos-error">Error: {sos12Data.apiError}</p>
-            {/if}
-
-            {#if sos12Data.data?.length}
-                {@const headers = tableHeaders(sos12Data)}
-                <p class="sos-table-info">Mostrando {sos12Data.data.length} de {sos12Data.count} registros recibidos.</p>
-                <div class="sos-table-wrap">
-                    <table class="sos-table">
-                        <thead>
-                            <tr>{#each headers as h}<th>{h}</th>{/each}</tr>
-                        </thead>
-                        <tbody>
-                            {#each sos12Data.data as row}
-                                <tr>{#each headers as h}<td>{row[h] ?? '—'}</td>{/each}</tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                </div>
-            {/if}
-        </div>
-        {/if}
-
-        {#if sos20Data}
-        <div class="sos-card">
-            <div class="sos-card-header">
-                <h3>{sos20Data.api}</h3>
-                <span class="sos-badge {sos20Data.dataSource === 'api' ? 'badge-ok' : 'badge-err'}">
-                    {sos20Data.dataSource === 'api' ? '✓ API real' : '✗ Error de conexión'}
-                </span>
-            </div>
-            <div class="sos-meta">
-                <span><strong>Grupo:</strong> {sos20Data.group}</span>
-                <span><strong>Integrado por:</strong> {sos20Data.integratedBy}</span>
-                <span><strong>Registros:</strong> {sos20Data.count}</span>
-            </div>
-            <p class="sos-source">Fuente: <code>{sos20Data.sourceUrl}</code></p>
-            <p class="sos-desc">{sos20Data.explanation}</p>
-
-            {#if sos20Data.apiError}
-                <p class="sos-error">Error: {sos20Data.apiError}</p>
-            {/if}
-
-            {#if sos20Data.data?.length}
-                {@const headers = tableHeaders(sos20Data)}
-                <p class="sos-table-info">Mostrando {sos20Data.data.length} de {sos20Data.count} registros recibidos.</p>
-                <div class="sos-table-wrap">
-                    <table class="sos-table">
-                        <thead>
-                            <tr>{#each headers as h}<th>{h}</th>{/each}</tr>
-                        </thead>
-                        <tbody>
-                            {#each sos20Data.data as row}
-                                <tr>{#each headers as h}<td>{row[h] ?? '—'}</td>{/each}</tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                </div>
-            {/if}
-        </div>
-        {/if}
     </section>
 </main>
 
@@ -277,120 +161,4 @@
         font-size: 0.85rem;
     }
     .endpoints li { margin: 0.4rem 0; }
-
-    /* ── SOS integrations ── */
-    .sos-section {
-        margin-top: 3rem;
-    }
-    .sos-title {
-        color: #61afef;
-        margin-bottom: 0.5rem;
-    }
-    .sos-intro {
-        color: #abb2bf;
-        margin-bottom: 1.5rem;
-        font-size: 0.9rem;
-    }
-    .sos-intro code {
-        background: #1c1f24;
-        padding: 0.1rem 0.4rem;
-        border-radius: 3px;
-        color: #98c379;
-        font-size: 0.82rem;
-    }
-    .sos-loading {
-        color: #7f848e;
-        font-style: italic;
-        padding: 1rem 0;
-    }
-    .sos-card {
-        background: #111827;
-        border-left: 4px solid #60a5fa;
-        border-radius: 8px;
-        padding: 1.25rem;
-        margin-bottom: 1.5rem;
-        color: #d1d5db;
-    }
-    .sos-card-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 0.75rem;
-    }
-    .sos-card-header h3 {
-        color: #e5c07b;
-        margin: 0;
-        font-size: 1.1rem;
-    }
-    .sos-badge {
-        font-size: 0.78rem;
-        font-weight: 600;
-        padding: 0.2rem 0.6rem;
-        border-radius: 4px;
-    }
-    .badge-ok  { background: #14532d; color: #86efac; }
-    .badge-err { background: #450a0a; color: #fca5a5; }
-    .sos-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        font-size: 0.88rem;
-        margin-bottom: 0.6rem;
-        color: #9ca3af;
-    }
-    .sos-source {
-        font-size: 0.82rem;
-        color: #6b7280;
-        margin: 0.25rem 0 0.5rem;
-        word-break: break-all;
-    }
-    .sos-source code {
-        color: #60a5fa;
-        background: transparent;
-    }
-    .sos-desc {
-        font-size: 0.9rem;
-        margin: 0.4rem 0 0.75rem;
-        line-height: 1.5;
-    }
-    .sos-error {
-        color: #f87171;
-        font-weight: 600;
-        font-size: 0.88rem;
-    }
-    .sos-table-info {
-        font-size: 0.8rem;
-        color: #6b7280;
-        margin: 0.5rem 0 0;
-    }
-    .sos-table-wrap {
-        overflow-x: auto;
-        margin-top: 0.4rem;
-    }
-    .sos-table {
-        width: 100%;
-        min-width: 700px;
-        border-collapse: collapse;
-        font-size: 0.83rem;
-    }
-    .sos-table th {
-        background: #1f2937;
-        color: #fbbf24;
-        padding: 0.5rem 0.75rem;
-        text-align: left;
-        border: 1px solid #374151;
-        white-space: nowrap;
-    }
-    .sos-table td {
-        color: #e5e7eb;
-        padding: 0.45rem 0.75rem;
-        border: 1px solid #374151;
-        max-width: 200px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .sos-table tbody tr:hover td {
-        background: #1f2937;
-    }
 </style>

@@ -268,6 +268,7 @@ export function loadBackendIntegrationsJFM(app) {
           BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities",
           BASE_URL_INTEGRATIONS_JFM + "/sos12-birth-death-growth",
           BASE_URL_INTEGRATIONS_JFM + "/sos20-spice-stats",
+          BASE_URL_INTEGRATIONS_JFM + "/sos21-aids-deaths-stats",
         ],
       });
     } catch (e) {
@@ -843,6 +844,78 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         count: 0,
         fieldsShown: [],
         explanation: "No se pudo consultar la API SOS externa.",
+        data: [],
+      });
+    }
+  });
+
+  // -------------------------------------------------------------------
+  // 6. SOS2526-21 -> aids-deaths-stats (proxy SOS)
+  // -------------------------------------------------------------------
+  app.get(BASE_URL_INTEGRATIONS_JFM + "/sos21-aids-deaths-stats", async (req, res) => {
+    const SOURCE_URL = "https://soporte-sos.onrender.com/api/v1/aids-deaths-stats";
+    const FIELDS_SHOWN = ["country", "year", "under_5", "age_5_14", "age_15_49", "age_50_69", "age_70_plus", "total_deaths"];
+    try {
+      const r = await fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000);
+      const text = await r.text();
+      let json;
+      try {
+        json = text ? JSON.parse(text) : [];
+      } catch {
+        throw new Error(`Respuesta no JSON desde SOS21. HTTP ${r.status}: ${text.slice(0, 300)}`);
+      }
+      if (!r.ok) throw new Error(`HTTP ${r.status} desde SOS21: ${text.slice(0, 300)}`);
+
+      const items = extractArrayPayload(json);
+
+      const normalizedRows = items.map(row => ({
+        country:     row.country,
+        codecountry: row.codecountry,
+        year:        row.year,
+        under_5:     row.death_count_hiv_aids_under_5,
+        age_5_14:    row.death_count_hiv_aids_5_14,
+        age_15_49:   row.death_count_hiv_aids_15_49,
+        age_50_69:   row.death_count_hiv_aids_50_69,
+        age_70_plus: row.death_count_hiv_aids_70_plus,
+        total_deaths:
+          Number(row.death_count_hiv_aids_under_5  || 0) +
+          Number(row.death_count_hiv_aids_5_14     || 0) +
+          Number(row.death_count_hiv_aids_15_49    || 0) +
+          Number(row.death_count_hiv_aids_50_69    || 0) +
+          Number(row.death_count_hiv_aids_70_plus  || 0),
+      }));
+
+      const visibleLimit = Math.min(normalizedRows.length, 50);
+
+      res.json({
+        api: "SOS2526-21 aids-deaths-stats",
+        sourceUrl: SOURCE_URL,
+        dataSource: "api",
+        apiError: null,
+        externalApiUsed: true,
+        sosApi: true,
+        group: "SOS2526-21",
+        integratedBy: "JFM",
+        fetchedAt: new Date().toISOString(),
+        count: normalizedRows.length,
+        fieldsShown: FIELDS_SHOWN,
+        explanation: "API de alumno SOS2526-21 integrada mediante proxy propio. Se reciben datos JSON sobre muertes por VIH/SIDA por país, año y grupo de edad, y se muestran en HTML.",
+        data: normalizedRows.slice(0, visibleLimit),
+      });
+    } catch (e) {
+      res.json({
+        api: "SOS2526-21 aids-deaths-stats",
+        sourceUrl: SOURCE_URL,
+        dataSource: "api-error",
+        apiError: e.message,
+        externalApiUsed: false,
+        sosApi: true,
+        group: "SOS2526-21",
+        integratedBy: "JFM",
+        fetchedAt: new Date().toISOString(),
+        count: 0,
+        fieldsShown: [],
+        explanation: "No se pudo consultar la API SOS2526-21 externa.",
         data: [],
       });
     }
