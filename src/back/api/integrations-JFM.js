@@ -751,7 +751,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       ].filter(Boolean);
 
       const fields = pickFields(items, sos12Preferred, 6);
-      const projected = projectRows(items, fields, 10);
+      const projected = projectRows(items, fields, Math.min(items.length, 50));
 
       res.json({
         api: "SOS2526-12 birth-death-growth-rates",
@@ -812,7 +812,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         "unit",
       ];
       const fields = pickFields(items, sos20Preferred, 7);
-      const projected = projectRows(items, fields, 10);
+      const projected = projectRows(items, fields, Math.min(items.length, 50));
 
       res.json({
         api: "SOS2526-20 spice-stats",

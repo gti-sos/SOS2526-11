@@ -469,6 +469,17 @@
         color: #f87171;
         font-weight: 600;
     }
+
+    .sos-table-info {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin: 0.5rem 0 0;
+    }
+
+    .sos-table-scroll {
+        overflow-x: auto;
+        margin-top: 0.4rem;
+    }
 </style>
 
 <svelte:head>
@@ -559,24 +570,20 @@
             {/if}
 
             {#if sos12Data.data?.length}
-                <table class="sos-table">
-                    <thead>
-                        <tr>
-                            {#each Object.keys(sos12Data.data[0]).slice(0, 5) as key}
-                                <th>{key}</th>
+                {@const headers12 = sos12Data.fieldsShown?.length ? sos12Data.fieldsShown : Object.keys(sos12Data.data[0]).slice(0, 6)}
+                <p class="sos-table-info">Mostrando {sos12Data.data.length} de {sos12Data.count} registros recibidos.</p>
+                <div class="sos-table-scroll">
+                    <table class="sos-table">
+                        <thead>
+                            <tr>{#each headers12 as key}<th>{key}</th>{/each}</tr>
+                        </thead>
+                        <tbody>
+                            {#each sos12Data.data as row}
+                                <tr>{#each headers12 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>
                             {/each}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each sos12Data.data.slice(0, 5) as row}
-                            <tr>
-                                {#each Object.keys(sos12Data.data[0]).slice(0, 5) as key}
-                                    <td>{row[key]}</td>
-                                {/each}
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             {/if}
         </div>
         {/if}
@@ -596,24 +603,20 @@
             {/if}
 
             {#if sos20Data.data?.length}
-                <table class="sos-table">
-                    <thead>
-                        <tr>
-                            {#each Object.keys(sos20Data.data[0]).slice(0, 5) as key}
-                                <th>{key}</th>
+                {@const headers20 = sos20Data.fieldsShown?.length ? sos20Data.fieldsShown : Object.keys(sos20Data.data[0]).slice(0, 7)}
+                <p class="sos-table-info">Mostrando {sos20Data.data.length} de {sos20Data.count} registros recibidos.</p>
+                <div class="sos-table-scroll">
+                    <table class="sos-table">
+                        <thead>
+                            <tr>{#each headers20 as key}<th>{key}</th>{/each}</tr>
+                        </thead>
+                        <tbody>
+                            {#each sos20Data.data as row}
+                                <tr>{#each headers20 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>
                             {/each}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each sos20Data.data.slice(0, 5) as row}
-                            <tr>
-                                {#each Object.keys(sos20Data.data[0]).slice(0, 5) as key}
-                                    <td>{row[key]}</td>
-                                {/each}
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             {/if}
         </div>
         {/if}

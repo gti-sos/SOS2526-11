@@ -131,13 +131,14 @@
 
             {#if sos12Data.data?.length}
                 {@const headers = tableHeaders(sos12Data)}
+                <p class="sos-table-info">Mostrando {sos12Data.data.length} de {sos12Data.count} registros recibidos.</p>
                 <div class="sos-table-wrap">
                     <table class="sos-table">
                         <thead>
                             <tr>{#each headers as h}<th>{h}</th>{/each}</tr>
                         </thead>
                         <tbody>
-                            {#each sos12Data.data.slice(0, 5) as row}
+                            {#each sos12Data.data as row}
                                 <tr>{#each headers as h}<td>{row[h] ?? '—'}</td>{/each}</tr>
                             {/each}
                         </tbody>
@@ -169,13 +170,14 @@
 
             {#if sos20Data.data?.length}
                 {@const headers = tableHeaders(sos20Data)}
+                <p class="sos-table-info">Mostrando {sos20Data.data.length} de {sos20Data.count} registros recibidos.</p>
                 <div class="sos-table-wrap">
                     <table class="sos-table">
                         <thead>
                             <tr>{#each headers as h}<th>{h}</th>{/each}</tr>
                         </thead>
                         <tbody>
-                            {#each sos20Data.data.slice(0, 5) as row}
+                            {#each sos20Data.data as row}
                                 <tr>{#each headers as h}<td>{row[h] ?? '—'}</td>{/each}</tr>
                             {/each}
                         </tbody>
@@ -356,9 +358,14 @@
         font-weight: 600;
         font-size: 0.88rem;
     }
+    .sos-table-info {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin: 0.5rem 0 0;
+    }
     .sos-table-wrap {
         overflow-x: auto;
-        margin-top: 0.75rem;
+        margin-top: 0.4rem;
     }
     .sos-table {
         width: 100%;
