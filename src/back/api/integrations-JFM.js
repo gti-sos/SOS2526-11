@@ -81,11 +81,46 @@ function requireVars(...names) {
 }
 
 // ── Mastodon OAuth2 client_credentials ────────────────────────────────
+//
+// Flujo OAuth2: client_credentials.
+// El token se solicita a: {MASTODON_INSTANCE}/oauth/token
+// Con ese token se llama a: /api/v1/timelines/tag/{tag}
+// para obtener las publicaciones públicas de cada hashtag de seguridad vial.
+// Los conteos de posts se combinan con la DB propia mediante:
+//   weightedScore = count * avgDeathRate
+//
+// Si aparece "invalid_client", las credenciales del .env han expirado o son incorrectas.
+// Para crear una nueva app de Mastodon y obtener credenciales nuevas:
+//
+//   Git Bash:
+//     curl -X POST https://mastodon.social/api/v1/apps \
+//       -F "client_name=sos2526-jfm" \
+//       -F "redirect_uris=urn:ietf:wg:oauth:2.0:oob" \
+//       -F "scopes=read" \
+//       -F "website=https://sos2526-11.onrender.com"
+//
+//   PowerShell:
+//     curl.exe -X POST https://mastodon.social/api/v1/apps `
+//       -F "client_name=sos2526-jfm" `
+//       -F "redirect_uris=urn:ietf:wg:oauth:2.0:oob" `
+//       -F "scopes=read" `
+//       -F "website=https://sos2526-11.onrender.com"
+//
+// La respuesta devuelve client_id y client_secret. Actualizar en .env:
+//   MASTODON_CLIENT_ID=CLIENT_ID_DEVUELTO
+//   MASTODON_CLIENT_SECRET=CLIENT_SECRET_DEVUELTO
+//   MASTODON_INSTANCE=https://mastodon.social
+//
+// Prueba: GET http://localhost:8080/api/integrations/jfm/mastodon-fatalities
+//   Si funciona: "dataSource": "api", "externalApiUsed": true, "apiError": null
+//   Si falla:    "dataSource": "fallback-db" → revisar "apiError" para el motivo exacto
 async function mastodonToken() {
   requireVars("MASTODON_CLIENT_ID", "MASTODON_CLIENT_SECRET", "MASTODON_INSTANCE");
 
   const instance = process.env.MASTODON_INSTANCE.replace(/\/$/, "");
 
+  // Petición OAuth2 client_credentials al token endpoint de Mastodon.
+  // Las credenciales (client_id, client_secret) vienen siempre del .env, nunca del código.
   const j = await fetchJsonT(`${instance}/oauth/token`, {
     method: "POST",
     headers: {
@@ -210,9 +245,19 @@ export function loadBackendIntegrationsJFM(app) {
   // -------------------------------------------------------------------
   // 1. Mastodon -> pie
   // -------------------------------------------------------------------
-  // Señal social de seguridad vial combinada con la tasa media de fallecidos
-  // de tu DB. Cada slice: posts del hashtag × avgDeathRate.
-  // Si Mastodon falla, fallback: fallecidos reales de la DB agrupados por income_level.
+  // Fuentes combinadas:
+  //   - API propia road-fatalities-v2: aporta population_death_rate, total_death, income_level.
+  //   - API externa Mastodon (OAuth2 client_credentials): aporta el conteo de posts públicos
+  //     por hashtag de seguridad vial consultando /api/v1/timelines/tag/{tag}.
+  //
+  // Fórmula de combinación:
+  //   weightedScore = count_posts_Mastodon * avg_population_death_rate_from_DB
+  //
+  // Cada slice del pie representa un hashtag con su señal social ponderada por
+  // la mortalidad media de la DB propia.
+  //
+  // Si Mastodon no responde o las credenciales son inválidas, el fallback agrupa
+  // los total_death de la DB por income_level (high, middle, low).
   app.get(BASE_URL_INTEGRATIONS_JFM + "/mastodon-fatalities", async (req, res) => {
     try {
       const docs = await dbFindAll();
@@ -303,6 +348,22 @@ export function loadBackendIntegrationsJFM(app) {
           dataSource === "api"
             ? "Conteo de posts públicos de Mastodon por hashtag, ponderado por la tasa media de fallecidos en carretera de la DB propia."
             : "Fallback: fallecidos reales de la DB propia agrupados por nivel de ingresos del país porque Mastodon no estuvo disponible.",
+        integrationEvidence: {
+          ownApi: {
+            name: "road-fatalities-v2",
+            fieldsUsed: ["population_death_rate", "total_death", "income_level"],
+            docsUsed: docs.length,
+          },
+          externalApi: {
+            name: "Mastodon API",
+            endpoint: `${(process.env.MASTODON_INSTANCE || "https://mastodon.social").replace(/\/$/, "")}/api/v1/timelines/tag/{tag}`,
+            fieldsUsed: ["public posts count by hashtag"],
+            oauthUsed: true,
+            oauthFlow: "client_credentials",
+            hashtagsUsed: MASTODON_HASHTAGS,
+          },
+          formula: "weightedScore = public_posts_count_from_Mastodon * avg_population_death_rate_from_own_DB",
+        },
         hashtags,
         totalPosts,
         dbContext: {
