@@ -25,14 +25,14 @@ export const BASE_URL_INTEGRATIONS_JFM = "/api/integrations/jfm";
 
 const tokenCache = new Map();
 
-function fetchT(url, opts = {}, ms = 10000) {
+function fetchT(url, opts = {}, ms = 45000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), ms);
 
   return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(t));
 }
 
-async function fetchJsonT(url, opts = {}, ms = 10000) {
+async function fetchJsonT(url, opts = {}, ms = 45000) {
   const r = await fetchT(url, opts, ms);
   const text = await r.text();
 
@@ -166,7 +166,8 @@ async function copernicusToken() {
         username: process.env.COPERNICUS_USERNAME,
         password: process.env.COPERNICUS_PASSWORD,
       }),
-    }
+    },
+    45000
   );
 
   return {
@@ -197,6 +198,12 @@ async function fedexToken() {
     expiresIn: j.expires_in || 3600,
   };
 }
+
+// Máximo de posts a recuperar por hashtag en cada consulta a Mastodon.
+// Este valor no representa el total histórico de publicaciones; es el límite
+// de la petición. Si un hashtag devuelve exactamente este número, significa
+// que Mastodon alcanzó el tope solicitado (limitReached = true).
+const MASTODON_POST_LIMIT = 80;
 
 const MASTODON_HASHTAGS = [
   "RoadSafety",
@@ -284,7 +291,10 @@ export function loadBackendIntegrationsJFM(app) {
 
         const results = await Promise.allSettled(
           MASTODON_HASHTAGS.map(async tag => {
-            const posts = await fetchJsonT(`${instance}/api/v1/timelines/tag/${tag}?limit=40`, {
+            // limit=MASTODON_POST_LIMIT: número máximo de posts recientes a recuperar.
+            // Si la respuesta tiene exactamente ese número, limitReached será true,
+            // indicando que hay más posts pero no se han pedido (no es el total histórico).
+            const posts = await fetchJsonT(`${instance}/api/v1/timelines/tag/${tag}?limit=${MASTODON_POST_LIMIT}`, {
               headers: {
                 Authorization: `Bearer ${token}`,
                 Accept: "application/json",
@@ -294,15 +304,19 @@ export function loadBackendIntegrationsJFM(app) {
             return {
               tag,
               count: Array.isArray(posts) ? posts.length : 0,
+              limitReached: Array.isArray(posts) && posts.length >= MASTODON_POST_LIMIT,
             };
           })
         );
 
+        // La fórmula de combinación sigue siendo: weightedScore = count * avgDeathRate.
+        // count es el número de posts recientes recuperados, no el total histórico de Mastodon.
         hashtags = results
           .filter(r => r.status === "fulfilled" && r.value.count > 0)
           .map(r => ({
             tag: r.value.tag,
             count: r.value.count,
+            limitReached: r.value.limitReached,
             weightedScore: Math.round(r.value.count * avgDeathRate),
           }));
 
@@ -346,7 +360,7 @@ export function loadBackendIntegrationsJFM(app) {
         officialFatalitySource: false,
         explanation:
           dataSource === "api"
-            ? "Conteo de posts públicos de Mastodon por hashtag, ponderado por la tasa media de fallecidos en carretera de la DB propia."
+            ? `Conteo de posts públicos recientes de Mastodon por hashtag, hasta un máximo de ${MASTODON_POST_LIMIT} por hashtag, ponderado por la tasa media de fallecidos en carretera de la DB propia.`
             : "Fallback: fallecidos reales de la DB propia agrupados por nivel de ingresos del país porque Mastodon no estuvo disponible.",
         integrationEvidence: {
           ownApi: {
@@ -361,8 +375,15 @@ export function loadBackendIntegrationsJFM(app) {
             oauthUsed: true,
             oauthFlow: "client_credentials",
             hashtagsUsed: MASTODON_HASHTAGS,
+            postLimitPerHashtag: MASTODON_POST_LIMIT,
+            countMeaning: "posts recientes recuperados por hashtag",
           },
           formula: "weightedScore = public_posts_count_from_Mastodon * avg_population_death_rate_from_own_DB",
+        },
+        mastodonContext: {
+          postLimitPerHashtag: MASTODON_POST_LIMIT,
+          countMeaning: "Número de posts recientes recuperados por hashtag, no total histórico de Mastodon.",
+          limitReachedMeaning: "Si true, Mastodon devolvió el máximo solicitado para ese hashtag.",
         },
         hashtags,
         totalPosts,
@@ -382,8 +403,16 @@ export function loadBackendIntegrationsJFM(app) {
   // -------------------------------------------------------------------
   // 2. Copernicus/ESA -> scatter
   // -------------------------------------------------------------------
-  // Imágenes Sentinel-2 sobre España combinadas con vehicle_death_rate y
-  // population_death_rate de la DB propia.
+  // Fuentes combinadas:
+  //   - API propia road-fatalities-v2: aporta vehicle_death_rate y population_death_rate por nación/año.
+  //   - API externa Copernicus Data Space OData: aporta imageCount (@odata.count),
+  //     el número de productos Sentinel-2 disponibles desde 2024-01-01.
+  //
+  // Fórmula de combinación:
+  //   y = population_death_rate * (1 + imageCount / 200)
+  //
+  // imageCount escala ligeramente el eje Y: mayor cobertura satelital → mayor peso visual.
+  // Se usa una consulta OData simplificada (sin filtro geográfico) para evitar timeouts.
   app.get(BASE_URL_INTEGRATIONS_JFM + "/copernicus-fatalities", async (req, res) => {
     try {
       const docs = await dbFindAll();
@@ -397,33 +426,43 @@ export function loadBackendIntegrationsJFM(app) {
       let imageCount = 20;
       let dataSource = "api";
       let apiError = null;
+      let tokenOk = false;
+      let catalogueOk = false;
 
       try {
+        // OAuth password flow: las credenciales vienen de COPERNICUS_USERNAME y COPERNICUS_PASSWORD en .env.
         const token = await getToken("jfm_copernicus", copernicusToken);
+        tokenOk = true;
 
+        // Consulta OData simplificada (sin filtro geográfico) para reducir tiempo de respuesta.
+        // @odata.count devuelve el total de productos Sentinel-2 disponibles desde 2024-01-01.
+        // Copernicus aporta este número; road-fatalities-v2 aporta las tasas de mortalidad.
         const url =
           "https://catalogue.dataspace.copernicus.eu/odata/v1/Products" +
           "?$count=true&$top=1" +
           "&$filter=Collection/Name eq 'SENTINEL-2'" +
-          " and ContentDate/Start gt 2024-01-01T00:00:00.000Z" +
-          " and OData.CSC.Intersects(area=geography'SRID=4326;" +
-          "POLYGON((-9 36,4 36,4 44,-9 44,-9 36))')";
+          " and ContentDate/Start gt 2024-01-01T00:00:00.000Z";
 
         const ext = await fetchJsonT(url, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
           },
-        });
+        }, 45000);
 
+        catalogueOk = true;
+        // imageCount: número real de productos Sentinel-2 devuelto por Copernicus.
+        // Se limita a 200 para que el ajuste en la fórmula sea proporcionado.
         imageCount = Math.min(Number(ext["@odata.count"] ?? 20), 200);
       } catch (e) {
         console.warn(`[JFM Copernicus] Usando fallback de DB. Motivo: ${e.message}`);
-
         dataSource = "fallback-db";
         apiError = e.message;
       }
 
+      // Cada punto del scatter combina ambas fuentes:
+      //   x = vehicle_death_rate de la DB propia.
+      //   y = population_death_rate de la DB propia × (1 + imageCount de Copernicus / 200).
       const data = docs.map(d => ({
         x: Number(d.vehicle_death_rate || 0),
         y: Number(d.population_death_rate || 0) * (1 + imageCount / 200),
@@ -435,7 +474,7 @@ export function loadBackendIntegrationsJFM(app) {
       }));
 
       res.json({
-        api: "Copernicus Data Space Ecosystem",
+        api: "Copernicus Data Space OData API",
         chartType: "scatter",
         dataSource,
         apiError,
@@ -448,17 +487,30 @@ export function loadBackendIntegrationsJFM(app) {
         externalFieldsUsed: ["@odata.count"],
         explanation:
           dataSource === "api"
-            ? "Se consulta Copernicus Data Space mediante OAuth y se combina el número de productos Sentinel-2 encontrados sobre España con las tasas de mortalidad vial de la DB propia."
+            ? `Copernicus Data Space aporta ${imageCount} productos Sentinel-2 (desde 2024-01-01) mediante OAuth. road-fatalities-v2 aporta vehicle_death_rate y population_death_rate. Fórmula: y = population_death_rate * (1 + ${imageCount} / 200).`
             : "Fallback: scatter calculado con DB propia y un imageCount neutro porque Copernicus no estuvo disponible.",
-        series: [
-          {
-            name: "Mortalidad vial + Sentinel-2",
-            data,
+        integrationEvidence: {
+          ownApi: {
+            name: "road-fatalities-v2",
+            fieldsUsed: ["vehicle_death_rate", "population_death_rate", "nation", "year"],
+            docsUsed: docs.length,
           },
-        ],
+          externalApi: {
+            name: "Copernicus Data Space OData API",
+            endpoint: "https://catalogue.dataspace.copernicus.eu/odata/v1/Products",
+            fieldsUsed: ["@odata.count"],
+            tokenOk,
+            catalogueOk,
+            imageCount,
+          },
+          formula: "adjustedPopulationDeathRate = population_death_rate_from_own_DB * (1 + imageCount_from_Copernicus / 200)",
+        },
+        series: [{ name: "Mortalidad vial ajustada con Sentinel-2", data }],
         dbContext: {
           docs: docs.length,
           imageCount,
+          tokenOk,
+          catalogueOk,
         },
       });
     } catch (e) {

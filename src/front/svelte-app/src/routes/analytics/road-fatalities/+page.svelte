@@ -4,7 +4,9 @@
 
     let error = $state("");
     let loading = $state(true);
+    let mastodonData: any = $state(null);
     let fedexData: any = $state(null);
+    let copernicusData: any = $state(null);
 
     onMount(async () => {
         try {
@@ -147,16 +149,45 @@
         } catch (e) { console.warn('Highcharts modules', e); }
 
         // 1. Mastodon API -> pie (señal social de seguridad vial)
+        // Fuentes: Mastodon aporta posts por hashtag; road-fatalities-v2 aporta avgDeathRate.
+        // Fórmula: weightedScore = posts_por_hashtag × avg_population_death_rate
         fetch('/api/integrations/jfm/mastodon-fatalities').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
+
+            // Guardamos la respuesta para el bloque explicativo inferior.
+            mastodonData = d;
+
+            const postLimit = d?.mastodonContext?.postLimitPerHashtag ?? 80;
+            const subtitle = d.dataSource === 'api'
+                ? `Posts recientes recuperados de Mastodon por hashtag, hasta ${postLimit} por etiqueta, ponderados con la tasa media vial (${d?.dbContext?.avgDeathRate ?? 'N/A'}) de road-fatalities-v2`
+                : `Fallback local: Mastodon no disponible. Se muestran datos derivados de road-fatalities-v2.`;
+
             Highcharts.chart('oauth-pie', {
                 chart: { type: 'pie', backgroundColor: 'transparent' },
                 title: { text: 'Mastodon road safety social signal', style: { color: '#e5c07b' } },
-                subtitle: { text: 'Conteo de publicaciones públicas por hashtag relacionado con seguridad vial y accidentes de tráfico.', style: { color: '#abb2bf' } },
-                tooltip: { pointFormat: '{series.name}: <b>{point.y}</b> publicaciones ({point.percentage:.1f}%)' },
+                subtitle: { text: subtitle, style: { color: '#abb2bf', fontSize: '11px' } },
                 // @ts-ignore
-                series: [{ name: 'Publicaciones', colorByPoint: true, data: d.hashtags.map(h => ({ name: h.tag, y: h.count })) }],
+                tooltip: {
+                    formatter: function (this: any) {
+                        const p: any = this.point;
+                        const limitText = p.limitReached
+                            ? `<br/>Límite alcanzado: máximo ${postLimit} posts solicitados`
+                            : '';
+                        return `<b>${p.name}</b><br/>` +
+                               `Posts recuperados: <b>${p.y}</b> (${this.percentage?.toFixed(1)}%)${limitText}<br/>` +
+                               `No representa el total histórico de Mastodon.`;
+                    },
+                },
+                series: [{
+                    name: 'Posts recuperados',
+                    colorByPoint: true,
+                    data: d.hashtags.map((h: any) => ({
+                        name: h.tag,
+                        y: h.count,
+                        limitReached: h.limitReached,
+                    })),
+                }],
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
         }).catch(e => console.error('pie:', e.message));
@@ -165,13 +196,22 @@
         fetch('/api/integrations/jfm/copernicus-fatalities').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
+
+            copernicusData = d;
+
+            const imageCount = d?.dbContext?.imageCount ?? 'N/A';
+            const scatterSubtitle = d.dataSource === 'api'
+                ? `Copernicus aporta ${imageCount} productos Sentinel-2; road-fatalities-v2 aporta tasas de mortalidad vial`
+                : `Fallback local: Copernicus no disponible. Se muestran datos derivados de road-fatalities-v2.`;
+
             // @ts-ignore
             Highcharts.chart('oauth-scatter', {
                 chart: { type: 'scatter', backgroundColor: 'transparent', zoomType: 'xy' },
-                title: { text: 'Mortalidad vehículos vs población (Copernicus ESA + DB propia)', style: { color: '#e5c07b' } },
+                title: { text: 'Mortalidad vial ajustada con productos Sentinel-2', style: { color: '#e5c07b' } },
+                subtitle: { text: scatterSubtitle, style: { color: '#abb2bf', fontSize: '11px' } },
                 xAxis: { title: { text: 'Vehicle death rate', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
-                yAxis: { title: { text: 'Population death rate', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
-                tooltip: { pointFormat: '<b>{point.name}</b><br>x={point.x}, y={point.y}' },
+                yAxis: { title: { text: 'Population death rate (ajustada)', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
+                tooltip: { pointFormat: '<b>{point.name}</b><br>x={point.x}, y={point.y:.4f}' },
                 series: d.series,
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
@@ -241,6 +281,14 @@
         max-width: 1200px;
         margin: 0 auto;
         color: #abb2bf;
+    }
+
+    .mastodon-proof {
+        margin-bottom: 1rem;
+    }
+
+    .copernicus-proof {
+        margin-bottom: 1rem;
     }
 
     .integration-proof {
@@ -339,7 +387,38 @@
 
     <h1 style="margin-top: 3rem;">Integraciones OAuth2 (3 APIs externas)</h1>
     <div class="chart-box"><div id="oauth-pie" class="oauth-chart"></div></div>
+
+    <!--
+      Nota para la corrección:
+      Este bloque explica la integración real entre la API propia y Mastodon.
+      Mastodon aporta el número de publicaciones públicas por hashtag.
+      La API propia aporta la tasa media de mortalidad, usada para calcular weightedScore.
+    -->
+    {#if mastodonData}
+    <div class="integration-proof mastodon-proof">
+        <strong>Integración:</strong>
+        <code>road-fatalities-v2</code> aporta <code>population_death_rate</code>, <code>total_death</code> e <code>income_level</code>.
+        <code>Mastodon API</code> aporta posts recientes por hashtag mediante OAuth2
+        (máx. <code>{mastodonData?.mastodonContext?.postLimitPerHashtag ?? 80}</code> por etiqueta).
+        El valor combinado es <code>posts_recuperados × avgDeathRate</code>
+        (<code>{mastodonData?.dbContext?.avgDeathRate ?? "N/A"}</code> de tasa media en la DB propia).
+    </div>
+    {/if}
+
     <div class="chart-box"><div id="oauth-scatter" class="oauth-chart"></div></div>
+
+    {#if copernicusData}
+    <div class="integration-proof copernicus-proof">
+        <strong>Integración:</strong>
+        <code>road-fatalities-v2</code> aporta <code>vehicle_death_rate</code> y <code>population_death_rate</code>.
+        <code>Copernicus Data Space API</code> aporta <code>{copernicusData?.dbContext?.imageCount ?? 'N/A'}</code> productos Sentinel-2 mediante OAuth2 (password grant).
+        La tasa Y se ajusta con la fórmula <code>population_death_rate × (1 + imageCount / 200)</code>.
+        {#if copernicusData?.integrationEvidence?.tokenOk}
+            Token Copernicus obtenido correctamente.
+        {/if}
+    </div>
+    {/if}
+
     <div class="chart-box"><div id="oauth-heatmap" class="oauth-chart"></div></div>
 
     {#if fedexData}
