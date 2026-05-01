@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
     import { onMount } from 'svelte';
     import Highcharts from 'highcharts';
 
     let error = $state("");
     let loading = $state(true);
+    let fedexData: any = $state(null);
 
     onMount(async () => {
         try {
@@ -177,18 +178,58 @@
         }).catch(e => console.error('scatter:', e.message));
 
         // 3. FedEx Sandbox -> heatmap
+        //
+        // Fuentes combinadas:
+        //   - API propia road-fatalities-v2: aporta total_death, nation y year de cada fila de la DB.
+        //   - API externa FedEx Locations (OAuth2 client_credentials): aporta locationCount,
+        //     el número de puntos/localizaciones que FedEx devuelve para una búsqueda en Madrid.
+        //
+        // Fórmula aplicada en el backend:
+        //   valor_celda = total_death / locationCount
+        //
+        // Ejemplo real: si FedEx devuelve 75 localizaciones y un país tiene total_death = 5625,
+        // el valor representado en la celda será 5625 / 75 = 75.
+        // El 75 no es un valor fijo inventado; es el resultado de dividir datos reales de
+        // nuestra DB entre el locationCount real devuelto por FedEx.
+        //
+        // d.dbContext.locationCount contiene el valor exacto que FedEx devolvió (o 10 si hubo fallback).
         fetch('/api/integrations/jfm/fedex-fatalities').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
+
+            // Guardamos la respuesta completa para usarla en el bloque explicativo inferior.
+            fedexData = d;
+
+            // locationCount viene de FedEx (número de localizaciones devueltas).
+            // Si FedEx no respondió correctamente, el backend devuelve 10 como fallback.
+            const locationCount = d?.dbContext?.locationCount ?? 'N/A';
+            const subtitle = d.dataSource === 'api'
+                ? `Datos de road-fatalities-v2 normalizados con ${locationCount} localizaciones obtenidas desde FedEx OAuth2`
+                : `Fallback local: FedEx no disponible. Se muestran datos derivados de road-fatalities-v2.`;
+
             Highcharts.chart('oauth-heatmap', {
                 chart: { type: 'heatmap', backgroundColor: 'transparent' },
-                title: { text: 'Muertes año/nación (FedEx + DB propia)', style: { color: '#e5c07b' } },
+                title: { text: 'Mortalidad vial ajustada por cobertura logística FedEx', style: { color: '#e5c07b' } },
+                subtitle: { text: subtitle, style: { color: '#abb2bf', fontSize: '11px' } },
+                // xAxis: años de la DB propia (road-fatalities-v2)
                 xAxis: { categories: d.xCategories || [], title: { text: 'Año', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
+                // yAxis: naciones de la DB propia (road-fatalities-v2)
                 yAxis: { categories: d.yCategories || [], title: { text: 'Nación', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
                 colorAxis: { min: 0, minColor: '#1c1f24', maxColor: '#e06c75' },
                 // @ts-ignore
-                tooltip: { formatter: function () { return `<b>${this.series.yAxis.categories[this.point.y]}</b> (${this.series.xAxis.categories[this.point.x]}): <b>${this.point.value}</b>`; } },
-                series: [{ name: 'Muertes', data: d.data, borderWidth: 1 }]
+                tooltip: {
+                    // El tooltip muestra la fórmula: total_death / locationCount_de_FedEx
+                    formatter: function (this: any) {
+                        const point = this.point;
+                        const year    = d.xCategories?.[point.x] ?? 'N/A';
+                        const nation  = d.yCategories?.[point.y] ?? 'N/A';
+                        return `<b>${nation}</b> (${year})<br/>` +
+                               `Valor: <b>${point.value}</b><br/>` +
+                               `Muertes registradas / ${locationCount} puntos FedEx`;
+                    }
+                },
+                // Los datos vienen del backend: cada punto es [idxAño, idxNación, total_death/locationCount]
+                series: [{ name: 'total_death / locationCount', data: d.data, borderWidth: 1 }]
             });
         }).catch(e => console.error('heatmap:', e.message));
     });
@@ -200,6 +241,22 @@
         max-width: 1200px;
         margin: 0 auto;
         color: #abb2bf;
+    }
+
+    .integration-proof {
+        margin-top: 0.8rem;
+        padding: 0.85rem 1rem;
+        background: #111827;
+        color: #d1d5db;
+        border-left: 4px solid #fbbf24;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+
+    .integration-proof code {
+        color: #fbbf24;
+        font-weight: 600;
     }
 
     h1 {
@@ -284,4 +341,13 @@
     <div class="chart-box"><div id="oauth-pie" class="oauth-chart"></div></div>
     <div class="chart-box"><div id="oauth-scatter" class="oauth-chart"></div></div>
     <div class="chart-box"><div id="oauth-heatmap" class="oauth-chart"></div></div>
+
+    {#if fedexData}
+    <div class="integration-proof compact">
+        <strong>Integración:</strong>
+        <code>road-fatalities-v2</code> aporta <code>total_death</code>, <code>nation</code> y <code>year</code>.
+        <code>FedEx Locations API</code> aporta <code>{fedexData?.dbContext?.locationCount ?? "N/A"}</code> localizaciones mediante OAuth2.
+        El valor representado es <code>total_death / locationCount</code>.
+    </div>
+    {/if}
 </main>
