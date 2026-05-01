@@ -11,6 +11,7 @@
     let sos14Data: any = $state(null);
     let sos20Data: any = $state(null);
     let sos21Data: any = $state(null);
+    let sos27Data: any = $state(null);
 
     onMount(async () => {
         try {
@@ -344,6 +345,11 @@
         fetch('/api/integrations/jfm/sos21-aids-deaths-stats')
             .then(async r => { const d = await r.json(); sos21Data = d; })
             .catch(e => { sos21Data = { api: 'SOS2526-21', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
+
+        // 7. SOS2526-27 -> world-hydroelectric-plants (proxy SOS)
+        fetch('/api/integrations/jfm/sos27-world-hydroelectric-plants')
+            .then(async r => { const d = await r.json(); sos27Data = d; })
+            .catch(e => { sos27Data = { api: 'SOS2526-27', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
     });
 </script>
 
@@ -691,6 +697,39 @@
                         <tbody>
                             {#each sos21Data.data as row}
                                 <tr>{#each headers21 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>
+                            {/each}
+                        </tbody>
+                    </table>
+                </div>
+            {/if}
+        </div>
+        {/if}
+
+        {#if sos27Data}
+        <div class="sos-integration-card">
+            <h2>{sos27Data.api}</h2>
+            <p><strong>Grupo:</strong> {sos27Data.group}</p>
+            <p><strong>Integrado por:</strong> {sos27Data.integratedBy}</p>
+            <p><strong>Fuente:</strong> {sos27Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'}</p>
+            <p><strong>Registros recibidos:</strong> {sos27Data.count}</p>
+            <p><strong>URL externa:</strong> <code>{sos27Data.sourceUrl}</code></p>
+            <p>{sos27Data.explanation}</p>
+
+            {#if sos27Data.apiError}
+                <p class="api-error">Error: {sos27Data.apiError}</p>
+            {/if}
+
+            {#if sos27Data.data?.length}
+                {@const headers27 = sos27Data.fieldsShown?.length ? sos27Data.fieldsShown : Object.keys(sos27Data.data[0]).slice(0, 9)}
+                <p class="sos-table-info">Mostrando {sos27Data.data.length} de {sos27Data.count} registros recibidos.</p>
+                <div class="sos-table-scroll">
+                    <table class="sos-table">
+                        <thead>
+                            <tr>{#each headers27 as key}<th>{key}</th>{/each}</tr>
+                        </thead>
+                        <tbody>
+                            {#each sos27Data.data as row}
+                                <tr>{#each headers27 as key}<td>{row[key] ?? 'N/A'}</td>{/each}</tr>
                             {/each}
                         </tbody>
                     </table>

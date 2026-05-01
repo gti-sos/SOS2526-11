@@ -270,6 +270,7 @@ export function loadBackendIntegrationsJFM(app) {
           BASE_URL_INTEGRATIONS_JFM + "/sos14-meteorite-landings",
           BASE_URL_INTEGRATIONS_JFM + "/sos20-spice-stats",
           BASE_URL_INTEGRATIONS_JFM + "/sos21-aids-deaths-stats",
+          BASE_URL_INTEGRATIONS_JFM + "/sos27-world-hydroelectric-plants",
         ],
       });
     } catch (e) {
@@ -979,6 +980,61 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         count: 0,
         fieldsShown: [],
         explanation: "No se pudo consultar la API SOS2526-21 externa.",
+        data: [],
+      });
+    }
+  });
+
+  // ── SOS2526-27 world-hydroelectric-plants ────────────────────────────────
+  app.get(BASE_URL_INTEGRATIONS_JFM + "/sos27-world-hydroelectric-plants", async (req, res) => {
+    const SOURCE_URL = "https://sos2526-27.onrender.com/api/v1/world-hydroelectric-plants";
+    const fieldsShown = ["country","name","year","river","plant_type","capacity_mw","head_m","dam_name","res_vol_km3"];
+    try {
+      const r = await fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 45000);
+      if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
+      const json = await r.json();
+      const rows = extractArrayPayload(json);
+      const normalizedRows = rows.map(row => ({
+        country:     row.country     ?? "N/A",
+        name:        row.name        ?? "N/A",
+        year:        row.year        ?? "N/A",
+        river:       row.river       ?? "N/A",
+        plant_type:  row.plant_type  ?? "N/A",
+        capacity_mw: row.capacity_mw ?? "N/A",
+        head_m:      row.head_m      ?? "N/A",
+        dam_name:    row.dam_name    ?? "N/A",
+        res_vol_km3: row.res_vol_km3 ?? "N/A",
+      }));
+      const visibleLimit = Math.min(normalizedRows.length, 50);
+      res.json({
+        api: "SOS2526-27 world-hydroelectric-plants",
+        sourceUrl: SOURCE_URL,
+        dataSource: "api",
+        apiError: null,
+        externalApiUsed: true,
+        sosApi: true,
+        group: "SOS2526-27",
+        integratedBy: "JFM",
+        fetchedAt: new Date().toISOString(),
+        count: rows.length,
+        fieldsShown,
+        explanation: "API de alumno SOS2526-27 integrada mediante proxy propio. Se reciben datos JSON sobre plantas hidroeléctricas del mundo y se muestran en HTML.",
+        data: normalizedRows.slice(0, visibleLimit),
+      });
+    } catch (e) {
+      res.json({
+        api: "SOS2526-27 world-hydroelectric-plants",
+        sourceUrl: SOURCE_URL,
+        dataSource: "api-error",
+        apiError: e.message,
+        externalApiUsed: false,
+        sosApi: true,
+        group: "SOS2526-27",
+        integratedBy: "JFM",
+        fetchedAt: new Date().toISOString(),
+        count: 0,
+        fieldsShown: [],
+        explanation: "No se pudo consultar la API SOS2526-27 externa.",
         data: [],
       });
     }

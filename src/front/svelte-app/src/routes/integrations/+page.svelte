@@ -18,8 +18,10 @@
                 <li>Copernicus/ESA Data Space (OAuth2 Client Credentials) → <b>scatter</b></li>
                 <li>FedEx Sandbox API (OAuth2 Client Credentials) → <b>heatmap</b></li>
                 <li>SOS2526-12 birth-death-growth-rates → <b>tabla HTML</b></li>
+                <li>SOS2526-14 meteorite-landings → <b>tabla HTML</b></li>
                 <li>SOS2526-20 spice-stats → <b>tabla HTML</b></li>
                 <li>SOS2526-21 aids-deaths-stats → <b>tabla HTML</b></li>
+                <li>SOS2526-27 world-hydroelectric-plants → <b>tabla HTML</b></li>
             </ul>
             <p class="signal-note">
                 Mastodon se usa como señal social externa relacionada con accidentes de tráfico, seguridad vial y movilidad.
@@ -61,8 +63,10 @@
             <li><code>GET /api/integrations/jfm/copernicus-fatalities</code></li>
             <li><code>GET /api/integrations/jfm/fedex-fatalities</code></li>
             <li><code>GET /api/integrations/jfm/sos12-birth-death-growth</code></li>
+            <li><code>GET /api/integrations/jfm/sos14-meteorite-landings</code></li>
             <li><code>GET /api/integrations/jfm/sos20-spice-stats</code></li>
             <li><code>GET /api/integrations/jfm/sos21-aids-deaths-stats</code></li>
+            <li><code>GET /api/integrations/jfm/sos27-world-hydroelectric-plants</code></li>
             <li><code>GET /api/integrations/mrg/vimeo-alcohol</code></li>
             <li><code>GET /api/integrations/mrg/dailymotion-alcohol</code></li>
             <li><code>GET /api/integrations/mrg/discord-alcohol</code></li>
