@@ -53,13 +53,14 @@ export function loadBackendIntegrationsTGG(app) {
 
     const accessToken = tokenRes.access_token;
 
-    // 2. Datos externos (top tracks)
-    const ext = await fetch(
-      "https://api.spotify.com/v1/browse/new-releases",
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    ).then(r => r.json());
+    // 2. Datos externos (búsqueda de tracks de educación)
+    const searchUrl = new URL("https://api.spotify.com/v1/search");
+    searchUrl.searchParams.set("q", "education");
+    searchUrl.searchParams.set("type", "track");
+    searchUrl.searchParams.set("limit", "10");
+    const ext = await fetch(searchUrl.toString(), { headers: { Authorization: `Bearer ${accessToken}` } }).then(r => r.json());
 
-    const popularity = (ext.albums?.items?.length || 1);
+    const popularity = (ext.tracks?.items?.length || 1);
 
     // 3. Tu DB
     const docs = await findAll();

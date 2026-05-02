@@ -49,8 +49,8 @@
             <p class="who">Tomás Gutiérrez García</p>
             <ul>
                 <li>NewsAPI (API key) → <b>funnel</b></li>
-                <li>Google Public Data (Client Credentials) → <b>pyramid</b></li>
-                <li>LinkedIn (Refresh Token) → <b>variablepie</b></li>
+                <li>Spotify (Client Credentials) → <b>pyramid</b></li>
+                <li>GitHub (API pública) → <b>column</b></li>
             </ul>
             <a class="btn" href="/analytics/literacy-rates">Ver widgets →</a>
         </article>
@@ -71,8 +71,8 @@
             <li><code>GET /api/integrations/mrg/dailymotion-alcohol</code></li>
             <li><code>GET /api/integrations/mrg/discord-alcohol</code></li>
             <li><code>GET /api/integrations/tgg/newsapi-education</code></li>
-            <li><code>GET /api/integrations/tgg/google-literacy</code></li>
-            <li><code>GET /api/integrations/tgg/linkedin-edu</code></li>
+            <li><code>GET /api/integrations/tgg/spotify-literacy</code></li>
+            <li><code>GET /api/integrations/tgg/github-literacy</code></li>
         </ul>
     </section>
 </main>
