@@ -48,9 +48,13 @@
             <h2>TGG — Literacy Rates</h2>
             <p class="who">Tomás Gutiérrez García</p>
             <ul>
-                <li>NewsAPI (API key) → <b>funnel</b></li>
-                <li>Spotify (Client Credentials) → <b>pyramid</b></li>
-                <li>GitHub (API pública) → <b>column</b></li>
+                <li>NewsAPI (API key) → <b>funnel</b> (Highcharts)</li>
+                <li>Spotify (Client Credentials) → <b>pyramid</b> (Highcharts)</li>
+                <li>GitHub (API pública) → <b>column</b> (Highcharts)</li>
+                <li>SOS2526-14 active-satellites → <b>donut</b> (C3.js)</li>
+                <li>SOS2526-20 coffee-stats → <b>bar</b> (C3.js)</li>
+                <li>soporte-sos cholera-stats → <b>pie</b> (C3.js)</li>
+                <li>SOS2526-12 age-specific-fertility-rates → <b>scatter</b> (C3.js)</li>
             </ul>
             <a class="btn" href="/analytics/literacy-rates">Ver widgets →</a>
         </article>
@@ -73,6 +77,10 @@
             <li><code>GET /api/integrations/tgg/newsapi-education</code></li>
             <li><code>GET /api/integrations/tgg/spotify-literacy</code></li>
             <li><code>GET /api/integrations/tgg/github-literacy</code></li>
+            <li><code>GET /api/integrations/tgg/sos14-satellites</code></li>
+            <li><code>GET /api/integrations/tgg/sos20-coffee</code></li>
+            <li><code>GET /api/integrations/tgg/cholera-stats</code></li>
+            <li><code>GET /api/integrations/tgg/sos12-fertility</code></li>
         </ul>
     </section>
 </main>

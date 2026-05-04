@@ -1,6 +1,8 @@
 <script>
     import { onMount } from 'svelte';
     import Highcharts from 'highcharts';
+    import c3 from 'c3';
+    import 'c3/c3.css';
 
     let error = $state("");
     let loading = $state(true);
@@ -130,6 +132,99 @@
             });
         })
         .catch(e => console.error('github:', e.message));
+
+        // 4. SOS2526-14 Active Satellites → C3.js donut
+        fetch('/api/integrations/tgg/sos14-satellites')
+        .then(async r => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
+
+            c3.generate({
+                bindto: '#c3-sos14-donut',
+                data: {
+                    columns: d.columns,
+                    type: 'donut'
+                },
+                donut: {
+                    title: `${d.totalSatellites} satélites`
+                },
+                color: {
+                    pattern: ['#98c379', '#61afef', '#e06c75', '#e5c07b']
+                }
+            });
+        })
+        .catch(e => console.error('sos14-satellites:', e.message));
+
+        // 5. SOS2526-20 Coffee Stats → C3.js bar
+        fetch('/api/integrations/tgg/sos20-coffee')
+        .then(async r => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
+
+            c3.generate({
+                bindto: '#c3-sos20-bar',
+                data: {
+                    columns: d.columns,
+                    type: 'bar'
+                },
+                axis: {
+                    x: {
+                        type: 'category',
+                        categories: d.categories
+                    },
+                    y: {
+                        label: { text: 'Valor', position: 'outer-middle' }
+                    }
+                },
+                color: {
+                    pattern: ['#98c379', '#e5c07b']
+                }
+            });
+        })
+        .catch(e => console.error('sos20-coffee:', e.message));
+
+        // 6. soporte-sos Cholera Stats → C3.js pie
+        fetch('/api/integrations/tgg/cholera-stats')
+        .then(async r => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
+
+            c3.generate({
+                bindto: '#c3-cholera-pie',
+                data: {
+                    columns: d.columns,
+                    type: 'pie'
+                },
+                color: {
+                    pattern: ['#98c379', '#61afef', '#e06c75', '#c678dd']
+                }
+            });
+        })
+        .catch(e => console.error('cholera-stats:', e.message));
+
+        // 7. SOS2526-12 Fertility Rates → C3.js scatter
+        fetch('/api/integrations/tgg/sos12-fertility')
+        .then(async r => {
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
+
+            c3.generate({
+                bindto: '#c3-fertility-scatter',
+                data: {
+                    xs: d.xs,
+                    columns: d.columns,
+                    type: 'scatter'
+                },
+                axis: {
+                    x: { label: { text: 'Índice', position: 'outer-center' } },
+                    y: { label: { text: 'Valor', position: 'outer-middle' } }
+                },
+                color: {
+                    pattern: ['#e5c07b', '#56b6c2']
+                }
+            });
+        })
+        .catch(e => console.error('sos12-fertility:', e.message));
     });
 </script>
 
@@ -196,6 +291,25 @@
     .back-btn:hover {
         background: rgba(97, 175, 239, 0.1);
     }
+
+    .c3-chart {
+        width: 100%;
+        height: 420px;
+    }
+
+    .chart-label {
+        color: #98c379;
+        font-size: 0.9rem;
+        margin: 0 0 0.5rem 0.5rem;
+        font-family: 'Monaco', 'Menlo', monospace;
+    }
+
+    :global(.c3 text) { fill: #abb2bf; }
+    :global(.c3 .c3-axis path, .c3 .c3-axis line) { stroke: #4b5263; }
+    :global(.c3-tooltip) { background: #282c34; border-color: #3e4451; color: #abb2bf; }
+    :global(.c3-tooltip td) { border-color: #3e4451; }
+    :global(.c3-legend-item text) { fill: #abb2bf; }
+    :global(.c3-donut-title) { fill: #e5c07b; }
 </style>
 
 <svelte:head>
@@ -231,5 +345,27 @@
 
     <div class="chart-box">
         <div id="oauth-variablepie" class="oauth-chart"></div>
+    </div>
+
+    <h1 style="margin-top: 3rem;">Integraciones APIs de compañeros SOS (C3.js)</h1>
+
+    <div class="chart-box">
+        <p class="chart-label">SOS2526-14 — Satélites activos · C3.js donut</p>
+        <div id="c3-sos14-donut" class="c3-chart"></div>
+    </div>
+
+    <div class="chart-box">
+        <p class="chart-label">SOS2526-20 — Coffee stats · C3.js bar</p>
+        <div id="c3-sos20-bar" class="c3-chart"></div>
+    </div>
+
+    <div class="chart-box">
+        <p class="chart-label">soporte-sos — Cholera stats · C3.js pie</p>
+        <div id="c3-cholera-pie" class="c3-chart"></div>
+    </div>
+
+    <div class="chart-box">
+        <p class="chart-label">SOS2526-12 — Age-specific fertility rates · C3.js scatter</p>
+        <div id="c3-fertility-scatter" class="c3-chart"></div>
     </div>
 </main>
