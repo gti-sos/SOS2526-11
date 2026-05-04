@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import Highcharts from 'highcharts';
+    import * as echarts from 'echarts';
 
     let error = $state("");
     let loading = $state(true);
@@ -12,6 +13,165 @@
     let sos20Data: any = $state(null);
     let sos21Data: any = $state(null);
     let sos27Data: any = $state(null);
+
+    function renderSos12Radar(d: any) {
+        const el = document.getElementById('sos12-radar');
+        if (!el || !d?.chartData?.metrics) return;
+        const chart = echarts.init(el);
+        const m = d.chartData.metrics;
+        chart.setOption({
+            backgroundColor: 'transparent',
+            title: { text: 'Tasas medias nacimiento/muerte/crecimiento', textStyle: { color: '#e5c07b' } },
+            tooltip: {
+                trigger: 'item',
+                formatter: () =>
+                    '<b>SOS2526-12 birth-death-growth-rates</b><br/>' +
+                    'API externa de alumno SOS de otro grupo<br/>' +
+                    'Proxy propio: /api/integrations/jfm/sos12-birth-death-growth<br/>' +
+                    'Datos JSON agregados para radar<br/>' +
+                    `Birth rate media: <b>${m.avgBirthRate}</b><br/>` +
+                    `Death rate media: <b>${m.avgDeathRate}</b><br/>` +
+                    `Growth rate media: <b>${m.avgGrowthRate}</b>`
+            },
+            radar: {
+                indicator: [
+                    { name: 'Birth rate', max: Math.max(40, m.avgBirthRate * 1.4) },
+                    { name: 'Death rate', max: Math.max(20, m.avgDeathRate * 1.4) },
+                    { name: 'Growth rate', max: Math.max(5, Math.abs(m.avgGrowthRate) * 1.8) }
+                ],
+                axisName: { color: '#abb2bf' }
+            },
+            series: [{ type: 'radar', data: [{ value: [m.avgBirthRate, m.avgDeathRate, m.avgGrowthRate], name: 'Media SOS2526-12' }] }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    function renderSos14Treemap(d: any) {
+        const el = document.getElementById('sos14-treemap');
+        if (!el || !d?.chartData?.countries?.length) return;
+        const chart = echarts.init(el);
+        chart.setOption({
+            backgroundColor: 'transparent',
+            title: { text: 'Meteoritos por país (top 15)', textStyle: { color: '#e5c07b' } },
+            tooltip: {
+                formatter: (info: any) => {
+                    const v = info.data;
+                    return `<b>${v.name}</b><br/>` +
+                        `Meteoritos: <b>${v.value}</b><br/>` +
+                        `Masa total aprox: <b>${v.totalMass?.toLocaleString() ?? 'N/A'} g</b><br/>` +
+                        `API: SOS2526-14 meteorite-landings<br/>` +
+                        `Proxy: /api/integrations/jfm/sos14-meteorite-landings<br/>` +
+                        `Widget: ECharts treemap`;
+                }
+            },
+            series: [{
+                type: 'treemap',
+                data: d.chartData.countries,
+                label: { show: true, formatter: '{b}' },
+                upperLabel: { show: true },
+                itemStyle: { borderColor: '#282c34', borderWidth: 2 }
+            }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    function renderSos20Sunburst(d: any) {
+        const el = document.getElementById('sos20-sunburst');
+        if (!el || !d?.chartData?.tree?.length) return;
+        const chart = echarts.init(el);
+        chart.setOption({
+            backgroundColor: 'transparent',
+            title: { text: 'Especias por área y producto', textStyle: { color: '#e5c07b' } },
+            tooltip: {
+                formatter: (info: any) => {
+                    const v = info.data;
+                    return `<b>${v.name}</b><br/>` +
+                        `Valor: <b>${v.value ?? 'N/A'}</b><br/>` +
+                        `API: SOS2526-20 spice-stats<br/>` +
+                        `Proxy: /api/integrations/jfm/sos20-spice-stats<br/>` +
+                        `Widget: ECharts sunburst`;
+                }
+            },
+            series: [{
+                type: 'sunburst',
+                data: d.chartData.tree,
+                radius: ['15%', '90%'],
+                label: { rotate: 'radial', fontSize: 10 },
+                itemStyle: { borderWidth: 1 }
+            }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    function renderSos21Heatmap(d: any) {
+        const el = document.getElementById('sos21-heatmap');
+        if (!el || !d?.chartData?.data?.length) return;
+        const chart = echarts.init(el);
+        const cd = d.chartData;
+        const maxVal = Math.max(...cd.data.map((p: any) => p[2]));
+        chart.setOption({
+            backgroundColor: 'transparent',
+            title: { text: 'Muertes VIH/SIDA por año y grupo de edad', textStyle: { color: '#e5c07b' } },
+            tooltip: {
+                position: 'top',
+                formatter: (info: any) => {
+                    const [yi, ai, val] = info.data;
+                    return `Año: <b>${cd.years[yi]}</b><br/>` +
+                        `Grupo: <b>${cd.ageGroups[ai]}</b><br/>` +
+                        `Muertes: <b>${val?.toLocaleString() ?? 0}</b><br/>` +
+                        `API: SOS2526-21 aids-deaths-stats<br/>` +
+                        `Proxy: /api/integrations/jfm/sos21-aids-deaths-stats<br/>` +
+                        `Widget: ECharts heatmap`;
+                }
+            },
+            grid: { top: '10%', bottom: '15%', left: '18%', right: '5%' },
+            xAxis: { type: 'category', data: cd.years, axisLabel: { color: '#abb2bf', rotate: 45 } },
+            yAxis: { type: 'category', data: cd.ageGroups, axisLabel: { color: '#abb2bf' } },
+            visualMap: {
+                min: 0, max: maxVal, calculable: true,
+                orient: 'horizontal', left: 'center', bottom: 0,
+                inRange: { color: ['#1c1f24', '#e06c75'] },
+                textStyle: { color: '#abb2bf' }
+            },
+            series: [{ type: 'heatmap', data: cd.data, label: { show: false }, emphasis: { itemStyle: { shadowBlur: 10 } } }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    function renderSos27Scatter(d: any) {
+        const el = document.getElementById('sos27-scatter');
+        if (!el || !d?.chartData?.data?.length) return;
+        const chart = echarts.init(el);
+        const pts = d.chartData.data;
+        chart.setOption({
+            backgroundColor: 'transparent',
+            title: { text: 'Plantas hidroeléctricas: capacidad vs. salto', textStyle: { color: '#e5c07b' } },
+            tooltip: {
+                trigger: 'item',
+                formatter: (info: any) => {
+                    const v = info.data;
+                    return `<b>${v.name}</b><br/>` +
+                        `País: <b>${v.country}</b><br/>` +
+                        `Capacidad: <b>${v.capacity_mw} MW</b><br/>` +
+                        `Salto (head): <b>${v.head_m} m</b><br/>` +
+                        `Río: <b>${v.river}</b><br/>` +
+                        `Presa: <b>${v.dam_name}</b><br/>` +
+                        `API: SOS2526-27 world-hydroelectric-plants<br/>` +
+                        `Proxy: /api/integrations/jfm/sos27-world-hydroelectric-plants<br/>` +
+                        `Widget: ECharts scatter`;
+                }
+            },
+            xAxis: { name: 'Capacidad (MW)', nameTextStyle: { color: '#abb2bf' }, axisLabel: { color: '#abb2bf' } },
+            yAxis: { name: 'Salto/Head (m)', nameTextStyle: { color: '#abb2bf' }, axisLabel: { color: '#abb2bf' } },
+            series: [{
+                type: 'scatter',
+                data: pts.map((p: any) => ({ value: [p.x, p.y], name: p.name, country: p.country, river: p.river, dam_name: p.dam_name, capacity_mw: p.capacity_mw, head_m: p.head_m })),
+                symbolSize: 8,
+                itemStyle: { color: '#61afef', opacity: 0.7 }
+            }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
 
     onMount(async () => {
         try {
@@ -328,27 +488,27 @@
 
         // 4. SOS2526-12 -> birth-death-growth-rates (proxy SOS)
         fetch('/api/integrations/jfm/sos12-birth-death-growth')
-            .then(async r => { const d = await r.json(); sos12Data = d; })
+            .then(async r => { const d = await r.json(); sos12Data = d; await tick(); renderSos12Radar(d); })
             .catch(e => { sos12Data = { api: 'SOS2526-12', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
 
         // 5. SOS2526-14 -> meteorite-landings (proxy SOS)
         fetch('/api/integrations/jfm/sos14-meteorite-landings')
-            .then(async r => { const d = await r.json(); sos14Data = d; })
+            .then(async r => { const d = await r.json(); sos14Data = d; await tick(); renderSos14Treemap(d); })
             .catch(e => { sos14Data = { api: 'SOS2526-14', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
 
         // 6. SOS2526-20 -> spice-stats (proxy SOS)
         fetch('/api/integrations/jfm/sos20-spice-stats')
-            .then(async r => { const d = await r.json(); sos20Data = d; })
+            .then(async r => { const d = await r.json(); sos20Data = d; await tick(); renderSos20Sunburst(d); })
             .catch(e => { sos20Data = { api: 'SOS2526-20', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
 
-        // 6. SOS2526-21 -> aids-deaths-stats (proxy SOS)
+        // 7. SOS2526-21 -> aids-deaths-stats (proxy SOS)
         fetch('/api/integrations/jfm/sos21-aids-deaths-stats')
-            .then(async r => { const d = await r.json(); sos21Data = d; })
+            .then(async r => { const d = await r.json(); sos21Data = d; await tick(); renderSos21Heatmap(d); })
             .catch(e => { sos21Data = { api: 'SOS2526-21', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
 
-        // 7. SOS2526-27 -> world-hydroelectric-plants (proxy SOS)
+        // 8. SOS2526-27 -> world-hydroelectric-plants (proxy SOS)
         fetch('/api/integrations/jfm/sos27-world-hydroelectric-plants')
-            .then(async r => { const d = await r.json(); sos27Data = d; })
+            .then(async r => { const d = await r.json(); sos27Data = d; await tick(); renderSos27Scatter(d); })
             .catch(e => { sos27Data = { api: 'SOS2526-27', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
     });
 </script>
@@ -488,15 +648,31 @@
         font-weight: 600;
     }
 
-    .sos-table-info {
-        font-size: 0.8rem;
-        color: #6b7280;
-        margin: 0.5rem 0 0;
-    }
-
     .sos-table-scroll {
         overflow-x: auto;
         margin-top: 0.4rem;
+    }
+
+    .echarts-sos-chart {
+        width: 100%;
+        height: 430px;
+        margin-top: 1rem;
+    }
+
+    .sos-table-details {
+        margin-top: 1rem;
+    }
+
+    .sos-table-details summary {
+        cursor: pointer;
+        color: #60a5fa;
+        font-size: 0.85rem;
+        padding: 0.3rem 0;
+        user-select: none;
+    }
+
+    .sos-table-details summary:hover {
+        color: #93c5fd;
     }
 </style>
 
@@ -576,32 +752,28 @@
         {#if sos12Data}
         <div class="sos-integration-card">
             <h2>{sos12Data.api}</h2>
-            <p><strong>Grupo:</strong> {sos12Data.group}</p>
-            <p><strong>Integrado por:</strong> {sos12Data.integratedBy}</p>
-            <p><strong>Fuente:</strong> {sos12Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'}</p>
-            <p><strong>Registros recibidos:</strong> {sos12Data.count}</p>
+            <p><strong>Grupo:</strong> {sos12Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos12Data.integratedBy}</p>
+            <p><strong>Fuente:</strong> {sos12Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos12Data.count}</p>
             <p><strong>URL externa:</strong> <code>{sos12Data.sourceUrl}</code></p>
+            <p><strong>Widget:</strong> ECharts radar</p>
             <p>{sos12Data.explanation}</p>
-
             {#if sos12Data.apiError}
                 <p class="api-error">Error: {sos12Data.apiError}</p>
             {/if}
-
+            {#if sos12Data.dataSource === 'api'}
+                <div id="sos12-radar" class="echarts-sos-chart"></div>
+            {/if}
             {#if sos12Data.data?.length}
                 {@const headers12 = sos12Data.fieldsShown?.length ? sos12Data.fieldsShown : Object.keys(sos12Data.data[0]).slice(0, 6)}
-                <p class="sos-table-info">Mostrando {sos12Data.data.length} de {sos12Data.count} registros recibidos.</p>
-                <div class="sos-table-scroll">
-                    <table class="sos-table">
-                        <thead>
-                            <tr>{#each headers12 as key}<th>{key}</th>{/each}</tr>
-                        </thead>
-                        <tbody>
-                            {#each sos12Data.data as row}
-                                <tr>{#each headers12 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                </div>
+                <details class="sos-table-details">
+                    <summary>Ver tabla de datos ({sos12Data.data.length} de {sos12Data.count} registros)</summary>
+                    <div class="sos-table-scroll">
+                        <table class="sos-table">
+                            <thead><tr>{#each headers12 as key}<th>{key}</th>{/each}</tr></thead>
+                            <tbody>{#each sos12Data.data as row}<tr>{#each headers12 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>{/each}</tbody>
+                        </table>
+                    </div>
+                </details>
             {/if}
         </div>
         {/if}
@@ -609,32 +781,28 @@
         {#if sos14Data}
         <div class="sos-integration-card">
             <h2>{sos14Data.api}</h2>
-            <p><strong>Grupo:</strong> {sos14Data.group}</p>
-            <p><strong>Integrado por:</strong> {sos14Data.integratedBy}</p>
-            <p><strong>Fuente:</strong> {sos14Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'}</p>
-            <p><strong>Registros recibidos:</strong> {sos14Data.count}</p>
+            <p><strong>Grupo:</strong> {sos14Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos14Data.integratedBy}</p>
+            <p><strong>Fuente:</strong> {sos14Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos14Data.count}</p>
             <p><strong>URL externa:</strong> <code>{sos14Data.sourceUrl}</code></p>
+            <p><strong>Widget:</strong> ECharts treemap</p>
             <p>{sos14Data.explanation}</p>
-
             {#if sos14Data.apiError}
                 <p class="api-error">Error: {sos14Data.apiError}</p>
             {/if}
-
+            {#if sos14Data.dataSource === 'api'}
+                <div id="sos14-treemap" class="echarts-sos-chart"></div>
+            {/if}
             {#if sos14Data.data?.length}
                 {@const headers14 = sos14Data.fieldsShown?.length ? sos14Data.fieldsShown : Object.keys(sos14Data.data[0]).slice(0, 6)}
-                <p class="sos-table-info">Mostrando {sos14Data.data.length} de {sos14Data.count} registros recibidos.</p>
-                <div class="sos-table-scroll">
-                    <table class="sos-table">
-                        <thead>
-                            <tr>{#each headers14 as key}<th>{key}</th>{/each}</tr>
-                        </thead>
-                        <tbody>
-                            {#each sos14Data.data as row}
-                                <tr>{#each headers14 as key}<td>{row[key] ?? 'N/A'}</td>{/each}</tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                </div>
+                <details class="sos-table-details">
+                    <summary>Ver tabla de datos ({sos14Data.data.length} de {sos14Data.count} registros)</summary>
+                    <div class="sos-table-scroll">
+                        <table class="sos-table">
+                            <thead><tr>{#each headers14 as key}<th>{key}</th>{/each}</tr></thead>
+                            <tbody>{#each sos14Data.data as row}<tr>{#each headers14 as key}<td>{row[key] ?? 'N/A'}</td>{/each}</tr>{/each}</tbody>
+                        </table>
+                    </div>
+                </details>
             {/if}
         </div>
         {/if}
@@ -642,32 +810,28 @@
         {#if sos20Data}
         <div class="sos-integration-card">
             <h2>{sos20Data.api}</h2>
-            <p><strong>Grupo:</strong> {sos20Data.group}</p>
-            <p><strong>Integrado por:</strong> {sos20Data.integratedBy}</p>
-            <p><strong>Fuente:</strong> {sos20Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'}</p>
-            <p><strong>Registros recibidos:</strong> {sos20Data.count}</p>
+            <p><strong>Grupo:</strong> {sos20Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos20Data.integratedBy}</p>
+            <p><strong>Fuente:</strong> {sos20Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos20Data.count}</p>
             <p><strong>URL externa:</strong> <code>{sos20Data.sourceUrl}</code></p>
+            <p><strong>Widget:</strong> ECharts sunburst</p>
             <p>{sos20Data.explanation}</p>
-
             {#if sos20Data.apiError}
                 <p class="api-error">Error: {sos20Data.apiError}</p>
             {/if}
-
+            {#if sos20Data.dataSource === 'api'}
+                <div id="sos20-sunburst" class="echarts-sos-chart"></div>
+            {/if}
             {#if sos20Data.data?.length}
                 {@const headers20 = sos20Data.fieldsShown?.length ? sos20Data.fieldsShown : Object.keys(sos20Data.data[0]).slice(0, 7)}
-                <p class="sos-table-info">Mostrando {sos20Data.data.length} de {sos20Data.count} registros recibidos.</p>
-                <div class="sos-table-scroll">
-                    <table class="sos-table">
-                        <thead>
-                            <tr>{#each headers20 as key}<th>{key}</th>{/each}</tr>
-                        </thead>
-                        <tbody>
-                            {#each sos20Data.data as row}
-                                <tr>{#each headers20 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                </div>
+                <details class="sos-table-details">
+                    <summary>Ver tabla de datos ({sos20Data.data.length} de {sos20Data.count} registros)</summary>
+                    <div class="sos-table-scroll">
+                        <table class="sos-table">
+                            <thead><tr>{#each headers20 as key}<th>{key}</th>{/each}</tr></thead>
+                            <tbody>{#each sos20Data.data as row}<tr>{#each headers20 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>{/each}</tbody>
+                        </table>
+                    </div>
+                </details>
             {/if}
         </div>
         {/if}
@@ -675,32 +839,28 @@
         {#if sos21Data}
         <div class="sos-integration-card">
             <h2>{sos21Data.api}</h2>
-            <p><strong>Grupo:</strong> {sos21Data.group}</p>
-            <p><strong>Integrado por:</strong> {sos21Data.integratedBy}</p>
-            <p><strong>Fuente:</strong> {sos21Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'}</p>
-            <p><strong>Registros recibidos:</strong> {sos21Data.count}</p>
+            <p><strong>Grupo:</strong> {sos21Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos21Data.integratedBy}</p>
+            <p><strong>Fuente:</strong> {sos21Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos21Data.count}</p>
             <p><strong>URL externa:</strong> <code>{sos21Data.sourceUrl}</code></p>
+            <p><strong>Widget:</strong> ECharts heatmap</p>
             <p>{sos21Data.explanation}</p>
-
             {#if sos21Data.apiError}
                 <p class="api-error">Error: {sos21Data.apiError}</p>
             {/if}
-
+            {#if sos21Data.dataSource === 'api'}
+                <div id="sos21-heatmap" class="echarts-sos-chart"></div>
+            {/if}
             {#if sos21Data.data?.length}
                 {@const headers21 = sos21Data.fieldsShown?.length ? sos21Data.fieldsShown : Object.keys(sos21Data.data[0]).slice(0, 8)}
-                <p class="sos-table-info">Mostrando {sos21Data.data.length} de {sos21Data.count} registros recibidos.</p>
-                <div class="sos-table-scroll">
-                    <table class="sos-table">
-                        <thead>
-                            <tr>{#each headers21 as key}<th>{key}</th>{/each}</tr>
-                        </thead>
-                        <tbody>
-                            {#each sos21Data.data as row}
-                                <tr>{#each headers21 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                </div>
+                <details class="sos-table-details">
+                    <summary>Ver tabla de datos ({sos21Data.data.length} de {sos21Data.count} registros)</summary>
+                    <div class="sos-table-scroll">
+                        <table class="sos-table">
+                            <thead><tr>{#each headers21 as key}<th>{key}</th>{/each}</tr></thead>
+                            <tbody>{#each sos21Data.data as row}<tr>{#each headers21 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>{/each}</tbody>
+                        </table>
+                    </div>
+                </details>
             {/if}
         </div>
         {/if}
@@ -708,32 +868,28 @@
         {#if sos27Data}
         <div class="sos-integration-card">
             <h2>{sos27Data.api}</h2>
-            <p><strong>Grupo:</strong> {sos27Data.group}</p>
-            <p><strong>Integrado por:</strong> {sos27Data.integratedBy}</p>
-            <p><strong>Fuente:</strong> {sos27Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'}</p>
-            <p><strong>Registros recibidos:</strong> {sos27Data.count}</p>
+            <p><strong>Grupo:</strong> {sos27Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos27Data.integratedBy}</p>
+            <p><strong>Fuente:</strong> {sos27Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos27Data.count}</p>
             <p><strong>URL externa:</strong> <code>{sos27Data.sourceUrl}</code></p>
+            <p><strong>Widget:</strong> ECharts scatter</p>
             <p>{sos27Data.explanation}</p>
-
             {#if sos27Data.apiError}
                 <p class="api-error">Error: {sos27Data.apiError}</p>
             {/if}
-
+            {#if sos27Data.dataSource === 'api'}
+                <div id="sos27-scatter" class="echarts-sos-chart"></div>
+            {/if}
             {#if sos27Data.data?.length}
                 {@const headers27 = sos27Data.fieldsShown?.length ? sos27Data.fieldsShown : Object.keys(sos27Data.data[0]).slice(0, 9)}
-                <p class="sos-table-info">Mostrando {sos27Data.data.length} de {sos27Data.count} registros recibidos.</p>
-                <div class="sos-table-scroll">
-                    <table class="sos-table">
-                        <thead>
-                            <tr>{#each headers27 as key}<th>{key}</th>{/each}</tr>
-                        </thead>
-                        <tbody>
-                            {#each sos27Data.data as row}
-                                <tr>{#each headers27 as key}<td>{row[key] ?? 'N/A'}</td>{/each}</tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                </div>
+                <details class="sos-table-details">
+                    <summary>Ver tabla de datos ({sos27Data.data.length} de {sos27Data.count} registros)</summary>
+                    <div class="sos-table-scroll">
+                        <table class="sos-table">
+                            <thead><tr>{#each headers27 as key}<th>{key}</th>{/each}</tr></thead>
+                            <tbody>{#each sos27Data.data as row}<tr>{#each headers27 as key}<td>{row[key] ?? 'N/A'}</td>{/each}</tr>{/each}</tbody>
+                        </table>
+                    </div>
+                </details>
             {/if}
         </div>
         {/if}

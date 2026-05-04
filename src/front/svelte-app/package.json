@@ -34,6 +34,7 @@
 	"dependencies": {
 		"c3": "^0.7.20",
 		"d3": "^7.9.0",
+		"echarts": "^5.6.0",
 		"highcharts": "^12.6.0",
 		"leaflet": "^1.9.4"
 	}

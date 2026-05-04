@@ -756,6 +756,19 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       const fields = pickFields(items, sos12Preferred, 6);
       const projected = projectRows(items, fields, Math.min(items.length, 50));
 
+      let chartData12 = null;
+      if (items.length > 0) {
+        const fKeys = Object.keys(items[0]);
+        const bField = ['crude_birth_rate', 'birth_rate'].find(f => fKeys.includes(f)) || 'crude_birth_rate';
+        const dField = deathField || ['crude_death_rate', 'death_rate'].find(f => fKeys.includes(f)) || 'crude_death_rate';
+        const gField = fKeys.includes('growth_rate') ? 'growth_rate' : null;
+        const n = items.length;
+        const avgBirthRate = Number((items.reduce((s, i) => s + Number(i[bField] || 0), 0) / n).toFixed(4));
+        const avgDeathRate = Number((items.reduce((s, i) => s + Number(i[dField] || 0), 0) / n).toFixed(4));
+        const avgGrowthRate = gField ? Number((items.reduce((s, i) => s + Number(i[gField] || 0), 0) / n).toFixed(4)) : 0;
+        chartData12 = { library: "ECharts", type: "radar", metrics: { avgBirthRate, avgDeathRate, avgGrowthRate } };
+      }
+
       res.json({
         api: "SOS2526-12 birth-death-growth-rates",
         sourceUrl: SOURCE_URL,
@@ -768,6 +781,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         fetchedAt: new Date().toISOString(),
         count: items.length,
         fieldsShown: fields,
+        chartData: chartData12,
         explanation: "Tasas de nacimiento, muerte y crecimiento por país y año, obtenidas desde la API SOS2526-12 mediante proxy propio y mostradas como tabla HTML.",
         data: projected,
       });
@@ -818,6 +832,22 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       }));
       const visibleLimit = Math.min(normalizedRows.length, 50);
 
+      const byCountry14 = {};
+      rows.forEach(row => {
+        const country = row.country || 'Unknown';
+        if (!byCountry14[country]) byCountry14[country] = { count: 0, totalMass: 0 };
+        byCountry14[country].count++;
+        byCountry14[country].totalMass += Number(row.mass || 0);
+      });
+      const chartData14 = {
+        library: "ECharts",
+        type: "treemap",
+        countries: Object.entries(byCountry14)
+          .map(([name, { count, totalMass }]) => ({ name, value: count, totalMass: Math.round(totalMass) }))
+          .sort((a, b) => b.value - a.value)
+          .slice(0, 15)
+      };
+
       res.json({
         api: "SOS2526-14 meteorite-landings",
         sourceUrl: SOURCE_URL,
@@ -830,6 +860,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         fetchedAt: new Date().toISOString(),
         count: rows.length,
         fieldsShown: FIELDS_SHOWN,
+        chartData: chartData14,
         explanation: "API de alumno SOS2526-14 integrada mediante proxy propio. Se reciben datos JSON sobre aterrizajes de meteoritos y se muestran en HTML.",
         data: normalizedRows.slice(0, visibleLimit),
       });
@@ -879,6 +910,26 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       const fields = pickFields(items, sos20Preferred, 7);
       const projected = projectRows(items, fields, Math.min(items.length, 50));
 
+      const byArea20 = {};
+      items.forEach(row => {
+        const area = String(row.area || 'Unknown');
+        const item = String(row.item || 'Unknown');
+        const val = Number(row.consumption ?? row.production ?? row.import ?? row.export ?? 0);
+        if (!byArea20[area]) byArea20[area] = {};
+        byArea20[area][item] = (byArea20[area][item] || 0) + val;
+      });
+      const chartData20 = {
+        library: "ECharts",
+        type: "sunburst",
+        tree: Object.entries(byArea20).slice(0, 10).map(([areaName, areaItems]) => ({
+          name: areaName,
+          children: Object.entries(areaItems).slice(0, 10).map(([itemName, v]) => ({
+            name: itemName,
+            value: Number(Number(v).toFixed(2))
+          }))
+        }))
+      };
+
       res.json({
         api: "SOS2526-20 spice-stats",
         sourceUrl: SOURCE_URL,
@@ -891,6 +942,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         fetchedAt: new Date().toISOString(),
         count: items.length,
         fieldsShown: fields,
+        chartData: chartData20,
         explanation: "Estadísticas de especias por país, producto y año. La API SOS2526-20 aporta importación, exportación, producción y consumo, recibidos en JSON mediante proxy propio y mostrados como tabla HTML.",
         data: projected,
       });
@@ -951,6 +1003,24 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
 
       const visibleLimit = Math.min(normalizedRows.length, 50);
 
+      const ageGroups21 = ["under_5", "age_5_14", "age_15_49", "age_50_69", "age_70_plus"];
+      const years21 = [...new Set(normalizedRows.map(r => r.year))].sort().slice(0, 10);
+      const heatmapData21 = [];
+      years21.forEach((year, yi) => {
+        const rowsForYear = normalizedRows.filter(r => r.year === year);
+        ageGroups21.forEach((ag, ai) => {
+          const total = rowsForYear.reduce((s, r) => s + Number(r[ag] || 0), 0);
+          heatmapData21.push([yi, ai, total]);
+        });
+      });
+      const chartData21 = {
+        library: "ECharts",
+        type: "heatmap",
+        years: years21.map(String),
+        ageGroups: ageGroups21,
+        data: heatmapData21
+      };
+
       res.json({
         api: "SOS2526-21 aids-deaths-stats",
         sourceUrl: SOURCE_URL,
@@ -963,6 +1033,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         fetchedAt: new Date().toISOString(),
         count: normalizedRows.length,
         fieldsShown: FIELDS_SHOWN,
+        chartData: chartData21,
         explanation: "API de alumno SOS2526-21 integrada mediante proxy propio. Se reciben datos JSON sobre muertes por VIH/SIDA por país, año y grupo de edad, y se muestran en HTML.",
         data: normalizedRows.slice(0, visibleLimit),
       });
@@ -1006,6 +1077,24 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         res_vol_km3: row.res_vol_km3 ?? "N/A",
       }));
       const visibleLimit = Math.min(normalizedRows.length, 50);
+      const chartData27 = {
+        library: "ECharts",
+        type: "scatter",
+        data: normalizedRows
+          .filter(row => row.capacity_mw !== 'N/A' && row.head_m !== 'N/A' && !isNaN(Number(row.capacity_mw)) && !isNaN(Number(row.head_m)))
+          .slice(0, 50)
+          .map(row => ({
+            name: row.name,
+            country: row.country,
+            river: row.river,
+            dam_name: row.dam_name,
+            x: Number(row.capacity_mw),
+            y: Number(row.head_m),
+            capacity_mw: Number(row.capacity_mw),
+            head_m: Number(row.head_m)
+          }))
+      };
+
       res.json({
         api: "SOS2526-27 world-hydroelectric-plants",
         sourceUrl: SOURCE_URL,
@@ -1018,6 +1107,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         fetchedAt: new Date().toISOString(),
         count: rows.length,
         fieldsShown,
+        chartData: chartData27,
         explanation: "API de alumno SOS2526-27 integrada mediante proxy propio. Se reciben datos JSON sobre plantas hidroeléctricas del mundo y se muestran en HTML.",
         data: normalizedRows.slice(0, visibleLimit),
       });
