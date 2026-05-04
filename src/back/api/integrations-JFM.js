@@ -782,7 +782,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         count: items.length,
         fieldsShown: fields,
         chartData: chartData12,
-        explanation: "Tasas de nacimiento, muerte y crecimiento por país y año, obtenidas desde la API SOS2526-12 mediante proxy propio y mostradas como tabla HTML.",
+        explanation: "Tasas de nacimiento, muerte y crecimiento por país y año. La API SOS2526-12 se consulta mediante proxy propio y sus datos JSON se agregan en un widget ECharts radar. La tabla HTML plegable permite consultar una muestra de los registros recibidos.",
         data: projected,
       });
     } catch (e) {
@@ -861,7 +861,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         count: rows.length,
         fieldsShown: FIELDS_SHOWN,
         chartData: chartData14,
-        explanation: "API de alumno SOS2526-14 integrada mediante proxy propio. Se reciben datos JSON sobre aterrizajes de meteoritos y se muestran en HTML.",
+        explanation: "Aterrizajes de meteoritos por país, año, masa y geolocalización. La API SOS2526-14 se consulta mediante proxy propio y sus datos JSON se agregan en un widget ECharts treemap por país. La tabla HTML plegable permite consultar una muestra de los registros recibidos.",
         data: normalizedRows.slice(0, visibleLimit),
       });
     } catch (e) {
@@ -958,7 +958,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         count: items.length,
         fieldsShown: fields,
         chartData: chartData20,
-        explanation: "Estadísticas de especias por país, producto y año. La API SOS2526-20 aporta importación, exportación, producción y consumo, recibidos en JSON mediante proxy propio y mostrados como tabla HTML.",
+        explanation: "Estadísticas de especias por país, producto y año. La API SOS2526-20 aporta importación, exportación, producción y consumo, recibidos en JSON mediante proxy propio y visualizados con un widget ECharts sankey. La tabla HTML plegable permite consultar los registros recibidos. El flujo representa: área → producto → métrica económica.",
         data: projected,
       });
     } catch (e) {
@@ -1049,7 +1049,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         count: normalizedRows.length,
         fieldsShown: FIELDS_SHOWN,
         chartData: chartData21,
-        explanation: "API de alumno SOS2526-21 integrada mediante proxy propio. Se reciben datos JSON sobre muertes por VIH/SIDA por país, año y grupo de edad, y se muestran en HTML.",
+        explanation: "Muertes por VIH/SIDA por país, año y grupo de edad. La API SOS2526-21 se consulta mediante proxy propio y sus datos JSON se visualizan en un widget ECharts heatmap por año y grupo de edad. La tabla HTML plegable permite consultar los registros recibidos.",
         data: normalizedRows.slice(0, visibleLimit),
       });
     } catch (e) {
@@ -1123,7 +1123,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         count: rows.length,
         fieldsShown,
         chartData: chartData27,
-        explanation: "API de alumno SOS2526-27 integrada mediante proxy propio. Se reciben datos JSON sobre plantas hidroeléctricas del mundo y se muestran en HTML.",
+        explanation: "Centrales hidroeléctricas por país, río, tipo de planta, capacidad y salto hidráulico. La API SOS2526-27 se consulta mediante proxy propio y sus datos JSON se visualizan en un widget ECharts scatter relacionando capacidad MW y head m. La tabla HTML plegable permite consultar una muestra de los registros recibidos.",
         data: normalizedRows.slice(0, visibleLimit),
       });
     } catch (e) {

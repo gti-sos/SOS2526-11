@@ -14,21 +14,21 @@
             <h2>JFM — Road Fatalities</h2>
             <p class="who">José Fernández Montero</p>
             <ul>
-                <li>Mastodon API (OAuth2 Client Credentials) → <b>pie</b></li>
-                <li>Copernicus/ESA Data Space (OAuth2 Client Credentials) → <b>scatter</b></li>
-                <li>FedEx Sandbox API (OAuth2 Client Credentials) → <b>heatmap</b></li>
-                <li>SOS2526-12 birth-death-growth-rates → <b>tabla HTML</b></li>
-                <li>SOS2526-14 meteorite-landings → <b>tabla HTML</b></li>
-                <li>SOS2526-20 spice-stats → <b>tabla HTML</b></li>
-                <li>SOS2526-21 aids-deaths-stats → <b>tabla HTML</b></li>
-                <li>SOS2526-27 world-hydroelectric-plants → <b>tabla HTML</b></li>
+                <li>Mastodon API (OAuth2 Client Credentials) → <b>pie</b> (Highcharts)</li>
+                <li>Copernicus/ESA Data Space (OAuth2 Password Grant) → <b>scatter</b> (Highcharts)</li>
+                <li>FedEx Sandbox API (OAuth2 Client Credentials) → <b>heatmap</b> (Highcharts)</li>
+                <li>SOS2526-12 birth-death-growth-rates → <b>radar</b> (ECharts) + tabla plegable</li>
+                <li>SOS2526-14 meteorite-landings → <b>treemap</b> (ECharts) + tabla plegable</li>
+                <li>SOS2526-20 spice-stats → <b>sankey</b> (ECharts) + tabla plegable</li>
+                <li>SOS2526-21 aids-deaths-stats → <b>heatmap</b> (ECharts) + tabla plegable</li>
+                <li>SOS2526-27 world-hydroelectric-plants → <b>scatter</b> (ECharts) + tabla plegable</li>
             </ul>
             <p class="signal-note">
-                Mastodon se usa como señal social externa relacionada con accidentes de tráfico, seguridad vial y movilidad.
-                La integración consulta hashtags públicos como RoadSafety, TrafficAccident, CarCrash, TrafficSafety,
-                RoadAccident, AccidentesTrafico, SeguridadVial y SiniestroVial.
-                El número de publicaciones encontradas por hashtag se usa como factor contextual en la gráfica pie de road fatalities.
-                No es una fuente oficial de fallecidos.
+                JFM integra 3 APIs externas no SOS mediante OAuth2 y proxy propio: Mastodon (señal social sobre seguridad vial,
+                hashtags como RoadSafety o SiniestroVial), Copernicus Data Space (productos Sentinel-2) y FedEx Sandbox
+                (localizaciones logísticas). Estas se visualizan con widgets Highcharts combinando datos externos con road-fatalities-v2.
+                Además, integra APIs SOS de otros grupos mediante proxy propio y las visualiza con widgets ECharts,
+                manteniendo tablas HTML plegables como apoyo para consultar los datos recibidos.
             </p>
             <a class="btn" href="/analytics/road-fatalities">Ver widgets →</a>
         </article>
