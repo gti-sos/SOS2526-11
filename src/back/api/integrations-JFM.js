@@ -910,24 +910,39 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       const fields = pickFields(items, sos20Preferred, 7);
       const projected = projectRows(items, fields, Math.min(items.length, 50));
 
-      const byArea20 = {};
-      items.forEach(row => {
+      // Agrupa por (area, item) los primeros 10 pares únicos para el sankey.
+      const pairMap20 = {};
+      const orderedPairs20 = [];
+      for (const row of items) {
         const area = String(row.area || 'Unknown');
         const item = String(row.item || 'Unknown');
-        const val = Number(row.consumption ?? row.production ?? row.import ?? row.export ?? 0);
-        if (!byArea20[area]) byArea20[area] = {};
-        byArea20[area][item] = (byArea20[area][item] || 0) + val;
+        const key = `${area}\x00${item}`;
+        if (!pairMap20[key]) {
+          if (orderedPairs20.length >= 10) continue;
+          pairMap20[key] = { area, item, imp: 0, exp: 0, prod: 0, cons: 0 };
+          orderedPairs20.push(pairMap20[key]);
+        }
+        pairMap20[key].imp  += Number(row.import      || 0);
+        pairMap20[key].exp  += Number(row.export      || 0);
+        pairMap20[key].prod += Number(row.production  || 0);
+        pairMap20[key].cons += Number(row.consumption || 0);
+      }
+      const rawLinks20 = [];
+      orderedPairs20.forEach(p => {
+        const total = p.imp + p.exp + p.prod + p.cons;
+        if (total > 0) rawLinks20.push({ source: p.area, target: p.item, value: Number(total.toFixed(2)) });
+        if (p.imp  > 0) rawLinks20.push({ source: p.item, target: 'Import',      value: Number(p.imp.toFixed(2)) });
+        if (p.exp  > 0) rawLinks20.push({ source: p.item, target: 'Export',      value: Number(p.exp.toFixed(2)) });
+        if (p.prod > 0) rawLinks20.push({ source: p.item, target: 'Production',  value: Number(p.prod.toFixed(2)) });
+        if (p.cons > 0) rawLinks20.push({ source: p.item, target: 'Consumption', value: Number(p.cons.toFixed(2)) });
       });
+      const nodeNames20 = new Set();
+      rawLinks20.forEach(l => { nodeNames20.add(l.source); nodeNames20.add(l.target); });
       const chartData20 = {
         library: "ECharts",
-        type: "sunburst",
-        tree: Object.entries(byArea20).slice(0, 10).map(([areaName, areaItems]) => ({
-          name: areaName,
-          children: Object.entries(areaItems).slice(0, 10).map(([itemName, v]) => ({
-            name: itemName,
-            value: Number(Number(v).toFixed(2))
-          }))
-        }))
+        type: "sankey",
+        nodes: [...nodeNames20].map(name => ({ name })),
+        links: rawLinks20
       };
 
       res.json({

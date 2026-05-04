@@ -75,29 +75,38 @@
         window.addEventListener('resize', () => chart.resize());
     }
 
-    function renderSos20Sunburst(d: any) {
-        const el = document.getElementById('sos20-sunburst');
-        if (!el || !d?.chartData?.tree?.length) return;
+    function renderSos20Sankey(d: any) {
+        const el = document.getElementById('sos20-sankey');
+        if (!el || !d?.chartData?.nodes?.length || !d?.chartData?.links?.length) return;
         const chart = echarts.init(el);
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: 'Especias por área y producto', textStyle: { color: '#e5c07b' } },
+            title: { text: 'Flujo de especias por área, producto y métrica', textStyle: { color: '#e5c07b' } },
             tooltip: {
+                trigger: 'item',
                 formatter: (info: any) => {
-                    const v = info.data;
-                    return `<b>${v.name}</b><br/>` +
-                        `Valor: <b>${v.value ?? 'N/A'}</b><br/>` +
+                    if (info.dataType === 'edge') {
+                        return `<b>${info.data.source}</b> → <b>${info.data.target}</b><br/>` +
+                            `Valor: <b>${info.data.value}</b><br/>` +
+                            `API: SOS2526-20 spice-stats<br/>` +
+                            `Proxy: /api/integrations/jfm/sos20-spice-stats<br/>` +
+                            `Métricas: import / export / production / consumption<br/>` +
+                            `Widget: ECharts sankey`;
+                    }
+                    return `<b>${info.data.name}</b><br/>` +
                         `API: SOS2526-20 spice-stats<br/>` +
                         `Proxy: /api/integrations/jfm/sos20-spice-stats<br/>` +
-                        `Widget: ECharts sunburst`;
+                        `Widget: ECharts sankey`;
                 }
             },
             series: [{
-                type: 'sunburst',
-                data: d.chartData.tree,
-                radius: ['15%', '90%'],
-                label: { rotate: 'radial', fontSize: 10 },
-                itemStyle: { borderWidth: 1 }
+                type: 'sankey',
+                data: d.chartData.nodes,
+                links: d.chartData.links,
+                emphasis: { focus: 'adjacency' },
+                lineStyle: { color: 'gradient', curveness: 0.5 },
+                label: { color: '#d1d5db', fontSize: 11 },
+                nodeAlign: 'left'
             }]
         });
         window.addEventListener('resize', () => chart.resize());
@@ -498,7 +507,7 @@
 
         // 6. SOS2526-20 -> spice-stats (proxy SOS)
         fetch('/api/integrations/jfm/sos20-spice-stats')
-            .then(async r => { const d = await r.json(); sos20Data = d; await tick(); renderSos20Sunburst(d); })
+            .then(async r => { const d = await r.json(); sos20Data = d; await tick(); renderSos20Sankey(d); })
             .catch(e => { sos20Data = { api: 'SOS2526-20', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
 
         // 7. SOS2526-21 -> aids-deaths-stats (proxy SOS)
@@ -813,13 +822,13 @@
             <p><strong>Grupo:</strong> {sos20Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos20Data.integratedBy}</p>
             <p><strong>Fuente:</strong> {sos20Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos20Data.count}</p>
             <p><strong>URL externa:</strong> <code>{sos20Data.sourceUrl}</code></p>
-            <p><strong>Widget:</strong> ECharts sunburst</p>
+            <p><strong>Widget:</strong> ECharts sankey</p>
             <p>{sos20Data.explanation}</p>
             {#if sos20Data.apiError}
                 <p class="api-error">Error: {sos20Data.apiError}</p>
             {/if}
             {#if sos20Data.dataSource === 'api'}
-                <div id="sos20-sunburst" class="echarts-sos-chart"></div>
+                <div id="sos20-sankey" class="echarts-sos-chart"></div>
             {/if}
             {#if sos20Data.data?.length}
                 {@const headers20 = sos20Data.fieldsShown?.length ? sos20Data.fieldsShown : Object.keys(sos20Data.data[0]).slice(0, 7)}
