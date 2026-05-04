@@ -24,7 +24,7 @@
                 <li>SOS2526-27 world-hydroelectric-plants → <b>scatter</b> (ECharts) + tabla plegable</li>
             </ul>
             <p class="signal-note">
-                JFM integra 3 APIs externas no SOS mediante OAuth2 y proxy propio: Mastodon (señal social sobre seguridad vial,
+                JFM integra 3 APIs externas mediante OAuth2 y proxy propio: Mastodon (señal social sobre seguridad vial,
                 hashtags como RoadSafety o SiniestroVial), Copernicus Data Space (productos Sentinel-2) y FedEx Sandbox
                 (localizaciones logísticas). Estas se visualizan con widgets Highcharts combinando datos externos con road-fatalities-v2.
                 Además, integra APIs SOS de otros grupos mediante proxy propio y las visualiza con widgets ECharts,
