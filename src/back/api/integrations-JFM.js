@@ -1229,70 +1229,116 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       if (!r.ok) throw new Error(`HTTP ${r.status} desde SOS20: ${text.slice(0, 300)}`);
 
       const items = extractArrayPayload(json);
-      const nationMap = buildNationMap(ownDocs);
 
-      const sos20Preferred = ["area", "item", "year", "import", "export", "production", "consumption", "unit"];
-      const fields = pickFields(items, sos20Preferred, 7);
-      const fieldsShown = [...fields, "road_population_death_rate", "road_total_death"];
+      const fieldsShown = ["year", "spice_total_production", "spice_total_import", "spice_total_export", "spice_total_consumption", "spice_unique_items", "spice_unique_areas", "spice_top_items", "road_total_death", "population_death_rate", "vehicle_death_rate", "road_countries_count"];
 
-      // Filas para tabla: campos SOS20 + road-fatalities cruzados por área (país)
-      const combinedProjected = items.slice(0, 50).map(row => {
-        const key = String(row.area || '').toLowerCase().trim();
-        const own = nationMap[key] || null;
-        const projected = {};
-        fields.forEach(f => { projected[f] = row?.[f]; });
-        projected.road_population_death_rate = own?.population_death_rate ?? null;
-        projected.road_total_death = own?.total_death ?? null;
-        return projected;
-      });
-
-      // Agrega producción total por área para funnel combinado y scatter
-      const byArea20 = {};
+      // Agrupa especias por año: suma métricas y recoge top items por producción
+      const spiceByYear = new Map();
       items.forEach(row => {
-        const area = String(row.area || 'Unknown');
-        if (!byArea20[area]) byArea20[area] = 0;
-        byArea20[area] += Number(row.production || 0);
+        const year = toNumber(row.year);
+        if (!year) return;
+        if (!spiceByYear.has(year)) {
+          spiceByYear.set(year, {
+            spice_total_production:  0,
+            spice_total_import:      0,
+            spice_total_export:      0,
+            spice_total_consumption: 0,
+            areas:    new Set(),
+            itemsMap: new Map(),
+          });
+        }
+        const e = spiceByYear.get(year);
+        e.spice_total_production  += toNumber(row.production);
+        e.spice_total_import      += toNumber(row.import);
+        e.spice_total_export      += toNumber(row.export);
+        e.spice_total_consumption += toNumber(row.consumption);
+        if (row.area) e.areas.add(String(row.area));
+        if (row.item) {
+          const prev = e.itemsMap.get(row.item) || 0;
+          e.itemsMap.set(row.item, prev + toNumber(row.production));
+        }
       });
 
-      // Funnel combinado: producción total (SOS20) × population_death_rate (propio) por país
-      const funnelItems20 = Object.entries(byArea20)
-        .map(([area, totalProd]) => {
-          const key = area.toLowerCase().trim();
-          const own = nationMap[key] || null;
-          if (!own || totalProd === 0) return null;
-          return {
-            name: area,
-            value: Math.round(totalProd * own.population_death_rate * 100) / 100,
-            production: Math.round(totalProd),
-            road_death_rate: own.population_death_rate,
-          };
-        })
-        .filter(Boolean)
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 10);
+      // Agrupa road-fatalities por año: suma muertes, media tasas
+      const roadByYear20 = new Map();
+      ownDocs.forEach(row => {
+        const year = toNumber(row.year);
+        if (!year) return;
+        if (!roadByYear20.has(year)) {
+          roadByYear20.set(year, { road_total_death: 0, pop_rate_sum: 0, veh_rate_sum: 0, rate_count: 0, road_countries_count: 0 });
+        }
+        const e = roadByYear20.get(year);
+        e.road_total_death      += toNumber(row.total_death);
+        e.pop_rate_sum          += toNumber(row.population_death_rate);
+        e.veh_rate_sum          += toNumber(row.vehicle_death_rate);
+        e.rate_count            += 1;
+        e.road_countries_count  += 1;
+      });
 
-      const chartData20 = {
-        library: "ECharts", type: "funnel",
-        description: "Producción de especias × mortalidad vial por país (SOS20 + road-fatalities-v2)",
-        data: funnelItems20.length > 0 ? funnelItems20 : [{ name: "Sin coincidencias", value: 0, production: 0, road_death_rate: 0 }],
-      };
+      const spiceYears = [...spiceByYear.keys()].sort((a, b) => a - b);
+      const commonYears20 = spiceYears.filter(y => roadByYear20.has(y));
 
-      // Scatter combinado: producción total por área (SOS20) × population_death_rate (propio)
-      const scatterPoints20 = Object.entries(byArea20)
-        .map(([area, totalProd]) => {
-          const key = area.toLowerCase().trim();
-          const own = nationMap[key] || null;
-          return own && totalProd > 0 ? { name: area, x: Math.round(totalProd), y: own.population_death_rate } : null;
-        })
-        .filter(Boolean);
+      console.log(`[SOS20] años en spice-stats: ${spiceYears.join(', ')}`);
+      console.log(`[SOS20] años en road-fatalities: ${[...roadByYear20.keys()].sort((a,b)=>a-b).join(', ')}`);
+      console.log(`[SOS20] años en común: ${commonYears20.join(', ')}`);
 
-      const combinedChartData20 = scatterPoints20.length > 0 ? {
-        library: "ECharts", type: "scatter",
-        description: "Producción total de especias (SOS20) vs mortalidad vial (road-fatalities-v2) por país",
-        xAxis: "total_production (SOS2526-20)",
-        yAxis: "population_death_rate (road-fatalities-v2)",
-        matchedCount: scatterPoints20.length,
-        data: scatterPoints20,
+      // Fila por año común con datos de ambas fuentes
+      const combinedData20 = commonYears20.map(year => {
+        const s = spiceByYear.get(year);
+        const r = roadByYear20.get(year);
+        const topItems = [...s.itemsMap.entries()]
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([name]) => name);
+        return {
+          year,
+          spice_total_production:  Math.round(s.spice_total_production),
+          spice_total_import:      Math.round(s.spice_total_import * 100) / 100,
+          spice_total_export:      Math.round(s.spice_total_export * 100) / 100,
+          spice_total_consumption: Math.round(s.spice_total_consumption * 100) / 100,
+          spice_unique_items:      s.itemsMap.size,
+          spice_unique_areas:      s.areas.size,
+          spice_top_items:         topItems.join(" · ") || "—",
+          road_total_death:        r.road_total_death,
+          population_death_rate:   Number((r.pop_rate_sum / r.rate_count).toFixed(4)),
+          vehicle_death_rate:      Number((r.veh_rate_sum / r.rate_count).toFixed(4)),
+          road_countries_count:    r.road_countries_count,
+        };
+      });
+
+      // Radar: métricas normalizadas (0-100) por año — cada año es una serie en el radar
+      const maxProd20  = Math.max(...combinedData20.map(d => d.spice_total_production), 1);
+      const maxCons20  = Math.max(...combinedData20.map(d => Math.abs(d.spice_total_consumption)), 1);
+      const maxRoad20  = Math.max(...combinedData20.map(d => d.road_total_death), 1);
+      const maxPop20   = Math.max(...combinedData20.map(d => d.population_death_rate), 1);
+      const maxVeh20   = Math.max(...combinedData20.map(d => d.vehicle_death_rate), 1);
+
+      const radarIndicators20 = [
+        { name: "Producción especias",  max: 100 },
+        { name: "Consumo especias",     max: 100 },
+        { name: "Muertes viales",       max: 100 },
+        { name: "Tasa vial población",  max: 100 },
+        { name: "Tasa vial vehículo",   max: 100 },
+      ];
+
+      const radarSeries20 = combinedData20.map(row => ({
+        name: String(row.year),
+        values: [
+          Math.round(normalizeTo100(row.spice_total_production,              maxProd20) * 10) / 10,
+          Math.round(normalizeTo100(Math.abs(row.spice_total_consumption),   maxCons20) * 10) / 10,
+          Math.round(normalizeTo100(row.road_total_death,                    maxRoad20) * 10) / 10,
+          Math.round(normalizeTo100(row.population_death_rate,               maxPop20)  * 10) / 10,
+          Math.round(normalizeTo100(row.vehicle_death_rate,                  maxVeh20)  * 10) / 10,
+        ],
+        raw: row,
+      }));
+
+      const chartData20 = combinedData20.length > 0 ? {
+        library: "ECharts", type: "radar",
+        description: "Métricas normalizadas (0-100) de especias y mortalidad vial por año (SOS20 + road-fatalities-v2)",
+        indicators: radarIndicators20,
+        series: radarSeries20,
+        matchedCount: combinedData20.length,
       } : null;
 
       res.json({
@@ -1306,14 +1352,19 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         group: "SOS2526-20",
         integratedBy: "JFM",
         fetchedAt: new Date().toISOString(),
-        count: items.length,
-        matchedCountries: scatterPoints20.length,
+        count: combinedData20.length,
+        matchedYears: combinedData20.length,
         fieldsShown,
         chartData: chartData20,
-        combinedChartData: combinedChartData20,
-        explanation: `Combinación de producción de especias por país (SOS2526-20) con mortalidad vial propia (road-fatalities-v2). El funnel muestra el producto total_production × population_death_rate por país (${funnelItems20.length} países combinados). El scatter cruza total_production (SOS20) con population_death_rate (propio) para los ${scatterPoints20.length} países coincidentes. La tabla incluye ambas fuentes.`,
-        ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
-        data: combinedProjected,
+        explanation: `Combinación de producción de especias por año (SOS2526-20) con mortalidad vial propia (road-fatalities-v2). El radar compara 5 métricas normalizadas (0-100) para los ${combinedData20.length} años en común: producción, consumo de especias, muertes viales, tasa vial por población y tasa vial por vehículo. El tooltip muestra las 3 especias más producidas de cada año y conteos de items y áreas. La tabla incluye todas las métricas de ambas fuentes.`,
+        ownApiFieldsUsed: ["year", "population_death_rate", "total_death"],
+        data: combinedData20,
+        debug: {
+          spiceRecords: items.length,
+          spiceYears: spiceYears.slice(0, 20),
+          roadYears: [...roadByYear20.keys()].sort((a,b)=>a-b).slice(0, 20),
+          commonYears: commonYears20,
+        },
       });
     } catch (e) {
       res.json({

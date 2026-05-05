@@ -77,38 +77,75 @@
         window.addEventListener('resize', () => chart.resize());
     }
 
-    function renderSos20Funnel(d: any) {
-        const el = document.getElementById('sos20-funnel');
-        if (!el || !d?.chartData?.data?.length) return;
+    function renderSos20Radar(d: any) {
+        const el = document.getElementById('sos20-radar');
+        if (!el) return;
+        const cd = d?.chartData;
+        if (!cd?.series?.length) {
+            el.innerHTML = `<p style="color:#f87171;padding:1rem;font-size:0.9rem;">No se encontraron años en común entre SOS2526-20 spice-stats y road-fatalities-v2.</p>`;
+            return;
+        }
+        const existing = echarts.getInstanceByDom(el);
+        if (existing) existing.dispose();
         const chart = echarts.init(el);
-        const cd = d.chartData;
+        const palette = ['#e06c75','#98c379','#e5c07b','#61afef','#c678dd','#56b6c2','#d19a66'];
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: cd.description || 'Producción especias × mortalidad vial', textStyle: { color: '#e5c07b' } },
+            title: {
+                text: 'Especias y mortalidad vial por año',
+                subtext: 'SOS2526-20 spice-stats + SOS2526-11 road-fatalities-v2',
+                left: 'center',
+                textStyle: { color: '#e5c07b' },
+                subtextStyle: { color: '#9ca3af' },
+            },
+            legend: {
+                bottom: 0,
+                textStyle: { color: '#d1d5db' },
+                data: cd.series.map((s: any) => s.name),
+            },
             tooltip: {
                 trigger: 'item',
                 formatter: (info: any) => {
-                    const v = info.data;
-                    return `<b>${v.name}</b><br/>` +
-                        `Valor combinado: <b>${v.value}</b><br/>` +
-                        `Producción total (SOS20): <b>${v.production?.toLocaleString() ?? 'N/A'}</b><br/>` +
-                        `Mortalidad vial (road-fatalities-v2): <b>${v.road_death_rate ?? 'N/A'}</b><br/>` +
+                    const s = info.data;
+                    const raw = s.raw;
+                    return `<b>Año ${s.name}</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
-                        `Fuente: SOS2526-20 spice-stats + road-fatalities-v2<br/>` +
-                        `Fórmula: total_production × population_death_rate<br/>` +
-                        `Widget: ECharts funnel`;
+                        `<b>SOS2526-20 spice-stats</b><br/>` +
+                        `Producción total: <b>${raw?.spice_total_production?.toLocaleString() ?? 'N/A'} t</b><br/>` +
+                        `Consumo total: <b>${raw?.spice_total_consumption?.toLocaleString() ?? 'N/A'} t</b><br/>` +
+                        `Importación: <b>${raw?.spice_total_import?.toLocaleString() ?? 'N/A'} t</b><br/>` +
+                        `Exportación: <b>${raw?.spice_total_export?.toLocaleString() ?? 'N/A'} t</b><br/>` +
+                        `Items únicos: <b>${raw?.spice_unique_items ?? 'N/A'}</b> | Áreas: <b>${raw?.spice_unique_areas ?? 'N/A'}</b><br/>` +
+                        `Top 3 especias: <b>${raw?.spice_top_items ?? '—'}</b><br/>` +
+                        `<hr style="margin:4px 0;border-color:#374151"/>` +
+                        `<b>road-fatalities-v2</b><br/>` +
+                        `Muertes viales: <b>${raw?.road_total_death?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `Tasa vial población: <b>${raw?.population_death_rate ?? 'N/A'}</b><br/>` +
+                        `Tasa vial vehículo: <b>${raw?.vehicle_death_rate ?? 'N/A'}</b><br/>` +
+                        `<hr style="margin:4px 0;border-color:#374151"/>` +
+                        `Valores normalizados 0-100 · Widget: ECharts radar`;
                 }
             },
+            radar: {
+                indicator: cd.indicators.map((ind: any) => ({ name: ind.name, max: ind.max })),
+                shape: 'polygon',
+                splitNumber: 4,
+                name: { textStyle: { color: '#d1d5db', fontSize: 11 } },
+                splitLine: { lineStyle: { color: '#374151' } },
+                splitArea: { areaStyle: { color: ['rgba(55,65,81,0.3)', 'rgba(55,65,81,0.1)'] } },
+                axisLine: { lineStyle: { color: '#4b5563' } },
+            },
             series: [{
-                type: 'funnel',
-                width: '70%',
-                left: '15%',
-                sort: 'descending',
-                data: cd.data.map((item: any) => ({ name: item.name, value: item.value, production: item.production, road_death_rate: item.road_death_rate })),
-                label: { show: true, position: 'inside', color: '#282c34', fontSize: 11, formatter: '{b}' },
-                itemStyle: { borderColor: '#282c34', borderWidth: 1 },
-                emphasis: { label: { fontSize: 13 } }
-            }]
+                type: 'radar',
+                data: cd.series.map((s: any, i: number) => ({
+                    name: s.name,
+                    value: s.values,
+                    raw: s.raw,
+                    lineStyle: { color: palette[i % palette.length], width: 2 },
+                    areaStyle: { color: palette[i % palette.length], opacity: 0.15 },
+                    itemStyle: { color: palette[i % palette.length] },
+                })),
+            }],
         });
         window.addEventListener('resize', () => chart.resize());
     }
@@ -613,7 +650,7 @@
 
         // 6. SOS2526-20 -> spice-stats (proxy SOS)
         fetch('/api/integrations/jfm/sos20-spice-stats')
-            .then(async r => { const d = await r.json(); sos20Data = d; await tick(); renderSos20Funnel(d); })
+            .then(async r => { const d = await r.json(); sos20Data = d; await tick(); renderSos20Radar(d); })
             .catch(e => { sos20Data = { api: 'SOS2526-20', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
 
         // 7. SOS2526-21 -> aids-deaths-stats (proxy SOS)
@@ -934,7 +971,7 @@
                 <p class="api-error">Error: {sos20Data.apiError}</p>
             {/if}
             {#if sos20Data.dataSource === 'api'}
-                <div id="sos20-funnel" class="echarts-sos-chart"></div>
+                <div id="sos20-radar" class="echarts-sos-chart"></div>
             {/if}
             {#if sos20Data.data?.length}
                 {@const headers20 = sos20Data.fieldsShown?.length ? sos20Data.fieldsShown : Object.keys(sos20Data.data[0]).slice(0, 7)}
