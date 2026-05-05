@@ -37,6 +37,16 @@ export function loadBackendJFMv2(app) {
                 return res.status(400).json({ error: "Bad Request: Los datos de la v2 ya han sido cargados." });
             } else {
                 const initialRoadFatalities = [
+                    { nation: "mexico", year: 1990, population_death_rate: 12.4, vehicle_death_rate: 38.7, distance_death_rate: 18.9, total_death: 10480, income_level: "middle", traffic_side: "right" },
+                    { nation: "canada", year: 1991, population_death_rate: 11.2, vehicle_death_rate: 18.4, distance_death_rate: 9.8, total_death: 3186, income_level: "high", traffic_side: "right" },
+                    { nation: "spain", year: 1992, population_death_rate: 16.7, vehicle_death_rate: 25.6, distance_death_rate: 14.3, total_death: 6512, income_level: "high", traffic_side: "right" },
+                    { nation: "italy", year: 1993, population_death_rate: 12.1, vehicle_death_rate: 19.8, distance_death_rate: 11.7, total_death: 6925, income_level: "high", traffic_side: "right" },
+                    { nation: "united kingdom", year: 1994, population_death_rate: 6.4, vehicle_death_rate: 10.9, distance_death_rate: 7.2, total_death: 3728, income_level: "high", traffic_side: "left" },
+                    { nation: "germany", year: 1995, population_death_rate: 11.6, vehicle_death_rate: 18.2, distance_death_rate: 10.4, total_death: 9484, income_level: "high", traffic_side: "right" },
+                    { nation: "argentina", year: 1996, population_death_rate: 17.8, vehicle_death_rate: 39.5, distance_death_rate: 21.6, total_death: 6310, income_level: "middle", traffic_side: "right" },
+                    { nation: "norway", year: 1997, population_death_rate: 7.1, vehicle_death_rate: 10.3, distance_death_rate: 8.5, total_death: 313, income_level: "high", traffic_side: "right" },
+                    { nation: "switzerland", year: 1998, population_death_rate: 8.3, vehicle_death_rate: 11.6, distance_death_rate: 7.9, total_death: 591, income_level: "high", traffic_side: "right" },
+                    { nation: "ukraine", year: 1999, population_death_rate: 18.9, vehicle_death_rate: 49.2, distance_death_rate: 24.1, total_death: 9375, income_level: "middle", traffic_side: "right" },
                     { nation: "mexico", year: 2019, population_death_rate: 5.7, vehicle_death_rate: 14.2, distance_death_rate: null, total_death: 4125, income_level: "middle", traffic_side: "right" },
                     { nation: "albania", year: 2013, population_death_rate: 15.1, vehicle_death_rate: 107.2, distance_death_rate: null, total_death: 478, income_level: "middle", traffic_side: "right" },
                     { nation: "argelia", year: 2013, population_death_rate: 23.8, vehicle_death_rate: 127.8, distance_death_rate: null, total_death: 9337, income_level: "middle", traffic_side: "right" },
