@@ -243,6 +243,25 @@ function projectRows(rows, fields, limit = 10) {
   });
 }
 
+function buildNationMap(docs) {
+  const map = {};
+  docs.forEach(d => {
+    const key = String(d.nation || '').toLowerCase().trim();
+    if (!key) return;
+    if (!map[key]) map[key] = { nation: d.nation, population_death_rate: 0, vehicle_death_rate: 0, total_death: 0, count: 0 };
+    map[key].population_death_rate += Number(d.population_death_rate || 0);
+    map[key].vehicle_death_rate    += Number(d.vehicle_death_rate    || 0);
+    map[key].total_death           += Number(d.total_death           || 0);
+    map[key].count++;
+  });
+  Object.values(map).forEach(v => {
+    v.population_death_rate = Number((v.population_death_rate / v.count).toFixed(4));
+    v.vehicle_death_rate    = Number((v.vehicle_death_rate    / v.count).toFixed(4));
+    delete v.count;
+  });
+  return map;
+}
+
 export function loadBackendIntegrationsJFM(app) {
   const dbFindAll = () =>
     new Promise((resolve, reject) => {
@@ -727,7 +746,10 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos12-birth-death-growth", async (req, res) => {
     const SOURCE_URL = "https://sos2526-12.onrender.com/api/v2/birth-death-growth-rates";
     try {
-      const r = await fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000);
+      const [r, ownDocs] = await Promise.all([
+        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
+        dbFindAll(),
+      ]);
       const text = await r.text();
       let json;
       try {
@@ -738,11 +760,12 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       if (!r.ok) throw new Error(`HTTP ${r.status} desde SOS12: ${text.slice(0, 300)}`);
 
       const items = extractArrayPayload(json);
+      const nationMap = buildNationMap(ownDocs);
 
-      // Detecta dinámicamente qué campo contiene la tasa de muerte en esta API.
       const firstKeys = items.length ? Object.keys(items[0]) : [];
       const deathField = ["crude_death_rate", "death_rate", "mortality_rate", "death"]
         .find(f => firstKeys.includes(f)) ?? null;
+      const countryField = ["country_name", "country", "nation"].find(f => firstKeys.includes(f)) ?? "country";
 
       const sos12Preferred = [
         "country_name", "country", "nation",
@@ -754,20 +777,79 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       ].filter(Boolean);
 
       const fields = pickFields(items, sos12Preferred, 6);
-      const projected = projectRows(items, fields, Math.min(items.length, 50));
+      const fieldsShown = [...fields, "road_population_death_rate", "road_total_death"];
+
+      // Filas combinadas: campos SOS12 + campos road-fatalities cruzados por país
+      const combinedData = items.slice(0, 50).map(row => {
+        const key = String(row[countryField] || '').toLowerCase().trim();
+        const own = nationMap[key] || null;
+        const projected = {};
+        fields.forEach(f => { projected[f] = row?.[f]; });
+        projected.road_population_death_rate = own?.population_death_rate ?? null;
+        projected.road_total_death = own?.total_death ?? null;
+        return projected;
+      });
 
       let chartData12 = null;
+      let combinedChartData12 = null;
       if (items.length > 0) {
         const fKeys = Object.keys(items[0]);
         const bField = ['crude_birth_rate', 'birth_rate'].find(f => fKeys.includes(f)) || 'crude_birth_rate';
         const dField = deathField || ['crude_death_rate', 'death_rate'].find(f => fKeys.includes(f)) || 'crude_death_rate';
-        const gField = fKeys.includes('growth_rate') ? 'growth_rate' : null;
-        const n = items.length;
-        const avgBirthRate = Number((items.reduce((s, i) => s + Number(i[bField] || 0), 0) / n).toFixed(4));
-        const avgDeathRate = Number((items.reduce((s, i) => s + Number(i[dField] || 0), 0) / n).toFixed(4));
-        const avgGrowthRate = gField ? Number((items.reduce((s, i) => s + Number(i[gField] || 0), 0) / n).toFixed(4)) : 0;
-        chartData12 = { library: "ECharts", type: "radar", metrics: { avgBirthRate, avgDeathRate, avgGrowthRate } };
+
+        // Bar combinado: crude_birth_rate (SOS12) vs population_death_rate (propio) por país
+        const barItems = items
+          .filter(row => {
+            const k = String(row[countryField] || '').toLowerCase().trim();
+            return nationMap[k] && Number(row[bField] || 0) > 0;
+          })
+          .slice(0, 12);
+
+        if (barItems.length > 0) {
+          chartData12 = {
+            library: "ECharts", type: "bar",
+            description: "Tasa bruta de natalidad (SOS12) vs mortalidad vial (road-fatalities-v2) por país",
+            xAxis: barItems.map(row => String(row[countryField] || '')),
+            series: [
+              {
+                name: "crude_birth_rate (SOS2526-12)",
+                data: barItems.map(row => Number(row[bField] || 0))
+              },
+              {
+                name: "population_death_rate (road-fatalities-v2)",
+                data: barItems.map(row => {
+                  const k = String(row[countryField] || '').toLowerCase().trim();
+                  return nationMap[k]?.population_death_rate ?? 0;
+                })
+              }
+            ]
+          };
+        }
+
+        // Scatter combinado: crude_death_rate (SOS12) × population_death_rate (propio) por país
+        const scatterPoints = items
+          .filter(row => {
+            const k = String(row[countryField] || '').toLowerCase().trim();
+            return nationMap[k] && Number(row[dField] || 0) > 0;
+          })
+          .map(row => {
+            const k = String(row[countryField] || '').toLowerCase().trim();
+            return { name: String(row[countryField] || ''), x: Number(row[dField] || 0), y: nationMap[k].population_death_rate };
+          });
+
+        if (scatterPoints.length > 0) {
+          combinedChartData12 = {
+            library: "ECharts", type: "scatter",
+            description: "Tasa de muerte demográfica (SOS12) vs mortalidad vial (road-fatalities-v2) por país",
+            xAxis: "crude_death_rate (SOS2526-12)",
+            yAxis: "population_death_rate (road-fatalities-v2)",
+            matchedCount: scatterPoints.length,
+            data: scatterPoints,
+          };
+        }
       }
+
+      const matchedCount = combinedData.filter(r => r.road_population_death_rate !== null).length;
 
       res.json({
         api: "SOS2526-12 birth-death-growth-rates",
@@ -775,15 +857,18 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         dataSource: "api",
         apiError: null,
         externalApiUsed: true,
+        combinedWithOwnApi: true,
         sosApi: true,
         group: "SOS2526-12",
         integratedBy: "JFM",
         fetchedAt: new Date().toISOString(),
         count: items.length,
-        fieldsShown: fields,
+        matchedCountries: matchedCount,
+        fieldsShown,
         chartData: chartData12,
-        explanation: "Tasas de nacimiento, muerte y crecimiento por país y año. La API SOS2526-12 se consulta mediante proxy propio y sus datos JSON se agregan en un widget ECharts radar. La tabla HTML plegable permite consultar una muestra de los registros recibidos.",
-        data: projected,
+        explanation: `Combinación de tasas de natalidad por país (SOS2526-12) con mortalidad vial propia (road-fatalities-v2). El gráfico de barras compara crude_birth_rate (SOS12) con population_death_rate (propio) para ${chartData12?.xAxis?.length ?? 0} países coincidentes. La tabla incluye ambas fuentes.`,
+        ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
+        data: combinedData,
       });
     } catch (e) {
       res.json({
@@ -792,6 +877,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         dataSource: "api-error",
         apiError: e.message,
         externalApiUsed: false,
+        combinedWithOwnApi: false,
         sosApi: true,
         group: "SOS2526-12",
         integratedBy: "JFM",
@@ -809,9 +895,12 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   // -------------------------------------------------------------------
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos14-meteorite-landings", async (req, res) => {
     const SOURCE_URL = "https://meteorite-landings-tvcf.onrender.com/api/v2/meteorite-landings";
-    const FIELDS_SHOWN = ["name", "year", "mass", "country", "geolocation", "id"];
+    const FIELDS_SHOWN = ["name", "year", "mass", "country", "geolocation", "id", "road_population_death_rate", "road_total_death"];
     try {
-      const r = await fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 45000);
+      const [r, ownDocs] = await Promise.all([
+        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 45000),
+        dbFindAll(),
+      ]);
       const text = await r.text();
       let json;
       try {
@@ -822,16 +911,9 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       if (!r.ok) throw new Error(`HTTP ${r.status} desde SOS14: ${text.slice(0, 300)}`);
 
       const rows = extractArrayPayload(json);
-      const normalizedRows = rows.map(row => ({
-        name:        row.name,
-        year:        row.year,
-        mass:        row.mass,
-        country:     row.country,
-        geolocation: row.geolocation,
-        id:          row.id,
-      }));
-      const visibleLimit = Math.min(normalizedRows.length, 50);
+      const nationMap = buildNationMap(ownDocs);
 
+      // Agrega meteoritos por país para treemap y para scatter combinado
       const byCountry14 = {};
       rows.forEach(row => {
         const country = row.country || 'Unknown';
@@ -839,14 +921,62 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         byCountry14[country].count++;
         byCountry14[country].totalMass += Number(row.mass || 0);
       });
+
       const chartData14 = {
         library: "ECharts",
         type: "treemap",
+        description: "Meteoritos × mortalidad vial por país (SOS14 + road-fatalities-v2)",
         countries: Object.entries(byCountry14)
-          .map(([name, { count, totalMass }]) => ({ name, value: count, totalMass: Math.round(totalMass) }))
+          .map(([name, { count, totalMass }]) => {
+            const key = name.toLowerCase().trim();
+            const own = nationMap[key] || null;
+            if (!own) return null;
+            return {
+              name,
+              value: Math.round(count * own.population_death_rate * 10) / 10,
+              meteoriteCount: count,
+              totalMass: Math.round(totalMass),
+              road_population_death_rate: own.population_death_rate,
+            };
+          })
+          .filter(Boolean)
           .sort((a, b) => b.value - a.value)
-          .slice(0, 15)
+          .slice(0, 15),
       };
+
+      // Scatter combinado: nº meteoritos por país (SOS14) × population_death_rate (propio)
+      const scatterPoints14 = Object.entries(byCountry14)
+        .map(([country, { count }]) => {
+          const key = country.toLowerCase().trim();
+          const own = nationMap[key] || null;
+          return own ? { name: country, x: count, y: own.population_death_rate } : null;
+        })
+        .filter(Boolean);
+
+      const combinedChartData14 = scatterPoints14.length > 0 ? {
+        library: "ECharts", type: "scatter",
+        description: "Nº meteoritos por país (SOS14) vs mortalidad vial (road-fatalities-v2)",
+        xAxis: "meteorite_count (SOS2526-14)",
+        yAxis: "population_death_rate (road-fatalities-v2)",
+        matchedCount: scatterPoints14.length,
+        data: scatterPoints14,
+      } : null;
+
+      // Filas para la tabla: campos SOS14 + road-fatalities cruzados por país
+      const normalizedRows = rows.slice(0, 50).map(row => {
+        const key = String(row.country || '').toLowerCase().trim();
+        const own = nationMap[key] || null;
+        return {
+          name:        row.name,
+          year:        row.year,
+          mass:        row.mass,
+          country:     row.country,
+          geolocation: row.geolocation,
+          id:          row.id,
+          road_population_death_rate: own?.population_death_rate ?? null,
+          road_total_death: own?.total_death ?? null,
+        };
+      });
 
       res.json({
         api: "SOS2526-14 meteorite-landings",
@@ -854,15 +984,19 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         dataSource: "api",
         apiError: null,
         externalApiUsed: true,
+        combinedWithOwnApi: true,
         sosApi: true,
         group: "SOS2526-14",
         integratedBy: "JFM",
         fetchedAt: new Date().toISOString(),
         count: rows.length,
+        matchedCountries: scatterPoints14.length,
         fieldsShown: FIELDS_SHOWN,
         chartData: chartData14,
-        explanation: "Aterrizajes de meteoritos por país, año, masa y geolocalización. La API SOS2526-14 se consulta mediante proxy propio y sus datos JSON se agregan en un widget ECharts treemap por país. La tabla HTML plegable permite consultar una muestra de los registros recibidos.",
-        data: normalizedRows.slice(0, visibleLimit),
+        combinedChartData: combinedChartData14,
+        explanation: `Combinación de aterrizajes de meteoritos por país (SOS2526-14) con mortalidad vial propia (road-fatalities-v2). El treemap dimensiona cada país por meteorite_count × population_death_rate (ambas fuentes combinadas). El scatter cruza meteorite_count (SOS14) con population_death_rate (propio) para los ${scatterPoints14.length} países coincidentes. La tabla incluye ambas fuentes.`,
+        ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
+        data: normalizedRows,
       });
     } catch (e) {
       res.json({
@@ -871,6 +1005,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         dataSource: "api-error",
         apiError: e.message,
         externalApiUsed: false,
+        combinedWithOwnApi: false,
         sosApi: true,
         group: "SOS2526-14",
         integratedBy: "JFM",
@@ -889,7 +1024,10 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos20-spice-stats", async (req, res) => {
     const SOURCE_URL = "https://sos2526-20-stable.onrender.com/api/v2/spice-stats/";
     try {
-      const r = await fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 30000);
+      const [r, ownDocs] = await Promise.all([
+        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 30000),
+        dbFindAll(),
+      ]);
       const text = await r.text();
       let json;
       try {
@@ -900,50 +1038,71 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       if (!r.ok) throw new Error(`HTTP ${r.status} desde SOS20: ${text.slice(0, 300)}`);
 
       const items = extractArrayPayload(json);
+      const nationMap = buildNationMap(ownDocs);
 
-      // Prioriza métricas económicas reales; evita códigos internos (domain_code, area_code, element_code).
-      const sos20Preferred = [
-        "area", "item", "year",
-        "import", "export", "production", "consumption",
-        "unit",
-      ];
+      const sos20Preferred = ["area", "item", "year", "import", "export", "production", "consumption", "unit"];
       const fields = pickFields(items, sos20Preferred, 7);
-      const projected = projectRows(items, fields, Math.min(items.length, 50));
+      const fieldsShown = [...fields, "road_population_death_rate", "road_total_death"];
 
-      // Agrupa por (area, item) los primeros 10 pares únicos para el sankey.
-      const pairMap20 = {};
-      const orderedPairs20 = [];
-      for (const row of items) {
-        const area = String(row.area || 'Unknown');
-        const item = String(row.item || 'Unknown');
-        const key = `${area}\x00${item}`;
-        if (!pairMap20[key]) {
-          if (orderedPairs20.length >= 10) continue;
-          pairMap20[key] = { area, item, imp: 0, exp: 0, prod: 0, cons: 0 };
-          orderedPairs20.push(pairMap20[key]);
-        }
-        pairMap20[key].imp  += Number(row.import      || 0);
-        pairMap20[key].exp  += Number(row.export      || 0);
-        pairMap20[key].prod += Number(row.production  || 0);
-        pairMap20[key].cons += Number(row.consumption || 0);
-      }
-      const rawLinks20 = [];
-      orderedPairs20.forEach(p => {
-        const total = p.imp + p.exp + p.prod + p.cons;
-        if (total > 0) rawLinks20.push({ source: p.area, target: p.item, value: Number(total.toFixed(2)) });
-        if (p.imp  > 0) rawLinks20.push({ source: p.item, target: 'Import',      value: Number(p.imp.toFixed(2)) });
-        if (p.exp  > 0) rawLinks20.push({ source: p.item, target: 'Export',      value: Number(p.exp.toFixed(2)) });
-        if (p.prod > 0) rawLinks20.push({ source: p.item, target: 'Production',  value: Number(p.prod.toFixed(2)) });
-        if (p.cons > 0) rawLinks20.push({ source: p.item, target: 'Consumption', value: Number(p.cons.toFixed(2)) });
+      // Filas para tabla: campos SOS20 + road-fatalities cruzados por área (país)
+      const combinedProjected = items.slice(0, 50).map(row => {
+        const key = String(row.area || '').toLowerCase().trim();
+        const own = nationMap[key] || null;
+        const projected = {};
+        fields.forEach(f => { projected[f] = row?.[f]; });
+        projected.road_population_death_rate = own?.population_death_rate ?? null;
+        projected.road_total_death = own?.total_death ?? null;
+        return projected;
       });
-      const nodeNames20 = new Set();
-      rawLinks20.forEach(l => { nodeNames20.add(l.source); nodeNames20.add(l.target); });
+
+      // Agrega producción total por área para funnel combinado y scatter
+      const byArea20 = {};
+      items.forEach(row => {
+        const area = String(row.area || 'Unknown');
+        if (!byArea20[area]) byArea20[area] = 0;
+        byArea20[area] += Number(row.production || 0);
+      });
+
+      // Funnel combinado: producción total (SOS20) × population_death_rate (propio) por país
+      const funnelItems20 = Object.entries(byArea20)
+        .map(([area, totalProd]) => {
+          const key = area.toLowerCase().trim();
+          const own = nationMap[key] || null;
+          if (!own || totalProd === 0) return null;
+          return {
+            name: area,
+            value: Math.round(totalProd * own.population_death_rate * 100) / 100,
+            production: Math.round(totalProd),
+            road_death_rate: own.population_death_rate,
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 10);
+
       const chartData20 = {
-        library: "ECharts",
-        type: "sankey",
-        nodes: [...nodeNames20].map(name => ({ name })),
-        links: rawLinks20
+        library: "ECharts", type: "funnel",
+        description: "Producción de especias × mortalidad vial por país (SOS20 + road-fatalities-v2)",
+        data: funnelItems20.length > 0 ? funnelItems20 : [{ name: "Sin coincidencias", value: 0, production: 0, road_death_rate: 0 }],
       };
+
+      // Scatter combinado: producción total por área (SOS20) × population_death_rate (propio)
+      const scatterPoints20 = Object.entries(byArea20)
+        .map(([area, totalProd]) => {
+          const key = area.toLowerCase().trim();
+          const own = nationMap[key] || null;
+          return own && totalProd > 0 ? { name: area, x: Math.round(totalProd), y: own.population_death_rate } : null;
+        })
+        .filter(Boolean);
+
+      const combinedChartData20 = scatterPoints20.length > 0 ? {
+        library: "ECharts", type: "scatter",
+        description: "Producción total de especias (SOS20) vs mortalidad vial (road-fatalities-v2) por país",
+        xAxis: "total_production (SOS2526-20)",
+        yAxis: "population_death_rate (road-fatalities-v2)",
+        matchedCount: scatterPoints20.length,
+        data: scatterPoints20,
+      } : null;
 
       res.json({
         api: "SOS2526-20 spice-stats",
@@ -951,15 +1110,19 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         dataSource: "api",
         apiError: null,
         externalApiUsed: true,
+        combinedWithOwnApi: true,
         sosApi: true,
         group: "SOS2526-20",
         integratedBy: "JFM",
         fetchedAt: new Date().toISOString(),
         count: items.length,
-        fieldsShown: fields,
+        matchedCountries: scatterPoints20.length,
+        fieldsShown,
         chartData: chartData20,
-        explanation: "Estadísticas de especias por país, producto y año. La API SOS2526-20 aporta importación, exportación, producción y consumo, recibidos en JSON mediante proxy propio y visualizados con un widget ECharts sankey. La tabla HTML plegable permite consultar los registros recibidos. El flujo representa: área → producto → métrica económica.",
-        data: projected,
+        combinedChartData: combinedChartData20,
+        explanation: `Combinación de producción de especias por país (SOS2526-20) con mortalidad vial propia (road-fatalities-v2). El funnel muestra el producto total_production × population_death_rate por país (${funnelItems20.length} países combinados). El scatter cruza total_production (SOS20) con population_death_rate (propio) para los ${scatterPoints20.length} países coincidentes. La tabla incluye ambas fuentes.`,
+        ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
+        data: combinedProjected,
       });
     } catch (e) {
       res.json({
@@ -968,6 +1131,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         dataSource: "api-error",
         apiError: e.message,
         externalApiUsed: false,
+        combinedWithOwnApi: false,
         sosApi: true,
         group: "SOS2526-20",
         integratedBy: "JFM",
@@ -985,9 +1149,12 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   // -------------------------------------------------------------------
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos21-aids-deaths-stats", async (req, res) => {
     const SOURCE_URL = "https://soporte-sos.onrender.com/api/v1/aids-deaths-stats";
-    const FIELDS_SHOWN = ["country", "year", "under_5", "age_5_14", "age_15_49", "age_50_69", "age_70_plus", "total_deaths"];
+    const FIELDS_SHOWN = ["country", "year", "under_5", "age_5_14", "age_15_49", "age_50_69", "age_70_plus", "total_deaths", "road_population_death_rate", "road_total_death"];
     try {
-      const r = await fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000);
+      const [r, ownDocs] = await Promise.all([
+        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
+        dbFindAll(),
+      ]);
       const text = await r.text();
       let json;
       try {
@@ -998,25 +1165,32 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       if (!r.ok) throw new Error(`HTTP ${r.status} desde SOS21: ${text.slice(0, 300)}`);
 
       const items = extractArrayPayload(json);
+      const nationMap = buildNationMap(ownDocs);
 
-      const normalizedRows = items.map(row => ({
-        country:     row.country,
-        codecountry: row.codecountry,
-        year:        row.year,
-        under_5:     row.death_count_hiv_aids_under_5,
-        age_5_14:    row.death_count_hiv_aids_5_14,
-        age_15_49:   row.death_count_hiv_aids_15_49,
-        age_50_69:   row.death_count_hiv_aids_50_69,
-        age_70_plus: row.death_count_hiv_aids_70_plus,
-        total_deaths:
+      // Filas combinadas: campos SOS21 + road-fatalities cruzados por país
+      const normalizedRows = items.map(row => {
+        const key = String(row.country || '').toLowerCase().trim();
+        const own = nationMap[key] || null;
+        const total_deaths =
           Number(row.death_count_hiv_aids_under_5  || 0) +
           Number(row.death_count_hiv_aids_5_14     || 0) +
           Number(row.death_count_hiv_aids_15_49    || 0) +
           Number(row.death_count_hiv_aids_50_69    || 0) +
-          Number(row.death_count_hiv_aids_70_plus  || 0),
-      }));
-
-      const visibleLimit = Math.min(normalizedRows.length, 50);
+          Number(row.death_count_hiv_aids_70_plus  || 0);
+        return {
+          country:     row.country,
+          codecountry: row.codecountry,
+          year:        row.year,
+          under_5:     row.death_count_hiv_aids_under_5,
+          age_5_14:    row.death_count_hiv_aids_5_14,
+          age_15_49:   row.death_count_hiv_aids_15_49,
+          age_50_69:   row.death_count_hiv_aids_50_69,
+          age_70_plus: row.death_count_hiv_aids_70_plus,
+          total_deaths,
+          road_population_death_rate: own?.population_death_rate ?? null,
+          road_total_death: own?.total_death ?? null,
+        };
+      });
 
       const ageGroups21 = ["under_5", "age_5_14", "age_15_49", "age_50_69", "age_70_plus"];
       const years21 = [...new Set(normalizedRows.map(r => r.year))].sort().slice(0, 10);
@@ -1024,8 +1198,14 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       years21.forEach((year, yi) => {
         const rowsForYear = normalizedRows.filter(r => r.year === year);
         ageGroups21.forEach((ag, ai) => {
-          const total = rowsForYear.reduce((s, r) => s + Number(r[ag] || 0), 0);
-          heatmapData21.push([yi, ai, total]);
+          // Valor combinado: muertes SIDA × tasa mortalidad vial por país
+          let combined = 0;
+          rowsForYear.forEach(r => {
+            const key = String(r.country || '').toLowerCase().trim();
+            const own = nationMap[key];
+            if (own) combined += Number(r[ag] || 0) * (own.population_death_rate || 1);
+          });
+          heatmapData21.push([yi, ai, Math.round(combined)]);
         });
       });
       const chartData21 = {
@@ -1033,8 +1213,36 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         type: "heatmap",
         years: years21.map(String),
         ageGroups: ageGroups21,
-        data: heatmapData21
+        data: heatmapData21,
       };
+
+      // Agrega muertes SIDA por país para el scatter combinado
+      const byCountry21 = {};
+      normalizedRows.forEach(row => {
+        const c = String(row.country || 'Unknown');
+        if (!byCountry21[c]) byCountry21[c] = 0;
+        byCountry21[c] += Number(row.total_deaths || 0);
+      });
+
+      // Scatter combinado: total muertes SIDA por país (SOS21) × population_death_rate (propio)
+      const scatterPoints21 = Object.entries(byCountry21)
+        .map(([country, aidsDeaths]) => {
+          const key = country.toLowerCase().trim();
+          const own = nationMap[key] || null;
+          return own && aidsDeaths > 0 ? { name: country, x: aidsDeaths, y: own.population_death_rate } : null;
+        })
+        .filter(Boolean);
+
+      const combinedChartData21 = scatterPoints21.length > 0 ? {
+        library: "ECharts", type: "scatter",
+        description: "Muertes por SIDA (SOS21) vs mortalidad vial (road-fatalities-v2) por país",
+        xAxis: "aids_total_deaths (SOS2526-21)",
+        yAxis: "population_death_rate (road-fatalities-v2)",
+        matchedCount: scatterPoints21.length,
+        data: scatterPoints21,
+      } : null;
+
+      const matchedCount = normalizedRows.filter(r => r.road_population_death_rate !== null).length;
 
       res.json({
         api: "SOS2526-21 aids-deaths-stats",
@@ -1042,15 +1250,19 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         dataSource: "api",
         apiError: null,
         externalApiUsed: true,
+        combinedWithOwnApi: true,
         sosApi: true,
         group: "SOS2526-21",
         integratedBy: "JFM",
         fetchedAt: new Date().toISOString(),
         count: normalizedRows.length,
+        matchedCountries: matchedCount,
         fieldsShown: FIELDS_SHOWN,
         chartData: chartData21,
-        explanation: "Muertes por VIH/SIDA por país, año y grupo de edad. La API SOS2526-21 se consulta mediante proxy propio y sus datos JSON se visualizan en un widget ECharts heatmap por año y grupo de edad. La tabla HTML plegable permite consultar los registros recibidos.",
-        data: normalizedRows.slice(0, visibleLimit),
+        combinedChartData: combinedChartData21,
+        explanation: `Combinación de muertes por VIH/SIDA por país (SOS2526-21) con mortalidad vial propia (road-fatalities-v2). El heatmap muestra el producto aids_deaths × population_death_rate por año y grupo de edad (combinando ambas fuentes). El scatter cruza aids_total_deaths (SOS21) con population_death_rate (propio) para los ${matchedCount} países coincidentes. La tabla incluye ambas fuentes.`,
+        ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
+        data: normalizedRows.slice(0, 50),
       });
     } catch (e) {
       res.json({
@@ -1059,6 +1271,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         dataSource: "api-error",
         apiError: e.message,
         externalApiUsed: false,
+        combinedWithOwnApi: false,
         sosApi: true,
         group: "SOS2526-21",
         integratedBy: "JFM",
@@ -1074,41 +1287,85 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   // ── SOS2526-27 world-hydroelectric-plants ────────────────────────────────
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos27-world-hydroelectric-plants", async (req, res) => {
     const SOURCE_URL = "https://sos2526-27.onrender.com/api/v1/world-hydroelectric-plants";
-    const fieldsShown = ["country","name","year","river","plant_type","capacity_mw","head_m","dam_name","res_vol_km3"];
+    const fieldsShown = ["country","name","year","river","plant_type","capacity_mw","head_m","dam_name","res_vol_km3","road_population_death_rate","road_total_death"];
     try {
-      const r = await fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 45000);
+      const [r, ownDocs] = await Promise.all([
+        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 45000),
+        dbFindAll(),
+      ]);
       if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
       const json = await r.json();
       const rows = extractArrayPayload(json);
-      const normalizedRows = rows.map(row => ({
-        country:     row.country     ?? "N/A",
-        name:        row.name        ?? "N/A",
-        year:        row.year        ?? "N/A",
-        river:       row.river       ?? "N/A",
-        plant_type:  row.plant_type  ?? "N/A",
-        capacity_mw: row.capacity_mw ?? "N/A",
-        head_m:      row.head_m      ?? "N/A",
-        dam_name:    row.dam_name    ?? "N/A",
-        res_vol_km3: row.res_vol_km3 ?? "N/A",
-      }));
-      const visibleLimit = Math.min(normalizedRows.length, 50);
+      const nationMap = buildNationMap(ownDocs);
+
+      // Agrega capacidad total por país para el scatter combinado
+      const byCountry27 = {};
+      rows.forEach(row => {
+        const country = String(row.country || 'N/A');
+        if (!byCountry27[country]) byCountry27[country] = 0;
+        byCountry27[country] += Number(row.capacity_mw || 0);
+      });
+
+      // Scatter combinado: capacidad total MW por país (SOS27) vs population_death_rate (road-fatalities-v2)
       const chartData27 = {
         library: "ECharts",
         type: "scatter",
-        data: normalizedRows
-          .filter(row => row.capacity_mw !== 'N/A' && row.head_m !== 'N/A' && !isNaN(Number(row.capacity_mw)) && !isNaN(Number(row.head_m)))
-          .slice(0, 50)
-          .map(row => ({
-            name: row.name,
-            country: row.country,
-            river: row.river,
-            dam_name: row.dam_name,
-            x: Number(row.capacity_mw),
-            y: Number(row.head_m),
-            capacity_mw: Number(row.capacity_mw),
-            head_m: Number(row.head_m)
-          }))
+        description: "Capacidad hidroeléctrica total MW por país (SOS27) vs mortalidad vial (road-fatalities-v2)",
+        data: Object.entries(byCountry27)
+          .map(([country, totalMW]) => {
+            const key = country.toLowerCase().trim();
+            const own = nationMap[key] || null;
+            if (!own || totalMW === 0) return null;
+            return {
+              name: country,
+              x: Math.round(totalMW),
+              y: own.population_death_rate,
+              capacity_mw: Math.round(totalMW),
+              road_population_death_rate: own.population_death_rate,
+              road_total_death: own.total_death,
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => b.x - a.x)
+          .slice(0, 30),
       };
+
+      // Scatter combinado: capacidad total MW por país (SOS27) × population_death_rate (propio)
+      const scatterPoints27 = Object.entries(byCountry27)
+        .map(([country, totalMW]) => {
+          const key = country.toLowerCase().trim();
+          const own = nationMap[key] || null;
+          return own && totalMW > 0 ? { name: country, x: Math.round(totalMW), y: own.population_death_rate } : null;
+        })
+        .filter(Boolean);
+
+      const combinedChartData27 = scatterPoints27.length > 0 ? {
+        library: "ECharts", type: "scatter",
+        description: "Capacidad hidroeléctrica total MW (SOS27) vs mortalidad vial (road-fatalities-v2) por país",
+        xAxis: "total_capacity_mw (SOS2526-27)",
+        yAxis: "population_death_rate (road-fatalities-v2)",
+        matchedCount: scatterPoints27.length,
+        data: scatterPoints27,
+      } : null;
+
+      // Filas para tabla: campos SOS27 + road-fatalities cruzados por país
+      const normalizedRows = rows.slice(0, 50).map(row => {
+        const key = String(row.country || '').toLowerCase().trim();
+        const own = nationMap[key] || null;
+        return {
+          country:     row.country     ?? "N/A",
+          name:        row.name        ?? "N/A",
+          year:        row.year        ?? "N/A",
+          river:       row.river       ?? "N/A",
+          plant_type:  row.plant_type  ?? "N/A",
+          capacity_mw: row.capacity_mw ?? "N/A",
+          head_m:      row.head_m      ?? "N/A",
+          dam_name:    row.dam_name    ?? "N/A",
+          res_vol_km3: row.res_vol_km3 ?? "N/A",
+          road_population_death_rate: own?.population_death_rate ?? null,
+          road_total_death: own?.total_death ?? null,
+        };
+      });
 
       res.json({
         api: "SOS2526-27 world-hydroelectric-plants",
@@ -1116,15 +1373,19 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         dataSource: "api",
         apiError: null,
         externalApiUsed: true,
+        combinedWithOwnApi: true,
         sosApi: true,
         group: "SOS2526-27",
         integratedBy: "JFM",
         fetchedAt: new Date().toISOString(),
         count: rows.length,
+        matchedCountries: scatterPoints27.length,
         fieldsShown,
         chartData: chartData27,
-        explanation: "Centrales hidroeléctricas por país, río, tipo de planta, capacidad y salto hidráulico. La API SOS2526-27 se consulta mediante proxy propio y sus datos JSON se visualizan en un widget ECharts scatter relacionando capacidad MW y head m. La tabla HTML plegable permite consultar una muestra de los registros recibidos.",
-        data: normalizedRows.slice(0, visibleLimit),
+        combinedChartData: combinedChartData27,
+        explanation: `Combinación de centrales hidroeléctricas por país (SOS2526-27) con mortalidad vial propia (road-fatalities-v2). El scatter muestra total_capacity_mw (SOS27) vs population_death_rate (propio) para ${chartData27.data.length} países coincidentes (combinando ambas fuentes). El scatter combinado cruza igualmente ambas fuentes. La tabla incluye ambas fuentes.`,
+        ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
+        data: normalizedRows,
       });
     } catch (e) {
       res.json({
@@ -1133,6 +1394,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         dataSource: "api-error",
         apiError: e.message,
         externalApiUsed: false,
+        combinedWithOwnApi: false,
         sosApi: true,
         group: "SOS2526-27",
         integratedBy: "JFM",

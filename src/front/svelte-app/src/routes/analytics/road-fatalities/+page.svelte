@@ -14,34 +14,33 @@
     let sos21Data: any = $state(null);
     let sos27Data: any = $state(null);
 
-    function renderSos12Radar(d: any) {
-        const el = document.getElementById('sos12-radar');
-        if (!el || !d?.chartData?.metrics) return;
+    function renderSos12Bar(d: any) {
+        const el = document.getElementById('sos12-bar');
+        if (!el || !d?.chartData?.series?.length) return;
         const chart = echarts.init(el);
-        const m = d.chartData.metrics;
+        const cd = d.chartData;
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: 'Tasas medias nacimiento/muerte/crecimiento', textStyle: { color: '#e5c07b' } },
+            title: { text: '', textStyle: { color: '#e5c07b' } },
             tooltip: {
-                trigger: 'item',
-                formatter: () =>
-                    '<b>SOS2526-12 birth-death-growth-rates</b><br/>' +
-                    'API externa de alumno SOS de otro grupo<br/>' +
-                    'Proxy propio: /api/integrations/jfm/sos12-birth-death-growth<br/>' +
-                    'Datos JSON agregados para radar<br/>' +
-                    `Birth rate media: <b>${m.avgBirthRate}</b><br/>` +
-                    `Death rate media: <b>${m.avgDeathRate}</b><br/>` +
-                    `Growth rate media: <b>${m.avgGrowthRate}</b>`
+                trigger: 'axis',
+                formatter: (params: any) => {
+                    const country = params[0]?.name || '';
+                    let html = `<b>${country}</b><br/>`;
+                    params.forEach((p: any) => {
+                        html += `<span style="color:${p.color}">●</span> ${p.seriesName}: <b>${p.value}</b><br/>`;
+                    });
+                    html += `<hr style="margin:4px 0;border-color:#374151"/>Fuente: SOS2526-12 + road-fatalities-v2`;
+                    return html;
+                }
             },
-            radar: {
-                indicator: [
-                    { name: 'Birth rate', max: Math.max(40, m.avgBirthRate * 1.4) },
-                    { name: 'Death rate', max: Math.max(20, m.avgDeathRate * 1.4) },
-                    { name: 'Growth rate', max: Math.max(5, Math.abs(m.avgGrowthRate) * 1.8) }
-                ],
-                axisName: { color: '#abb2bf' }
-            },
-            series: [{ type: 'radar', data: [{ value: [m.avgBirthRate, m.avgDeathRate, m.avgGrowthRate], name: 'Media SOS2526-12' }] }]
+            legend: { data: cd.series.map((s: any) => s.name), textStyle: { color: '#abb2bf' } },
+            xAxis: { type: 'category', data: cd.xAxis, axisLabel: { color: '#abb2bf', rotate: 45, fontSize: 10 } },
+            yAxis: { axisLabel: { color: '#abb2bf' } },
+            series: cd.series.map((s: any, i: number) => ({
+                name: s.name, type: 'bar', data: s.data,
+                itemStyle: { color: i === 0 ? '#e5c07b' : '#61afef' }
+            }))
         });
         window.addEventListener('resize', () => chart.resize());
     }
@@ -52,15 +51,18 @@
         const chart = echarts.init(el);
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: 'Meteoritos por país (top 15)', textStyle: { color: '#e5c07b' } },
+            title: { text: d.chartData.description || 'Meteoritos × mortalidad vial por país', textStyle: { color: '#e5c07b' } },
             tooltip: {
                 formatter: (info: any) => {
                     const v = info.data;
                     return `<b>${v.name}</b><br/>` +
-                        `Meteoritos: <b>${v.value}</b><br/>` +
-                        `Masa total aprox: <b>${v.totalMass?.toLocaleString() ?? 'N/A'} g</b><br/>` +
-                        `API: SOS2526-14 meteorite-landings<br/>` +
-                        `Proxy: /api/integrations/jfm/sos14-meteorite-landings<br/>` +
+                        `Valor combinado (meteoritos × tasa vial): <b>${v.value}</b><br/>` +
+                        `Meteoritos: <b>${v.meteoriteCount ?? 'N/A'}</b><br/>` +
+                        `Masa total: <b>${v.totalMass?.toLocaleString() ?? 'N/A'} g</b><br/>` +
+                        `Mortalidad vial: <b>${v.road_population_death_rate ?? 'N/A'}</b><br/>` +
+                        `<hr style="margin:4px 0;border-color:#374151"/>` +
+                        `Fuente: SOS2526-14 meteorite-landings + road-fatalities-v2<br/>` +
+                        `Fórmula: meteorite_count × population_death_rate<br/>` +
                         `Widget: ECharts treemap`;
                 }
             },
@@ -75,38 +77,37 @@
         window.addEventListener('resize', () => chart.resize());
     }
 
-    function renderSos20Sankey(d: any) {
-        const el = document.getElementById('sos20-sankey');
-        if (!el || !d?.chartData?.nodes?.length || !d?.chartData?.links?.length) return;
+    function renderSos20Funnel(d: any) {
+        const el = document.getElementById('sos20-funnel');
+        if (!el || !d?.chartData?.data?.length) return;
         const chart = echarts.init(el);
+        const cd = d.chartData;
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: 'Flujo de especias por área, producto y métrica', textStyle: { color: '#e5c07b' } },
+            title: { text: cd.description || 'Producción especias × mortalidad vial', textStyle: { color: '#e5c07b' } },
             tooltip: {
                 trigger: 'item',
                 formatter: (info: any) => {
-                    if (info.dataType === 'edge') {
-                        return `<b>${info.data.source}</b> → <b>${info.data.target}</b><br/>` +
-                            `Valor: <b>${info.data.value}</b><br/>` +
-                            `API: SOS2526-20 spice-stats<br/>` +
-                            `Proxy: /api/integrations/jfm/sos20-spice-stats<br/>` +
-                            `Métricas: import / export / production / consumption<br/>` +
-                            `Widget: ECharts sankey`;
-                    }
-                    return `<b>${info.data.name}</b><br/>` +
-                        `API: SOS2526-20 spice-stats<br/>` +
-                        `Proxy: /api/integrations/jfm/sos20-spice-stats<br/>` +
-                        `Widget: ECharts sankey`;
+                    const v = info.data;
+                    return `<b>${v.name}</b><br/>` +
+                        `Valor combinado: <b>${v.value}</b><br/>` +
+                        `Producción total (SOS20): <b>${v.production?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `Mortalidad vial (road-fatalities-v2): <b>${v.road_death_rate ?? 'N/A'}</b><br/>` +
+                        `<hr style="margin:4px 0;border-color:#374151"/>` +
+                        `Fuente: SOS2526-20 spice-stats + road-fatalities-v2<br/>` +
+                        `Fórmula: total_production × population_death_rate<br/>` +
+                        `Widget: ECharts funnel`;
                 }
             },
             series: [{
-                type: 'sankey',
-                data: d.chartData.nodes,
-                links: d.chartData.links,
-                emphasis: { focus: 'adjacency' },
-                lineStyle: { color: 'gradient', curveness: 0.5 },
-                label: { color: '#d1d5db', fontSize: 11 },
-                nodeAlign: 'left'
+                type: 'funnel',
+                width: '70%',
+                left: '15%',
+                sort: 'descending',
+                data: cd.data.map((item: any) => ({ name: item.name, value: item.value, production: item.production, road_death_rate: item.road_death_rate })),
+                label: { show: true, position: 'inside', color: '#282c34', fontSize: 11, formatter: '{b}' },
+                itemStyle: { borderColor: '#282c34', borderWidth: 1 },
+                emphasis: { label: { fontSize: 13 } }
             }]
         });
         window.addEventListener('resize', () => chart.resize());
@@ -120,15 +121,17 @@
         const maxVal = Math.max(...cd.data.map((p: any) => p[2]));
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: 'Muertes VIH/SIDA por año y grupo de edad', textStyle: { color: '#e5c07b' } },
+            title: { text: 'Muertes VIH/SIDA × mortalidad vial por año y grupo de edad', textStyle: { color: '#e5c07b' } },
             tooltip: {
                 position: 'top',
                 formatter: (info: any) => {
                     const [yi, ai, val] = info.data;
                     return `Año: <b>${cd.years[yi]}</b><br/>` +
                         `Grupo: <b>${cd.ageGroups[ai]}</b><br/>` +
-                        `Muertes: <b>${val?.toLocaleString() ?? 0}</b><br/>` +
-                        `API: SOS2526-21 aids-deaths-stats<br/>` +
+                        `Valor combinado (SIDA × tasa vial): <b>${val?.toLocaleString() ?? 0}</b><br/>` +
+                        `<hr style="margin:4px 0;border-color:#374151"/>` +
+                        `Fuente: SOS2526-21 aids-deaths-stats + road-fatalities-v2<br/>` +
+                        `Fórmula: aids_deaths × population_death_rate por país<br/>` +
                         `Proxy: /api/integrations/jfm/sos21-aids-deaths-stats<br/>` +
                         `Widget: ECharts heatmap`;
                 }
@@ -154,30 +157,90 @@
         const pts = d.chartData.data;
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: 'Plantas hidroeléctricas: capacidad vs. salto', textStyle: { color: '#e5c07b' } },
+            title: { text: d.chartData.description || 'Capacidad hidroeléctrica vs mortalidad vial', textStyle: { color: '#e5c07b' } },
             tooltip: {
                 trigger: 'item',
                 formatter: (info: any) => {
                     const v = info.data;
                     return `<b>${v.name}</b><br/>` +
-                        `País: <b>${v.country}</b><br/>` +
-                        `Capacidad: <b>${v.capacity_mw} MW</b><br/>` +
-                        `Salto (head): <b>${v.head_m} m</b><br/>` +
-                        `Río: <b>${v.river}</b><br/>` +
-                        `Presa: <b>${v.dam_name}</b><br/>` +
-                        `API: SOS2526-27 world-hydroelectric-plants<br/>` +
-                        `Proxy: /api/integrations/jfm/sos27-world-hydroelectric-plants<br/>` +
+                        `Capacidad total MW (SOS27): <b>${v.capacity_mw?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `Mortalidad vial (road-fatalities-v2): <b>${v.road_population_death_rate ?? 'N/A'}</b><br/>` +
+                        `<hr style="margin:4px 0;border-color:#374151"/>` +
+                        `Fuente: SOS2526-27 world-hydroelectric-plants + road-fatalities-v2<br/>` +
                         `Widget: ECharts scatter`;
                 }
             },
-            xAxis: { name: 'Capacidad (MW)', nameTextStyle: { color: '#abb2bf' }, axisLabel: { color: '#abb2bf' } },
-            yAxis: { name: 'Salto/Head (m)', nameTextStyle: { color: '#abb2bf' }, axisLabel: { color: '#abb2bf' } },
+            xAxis: {
+                name: 'Capacidad total MW (SOS27)',
+                nameTextStyle: { color: '#abb2bf' },
+                nameLocation: 'middle',
+                nameGap: 30,
+                axisLabel: { color: '#abb2bf' }
+            },
+            yAxis: {
+                name: 'population_death_rate (road-fatalities-v2)',
+                nameTextStyle: { color: '#abb2bf' },
+                nameLocation: 'middle',
+                nameGap: 50,
+                axisLabel: { color: '#abb2bf' }
+            },
             series: [{
                 type: 'scatter',
-                data: pts.map((p: any) => ({ value: [p.x, p.y], name: p.name, country: p.country, river: p.river, dam_name: p.dam_name, capacity_mw: p.capacity_mw, head_m: p.head_m })),
-                symbolSize: 8,
-                itemStyle: { color: '#61afef', opacity: 0.7 }
+                data: pts.map((p: any) => ({ value: [p.x, p.y], name: p.name, capacity_mw: p.capacity_mw, road_population_death_rate: p.road_population_death_rate })),
+                symbolSize: 10,
+                itemStyle: { color: '#61afef', opacity: 0.8 }
             }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    // Scatter combinado genérico: métrica externa (x) × population_death_rate propia (y) por país
+    function renderCombinedScatter(divId: string, d: any) {
+        const el = document.getElementById(divId);
+        const pts = d?.combinedChartData?.data;
+        if (!el || !pts?.length) return;
+        const chart = echarts.init(el);
+        const cd = d.combinedChartData;
+        chart.setOption({
+            backgroundColor: 'transparent',
+            title: {
+                text: cd.description || 'Combinación por país',
+                textStyle: { color: '#e5c07b', fontSize: 13 },
+                subtext: `${d.group} + road-fatalities-v2  |  países cruzados: ${pts.length}`,
+                subtextStyle: { color: '#98c379', fontSize: 11 },
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: (info: any) => {
+                    const v = info.data;
+                    return `<b>${v.name}</b><br/>` +
+                        `${cd.xAxis || 'Eje X'}: <b>${v.value[0]}</b><br/>` +
+                        `${cd.yAxis || 'population_death_rate'}: <b>${v.value[1]}</b><br/>` +
+                        `<hr style="margin:4px 0;border-color:#374151"/>` +
+                        `Fuente externa: <b>${d.api}</b><br/>` +
+                        `Fuente propia: <b>road-fatalities-v2</b>`;
+                },
+            },
+            xAxis: {
+                name: cd.xAxis || '',
+                nameTextStyle: { color: '#abb2bf' },
+                nameLocation: 'middle',
+                nameGap: 30,
+                axisLabel: { color: '#abb2bf' },
+            },
+            yAxis: {
+                name: cd.yAxis || '',
+                nameTextStyle: { color: '#abb2bf' },
+                nameLocation: 'middle',
+                nameGap: 45,
+                axisLabel: { color: '#abb2bf' },
+            },
+            series: [{
+                type: 'scatter',
+                data: pts.map((p: any) => ({ value: [p.x, p.y], name: p.name })),
+                symbolSize: 10,
+                itemStyle: { color: '#e5c07b', opacity: 0.85 },
+            }],
         });
         window.addEventListener('resize', () => chart.resize());
     }
@@ -497,7 +560,7 @@
 
         // 4. SOS2526-12 -> birth-death-growth-rates (proxy SOS)
         fetch('/api/integrations/jfm/sos12-birth-death-growth')
-            .then(async r => { const d = await r.json(); sos12Data = d; await tick(); renderSos12Radar(d); })
+            .then(async r => { const d = await r.json(); sos12Data = d; await tick(); renderSos12Bar(d); })
             .catch(e => { sos12Data = { api: 'SOS2526-12', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
 
         // 5. SOS2526-14 -> meteorite-landings (proxy SOS)
@@ -507,7 +570,7 @@
 
         // 6. SOS2526-20 -> spice-stats (proxy SOS)
         fetch('/api/integrations/jfm/sos20-spice-stats')
-            .then(async r => { const d = await r.json(); sos20Data = d; await tick(); renderSos20Sankey(d); })
+            .then(async r => { const d = await r.json(); sos20Data = d; await tick(); renderSos20Funnel(d); })
             .catch(e => { sos20Data = { api: 'SOS2526-20', dataSource: 'api-error', apiError: e.message, count: 0, data: [] }; });
 
         // 7. SOS2526-21 -> aids-deaths-stats (proxy SOS)
@@ -764,13 +827,13 @@
             <p><strong>Grupo:</strong> {sos12Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos12Data.integratedBy}</p>
             <p><strong>Fuente:</strong> {sos12Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos12Data.count}</p>
             <p><strong>URL externa:</strong> <code>{sos12Data.sourceUrl}</code></p>
-            <p><strong>Widget:</strong> ECharts radar</p>
+            <p><strong>Widget:</strong> ECharts bar (combinado)</p>
             <p>{sos12Data.explanation}</p>
             {#if sos12Data.apiError}
                 <p class="api-error">Error: {sos12Data.apiError}</p>
             {/if}
             {#if sos12Data.dataSource === 'api'}
-                <div id="sos12-radar" class="echarts-sos-chart"></div>
+                <div id="sos12-bar" class="echarts-sos-chart"></div>
             {/if}
             {#if sos12Data.data?.length}
                 {@const headers12 = sos12Data.fieldsShown?.length ? sos12Data.fieldsShown : Object.keys(sos12Data.data[0]).slice(0, 6)}
@@ -822,13 +885,13 @@
             <p><strong>Grupo:</strong> {sos20Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos20Data.integratedBy}</p>
             <p><strong>Fuente:</strong> {sos20Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos20Data.count}</p>
             <p><strong>URL externa:</strong> <code>{sos20Data.sourceUrl}</code></p>
-            <p><strong>Widget:</strong> ECharts sankey</p>
+            <p><strong>Widget:</strong> ECharts funnel</p>
             <p>{sos20Data.explanation}</p>
             {#if sos20Data.apiError}
                 <p class="api-error">Error: {sos20Data.apiError}</p>
             {/if}
             {#if sos20Data.dataSource === 'api'}
-                <div id="sos20-sankey" class="echarts-sos-chart"></div>
+                <div id="sos20-funnel" class="echarts-sos-chart"></div>
             {/if}
             {#if sos20Data.data?.length}
                 {@const headers20 = sos20Data.fieldsShown?.length ? sos20Data.fieldsShown : Object.keys(sos20Data.data[0]).slice(0, 7)}
