@@ -150,4 +150,5 @@ vite.config.ts.timestamp-*
 data/*.db
 
 .claude
+.playwright-mcp
 

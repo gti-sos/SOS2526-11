@@ -14,32 +14,77 @@ export function loadBackendIntegrationsTGG(app) {
     db.find({}, (err, docs) => (err ? rej(err) : res(docs)))
   );
 
-  // -------- NewsAPI -> funnel ----------------------------------------
+  // -------- NewsAPI -> polar/spider ----------------------------------------
   app.get(BASE_URL_INTEGRATIONS_TGG + "/newsapi-education", async (req, res) => {
     try {
       const ext = await fetch(
         `https://newsapi.org/v2/everything?q=literacy+education&pageSize=20&apiKey=${process.env.NEWSAPI_KEY}`
       ).then(r => r.json());
 
-      const schools = (ext.articles || []).length || 1;
-
+      const articlesCount = (ext.articles || []).length;
       const docs = await findAll();
       const avg = (k) => docs.reduce((a, b) => a + (b[k] || 0), 0) / Math.max(1, docs.length);
 
-      const data = [
-        ["Población alfabetizada (media)", Math.round(avg("total") * schools * 100)],
-        ["Hombres alfabetizados",          Math.round(avg("male")  * schools * 100)],
-        ["Mujeres alfabetizadas",          Math.round(avg("female") * schools * 100)],
-        ["Brecha cubierta",                Math.round((100 - avg("gender_gap")) * schools * 50)],
-        ["Educación superior (proxy)",     Math.round(avg("total") * schools * 30)],
+      const categories = [
+        "Alfabetización media (%)",
+        "Masculina (%)",
+        "Femenina (%)",
+        "Sin brecha (est. %)",
+        "Cobertura noticias"
+      ];
+      const values = [
+        Math.round(avg("total") * 10) / 10,
+        Math.round(avg("male") * 10) / 10,
+        Math.round(avg("female") * 10) / 10,
+        Math.round((100 - avg("gender_gap")) * 10) / 10,
+        Math.min(articlesCount, 100)
       ];
 
-      res.json({ chartType: "funnel", series: [{ name: "Embudo educativo", data }] });
+      res.json({
+        chartType: "polar",
+        articlesCount,
+        categories,
+        series: [{ name: "Indicadores educativos", data: values }]
+      });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
+  // Mapeo ISO 3166-1 alpha-2 → nombre de país usado en la DB
+  const ISO_TO_COUNTRY = {
+    AF:"Afghanistan",AL:"Albania",DZ:"Algeria",AO:"Angola",AG:"Antigua and Barbuda",
+    AR:"Argentina",AM:"Armenia",AZ:"Azerbaijan",BH:"Bahrain",BD:"Bangladesh",
+    BB:"Barbados",BY:"Belarus",BJ:"Benin",BT:"Bhutan",BO:"Bolivia",
+    BA:"Bosnia and Herzegovina",BW:"Botswana",BR:"Brazil",BN:"Brunei",BG:"Bulgaria",
+    BF:"Burkina Faso",BI:"Burundi",KH:"Cambodia",CM:"Cameroon",CV:"Cape Verde",
+    CF:"Central African Republic",TD:"Chad",CL:"Chile",CN:"China",CO:"Colombia",
+    KM:"Comoros",CG:"Congo",CD:"DR Congo",CR:"Costa Rica",CI:"Ivory Coast",
+    HR:"Croatia",CU:"Cuba",CY:"Cyprus",CZ:"Czech Republic",DO:"Dominican Republic",
+    EC:"Ecuador",EG:"Egypt",SV:"El Salvador",GQ:"Equatorial Guinea",ER:"Eritrea",
+    EE:"Estonia",ET:"Ethiopia",FJ:"Fiji",GA:"Gabon",GM:"Gambia",GE:"Georgia",
+    GH:"Ghana",GR:"Greece",GD:"Grenada",GT:"Guatemala",GN:"Guinea",GW:"Guinea-Bissau",
+    GY:"Guyana",HT:"Haiti",HN:"Honduras",HU:"Hungary",IN:"India",ID:"Indonesia",
+    IR:"Iran",IQ:"Iraq",IL:"Israel",IT:"Italy",JM:"Jamaica",JO:"Jordan",
+    KZ:"Kazakhstan",KE:"Kenya",KP:"North Korea",KW:"Kuwait",KG:"Kyrgyzstan",
+    LA:"Laos",LV:"Latvia",LB:"Lebanon",LS:"Lesotho",LR:"Liberia",LY:"Libya",
+    LT:"Lithuania",MG:"Madagascar",MW:"Malawi",MY:"Malaysia",MV:"Maldives",
+    ML:"Mali",MT:"Malta",MH:"Marshall Islands",MR:"Mauritania",MU:"Mauritius",
+    MX:"Mexico",MD:"Moldova",MN:"Mongolia",ME:"Montenegro",MA:"Morocco",
+    MZ:"Mozambique",MM:"Myanmar",NA:"Namibia",NP:"Nepal",NI:"Nicaragua",
+    NE:"Niger",NG:"Nigeria",MK:"North Macedonia",OM:"Oman",PK:"Pakistan",
+    PW:"Palau",PA:"Panama",PG:"Papua New Guinea",PY:"Paraguay",PE:"Peru",
+    PH:"Philippines",PL:"Poland",PT:"Portugal",PS:"Palestine",QA:"Qatar",
+    RO:"Romania",RU:"Russia",RW:"Rwanda",WS:"Samoa",SM:"San Marino",
+    ST:"Sao Tome and Principe",SA:"Saudi Arabia",SN:"Senegal",RS:"Serbia",
+    SC:"Seychelles",SL:"Sierra Leone",SG:"Singapore",SI:"Slovenia",ZA:"South Africa",
+    SS:"South Sudan",ES:"Spain",LK:"Sri Lanka",SD:"Sudan",SR:"Suriname",
+    SZ:"Eswatini",SY:"Syria",TW:"Taiwan",TJ:"Tajikistan",TZ:"Tanzania",
+    TH:"Thailand",TL:"Timor-Leste",TG:"Togo",TO:"Tonga",TT:"Trinidad and Tobago",
+    TN:"Tunisia",TR:"Turkey",TM:"Turkmenistan",UG:"Uganda",UA:"Ukraine",
+    AE:"United Arab Emirates",UY:"Uruguay",UZ:"Uzbekistan",VU:"Vanuatu",
+    VE:"Venezuela",VN:"Vietnam",YE:"Yemen",ZM:"Zambia",ZW:"Zimbabwe"
+  };
+
   app.get(BASE_URL_INTEGRATIONS_TGG + "/spotify-literacy", async (req, res) => {
   try {
-    // 1. Token
     const tokenRes = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
       headers: {
@@ -52,68 +97,90 @@ export function loadBackendIntegrationsTGG(app) {
     }).then(r => r.json());
 
     const accessToken = tokenRes.access_token;
-
-    // 2. Datos externos (búsqueda de tracks de educación)
     const searchUrl = new URL("https://api.spotify.com/v1/search");
-    searchUrl.searchParams.set("q", "education");
+    searchUrl.searchParams.set("q", "literacy education");
     searchUrl.searchParams.set("type", "track");
     searchUrl.searchParams.set("limit", "10");
-    const ext = await fetch(searchUrl.toString(), { headers: { Authorization: `Bearer ${accessToken}` } }).then(r => r.json());
+    const ext = await fetch(searchUrl.toString(), {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    }).then(r => r.json());
 
-    const popularity = (ext.tracks?.items?.length || 1);
-
-    // 3. Tu DB
-    const docs = await findAll();
-    const avg = (k) => docs.reduce((a, b) => a + (b[k] || 0), 0) / docs.length;
-
-    const data = [
-      { name: "Alfabetización", y: avg("total"), z: popularity },
-      { name: "Hombres", y: avg("male"), z: popularity / 2 },
-      { name: "Mujeres", y: avg("female"), z: popularity / 2 }
-    ];
+    const tracks = (ext.tracks?.items || []).slice(0, 10);
+    const categories = tracks.map(t => {
+      const n = t.name || "";
+      return n.length > 28 ? n.substring(0, 25) + "…" : n;
+    });
+    const popularity = tracks.map(t => t.popularity || 0);
+    const artists    = tracks.map(t => t.artists?.[0]?.name || "");
 
     res.json({
-      chartType: "variablepie",
-      series: [{ name: "Spotify vs Literacy", data }]
+      chartType: "bar",
+      categories,
+      artists,
+      series: [{ name: "Popularidad", data: popularity, color: "#1DB954" }]
     });
-
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
   });
 
-  
   app.get(BASE_URL_INTEGRATIONS_TGG + "/github-literacy", async (req, res) => {
   try {
-    const ext = await fetch("https://api.github.com/search/repositories?q=education&per_page=10")
-      .then(r => r.json());
+    const ext = await fetch(
+      "https://api.github.com/search/repositories?q=education+literacy&per_page=30",
+      { headers: { "User-Agent": "SOS2526-11" } }
+    ).then(r => r.json());
 
-    const repos = ext.items?.length || 1;
-
+    const totalRepos = ext.total_count || 0;
+    const repos = ext.items || [];
     const docs = await findAll();
-    const avg = (k) => docs.reduce((a, b) => a + (b[k] || 0), 0) / docs.length;
 
-    const categories = ["Total", "Hombres", "Mujeres"];
+    // Detectar países de la DB mencionados en descripciones o topics de repos
+    const mentioned = new Set();
+    for (const repo of repos) {
+      const text = `${repo.description || ""} ${(repo.topics || []).join(" ")}`.toLowerCase();
+      for (const doc of docs) {
+        const cn = doc.country.toLowerCase();
+        // match si el nombre completo aparece en el texto
+        if (cn.length >= 4 && text.includes(cn)) mentioned.add(doc.country);
+      }
+    }
+
+    // Dos series: datos directos de GitHub (mencionados) y proxy (resto de la DB)
+    const direct = docs.filter(d =>  mentioned.has(d.country));
+    const proxy  = docs.filter(d => !mentioned.has(d.country));
+
+    const toPoint = d => ({
+      x: Math.round((d.gender_gap || 0) * 10) / 10,
+      y: Math.round((d.total      || 0) * 10) / 10,
+      name: d.country
+    });
 
     const series = [
-      {
-        name: "Literacy",
-        data: [avg("total"), avg("male"), avg("female")]
-      },
-      {
-        name: "Actividad GitHub",
-        data: [repos * 2, repos, repos]
-      }
+      { name: "Mencionados en repos", color: "#98c379", data: direct.map(toPoint) },
+      { name: "DB (proxy)",           color: "#61afef55",
+        marker: { fillColor: "#61afef33", lineColor: "#61afef", lineWidth: 1 },
+        data: proxy.map(d => ({ ...toPoint(d), name: `${d.country} (proxy)` })) }
     ];
 
-    res.json({ chartType: "column", categories, series });
-
+    res.json({ chartType: "scatter", totalRepos, matchedCountries: [...mentioned], series });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-  // -------- SOS2526-14 Active Satellites -> C3.js donut ----------------------------------------
+  // Matching flexible por nombre de país entre APIs externas y la DB
+  const matchByCountry = (docs, name) => {
+    if (!name) return null;
+    const n = name.toLowerCase().trim();
+    return docs.find(d => {
+      const dc = (d.country || "").toLowerCase().trim();
+      return dc === n || n.includes(dc) || dc.includes(n);
+    }) || null;
+  };
+
+  // -------- SOS2526-14 Active Satellites -> C3.js grouped bar ----------------------------------------
+  // Por país: alfabetización total (DB propia) + nº de satélites activos (API externa)
   app.get(BASE_URL_INTEGRATIONS_TGG + "/sos14-satellites", async (req, res) => {
     try {
       await fetch("https://sos2526-14-yjus.onrender.com/api/v1/active-satellites/loadInitialData")
@@ -123,30 +190,33 @@ export function loadBackendIntegrationsTGG(app) {
         .then(r => r.json());
 
       const docs = await findAll();
-      const avg = (k) => docs.reduce((a, b) => a + (b[k] || 0), 0) / Math.max(1, docs.length);
-
       const items = Array.isArray(ext) ? ext : (Array.isArray(ext.data) ? ext.data : []);
-      const totalSatellites = items.length || 1;
 
-      const avgTotal  = Math.round(avg("total")  * 10) / 10;
-      const avgMale   = Math.round(avg("male")   * 10) / 10;
-      const avgFemale = Math.round(avg("female") * 10) / 10;
-      const gapShare  = Math.max(0, Math.round((avgMale - avgFemale) * 10) / 10);
+      // Agrupar satélites por país coincidente
+      const byCountry = {};
+      for (const item of items) {
+        const match = matchByCountry(docs, item.country);
+        if (!match) continue;
+        const key = match.country;
+        if (!byCountry[key]) byCountry[key] = { literacy: Math.round(match.total * 10) / 10, count: 0 };
+        byCountry[key].count += 1;
+      }
+
+      const entries = Object.entries(byCountry).slice(0, 12);
+      const columns  = entries.map(([c, v]) => [c, v.literacy]);
+      const satellites = Object.fromEntries(entries.map(([c, v]) => [c, v.count]));
 
       res.json({
         chartType: "donut",
-        totalSatellites,
-        columns: [
-          ["Alfabetización Total (%)", avgTotal],
-          ["Alfabetización Masculina (%)", avgMale],
-          ["Alfabetización Femenina (%)", avgFemale],
-          ["Brecha de género", gapShare]
-        ]
+        totalSatellites: items.length,
+        columns: columns.length > 0 ? columns : [["Sin coincidencias", 100]],
+        satellites
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   // -------- SOS2526-20 Coffee Stats -> C3.js bar ----------------------------------------
+  // Países que producen café Y tienen datos de literacy. Barras: alfabetización vs producción.
   app.get(BASE_URL_INTEGRATIONS_TGG + "/sos20-coffee", async (req, res) => {
     try {
       await fetch("https://sos2526-20-stable.onrender.com/api/v2/coffee-stats/loadInitialData")
@@ -156,41 +226,21 @@ export function loadBackendIntegrationsTGG(app) {
         .then(r => r.json());
 
       const docs = await findAll();
-      const avg = (k) => docs.reduce((a, b) => a + (b[k] || 0), 0) / Math.max(1, docs.length);
-
-      const items = (Array.isArray(ext) ? ext : (Array.isArray(ext.data) ? ext.data : [])).slice(0, 5);
+      const coffeeItems = (Array.isArray(ext.data) ? ext.data : (Array.isArray(ext) ? ext : [])).slice(0, 15);
 
       const categories = [];
       const literacyVals = [];
       const coffeeVals   = [];
 
-      for (const item of items) {
-        const label = String(item.country || item.entity || item.name || item.region || "–").substring(0, 20);
-        categories.push(label);
-
-        const match = docs.find(d =>
-          d.country && label.toLowerCase().startsWith(d.country.toLowerCase().substring(0, 4))
-        );
-        literacyVals.push(match ? Math.round(match.total * 10) / 10 : Math.round(avg("total") * 10) / 10);
-
-        const numericKey = ["production", "consumption", "value", "yield", "total", "amount"]
-          .find(k => typeof item[k] === "number");
-        const raw = numericKey ? item[numericKey] : (Object.values(item).find(v => typeof v === "number") ?? 0);
-        // normalise to 0-100 range relative to max in dataset
-        coffeeVals.push(Math.round(Number(raw) * 10) / 10);
+      for (const item of coffeeItems) {
+        const match = matchByCountry(docs, item.country);
+        if (!match) continue;
+        if (categories.includes(match.country)) continue;
+        categories.push(match.country);
+        literacyVals.push(Math.round(match.total * 10) / 10);
+        coffeeVals.push(item.production || 0);
       }
 
-      if (categories.length === 0) {
-        categories.push(...["Total", "Hombres", "Mujeres"]);
-        literacyVals.push(
-          Math.round(avg("total")  * 10) / 10,
-          Math.round(avg("male")   * 10) / 10,
-          Math.round(avg("female") * 10) / 10
-        );
-        coffeeVals.push(0, 0, 0);
-      }
-
-      // normalise coffee values to 0-100 scale
       const maxCoffee = Math.max(...coffeeVals, 1);
       const coffeeNorm = coffeeVals.map(v => Math.round((v / maxCoffee) * 100 * 10) / 10);
 
@@ -198,14 +248,15 @@ export function loadBackendIntegrationsTGG(app) {
         chartType: "bar",
         categories,
         columns: [
-          ["Tasa Alfabetización (%)", ...literacyVals],
-          ["Café stats (normalizado 0-100)", ...coffeeNorm]
+          ["Alfabetización (%)", ...literacyVals],
+          ["Producción café (norm. 0-100)", ...coffeeNorm]
         ]
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  // -------- soporte-sos Cholera Stats -> C3.js pie ----------------------------------------
+  // -------- soporte-sos Cholera Stats -> C3.js grouped bar ----------------------------------------
+  // Por país: alfabetización total (DB propia) + casos de cólera (API externa)
   app.get(BASE_URL_INTEGRATIONS_TGG + "/cholera-stats", async (req, res) => {
     try {
       await fetch("https://soporte-sos.onrender.com/api/v1/cholera-stats/loadInitialData")
@@ -215,43 +266,33 @@ export function loadBackendIntegrationsTGG(app) {
         .then(r => r.json());
 
       const docs = await findAll();
-      const avg = (k) => docs.reduce((a, b) => a + (b[k] || 0), 0) / Math.max(1, docs.length);
-
       const items = Array.isArray(ext) ? ext : (Array.isArray(ext.data) ? ext.data : []);
 
-      // Extract top numeric value from cholera items (cases, deaths, rate, etc.)
-      const numericKey = items.length > 0
-        ? ["cases", "deaths", "fatalities", "rate", "total", "value", "count"]
-            .find(k => typeof items[0][k] === "number")
-        : null;
+      // Agrupar por país: sumar casos, tomar literacy
+      const byCountry = {};
+      for (const item of items) {
+        const match = matchByCountry(docs, item.country);
+        if (!match) continue;
+        const key = match.country;
+        if (!byCountry[key]) byCountry[key] = { literacy: Math.round(match.total * 10) / 10, cases: 0 };
+        byCountry[key].cases += item.cases || item.deaths || item.reported_cases || 1;
+      }
 
-      const choleraTotal = items.reduce((sum, item) => {
-        const raw = numericKey ? item[numericKey]
-          : (Object.values(item).find(v => typeof v === "number") ?? 0);
-        return sum + Number(raw);
-      }, 0) || 1;
-
-      const avgTotal  = Math.round(avg("total")  * 10) / 10;
-      const avgMale   = Math.round(avg("male")   * 10) / 10;
-      const avgFemale = Math.round(avg("female") * 10) / 10;
-
-      // Normalise cholera total to same order of magnitude as literacy (0-100 scale)
-      const choleraScaled = Math.min(100, Math.round((choleraTotal / Math.max(choleraTotal, 1)) * 30 * 10) / 10);
+      const entries = Object.entries(byCountry).slice(0, 12);
+      const columns  = entries.map(([c, v]) => [c, v.literacy]);
+      const casesMap = Object.fromEntries(entries.map(([c, v]) => [c, v.cases]));
 
       res.json({
         chartType: "pie",
         totalItems: items.length,
-        columns: [
-          ["Alfabetización Total (%)", avgTotal],
-          ["Alfabetización Masculina (%)", avgMale],
-          ["Alfabetización Femenina (%)", avgFemale],
-          ["Cólera (escala relativa)", choleraScaled]
-        ]
+        columns: columns.length > 0 ? columns : [["Sin coincidencias", 100]],
+        casesMap
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   // -------- SOS2526-12 Age-Specific Fertility Rates -> C3.js scatter ----------------------------------------
+  // Scatter por país: eje X = tasa de fertilidad (20-24), eje Y = tasa de alfabetización.
   app.get(BASE_URL_INTEGRATIONS_TGG + "/sos12-fertility", async (req, res) => {
     try {
       await fetch("https://sos2526-12.onrender.com/api/v2/age-specific-fertility-rates/loadInitialData")
@@ -261,39 +302,27 @@ export function loadBackendIntegrationsTGG(app) {
         .then(r => r.json());
 
       const docs = await findAll();
+      const items = (Array.isArray(ext) ? ext : (Array.isArray(ext.data) ? ext.data : [])).slice(0, 20);
 
-      const items = (Array.isArray(ext) ? ext : (Array.isArray(ext.data) ? ext.data : [])).slice(0, 8);
+      const xs = {};
+      const columns = [];
+      const seen = new Set();
 
-      // Extract numeric fertility value per item
-      const fertilityPoints = items.map((item, i) => {
-        const numericKey = ["rate", "fertility_rate", "value", "births", "total", "fertility"]
-          .find(k => typeof item[k] === "number");
-        const raw = numericKey ? item[numericKey]
-          : (Object.values(item).find(v => typeof v === "number") ?? 0);
-        return Math.round(Number(raw) * 10) / 10;
-      });
-
-      // Top literacy rates from DB for scatter overlay
-      const topDocs = [...docs]
-        .sort((a, b) => (b.total || 0) - (a.total || 0))
-        .slice(0, items.length || 5);
-      const literacyPoints = topDocs.map(d => Math.round((d.total || 0) * 10) / 10);
-
-      const xAxis = items.map((_, i) => i + 1);
-      const xAxisLit = topDocs.map((_, i) => i + 1);
+      for (const item of items) {
+        const match = matchByCountry(docs, item.country_name);
+        if (!match || seen.has(match.country)) continue;
+        seen.add(match.country);
+        const fert = Math.round((item.fert_20_24 || item.fert_15_19 || 0) * 10) / 10;
+        const xKey = `x_${match.country}`;
+        xs[match.country] = xKey;
+        columns.push([xKey, fert]);
+        columns.push([match.country, Math.round(match.total * 10) / 10]);
+      }
 
       res.json({
         chartType: "scatter",
-        xs: {
-          "Tasa Fertilidad (SOS12)": "x_fert",
-          "Tasa Alfabetización (DB)": "x_lit"
-        },
-        columns: [
-          ["x_fert",                    ...xAxis],
-          ["Tasa Fertilidad (SOS12)",   ...fertilityPoints],
-          ["x_lit",                     ...xAxisLit],
-          ["Tasa Alfabetización (DB)",  ...literacyPoints]
-        ]
+        xs: Object.keys(xs).length > 0 ? xs : { "Sin datos comunes": "x_none" },
+        columns: columns.length > 0 ? columns : [["x_none", 0], ["Sin datos comunes", 0]]
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });

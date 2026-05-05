@@ -1,13 +1,17 @@
 <script>
     import { onMount } from 'svelte';
     import Highcharts from 'highcharts';
-    import c3 from 'c3';
-    import 'c3/c3.css';
 
     let error = $state("");
     let loading = $state(true);
 
     onMount(async () => {
+        const [c3Module] = await Promise.all([
+            import('c3'),
+            import('c3/c3.css')
+        ]);
+        const c3 = c3Module.default;
+
         try {
             const res = await fetch('/api/v2/literacy-rates');
             let data = await res.json();
@@ -74,61 +78,117 @@
             loading = false;
         }
 
-        // ---- Cargar módulos ----
-        try {
-            const Funnel = (await import('highcharts/modules/funnel')).default;
-            const VariablePie = (await import('highcharts/modules/variable-pie')).default;
-            // @ts-ignore
-            Funnel(Highcharts);
-            // @ts-ignore
-            VariablePie(Highcharts);
-        } catch (e) { 
-            console.warn('Highcharts modules', e); 
-        }
-
         // ---- OAuth charts ----
 
-        // 1. NewsAPI
+        // 1. NewsAPI → polar/spider
         fetch('/api/integrations/tgg/newsapi-education')
         .then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
 
             Highcharts.chart('oauth-funnel', {
-                chart: { type: 'funnel', backgroundColor: 'transparent' },
-                title: { text: 'Embudo educativo (NewsAPI + DB propia)', style: { color: '#e5c07b' } },
-                series: d.series
+                chart: { polar: true, type: 'area', backgroundColor: 'transparent' },
+                title: { text: `Indicadores educativos · ${d.articlesCount} artículos (NewsAPI)`, style: { color: '#e5c07b' } },
+                xAxis: {
+                    categories: d.categories,
+                    tickmarkPlacement: 'on',
+                    lineWidth: 0,
+                    labels: { style: { color: '#abb2bf', fontSize: '11px' } }
+                },
+                yAxis: {
+                    gridLineInterpolation: 'polygon',
+                    lineWidth: 0,
+                    min: 0,
+                    max: 100,
+                    labels: { style: { color: '#abb2bf' } }
+                },
+                tooltip: { shared: true, valueSuffix: '' },
+                series: d.series.map(s => ({
+                    ...s,
+                    color: '#61afef',
+                    fillColor: 'rgba(97,175,239,0.15)',
+                    pointPlacement: 'on',
+                    lineWidth: 2
+                })),
+                credits: { enabled: false }
             });
         })
-        .catch(e => console.error('funnel:', e.message));
+        .catch(e => console.error('newsapi:', e.message));
 
 
-        // 2. Spotify
+        // 2. Spotify → bar: top tracks "literacy/education" por popularidad
         fetch('/api/integrations/tgg/spotify-literacy')
         .then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
 
-            Highcharts.chart('oauth-pyramid', {
-                chart: { type: 'pyramid', backgroundColor: 'transparent' },
-                title: { text: 'Spotify vs Literacy', style: { color: '#e5c07b' } },
-                series: d.series
+            Highcharts.chart('oauth-spotify-gauge', {
+                chart: { type: 'bar', backgroundColor: 'transparent' },
+                title: { text: 'Top tracks "literacy / education" · Spotify', style: { color: '#e5c07b' } },
+                xAxis: {
+                    categories: d.categories,
+                    labels: { style: { color: '#abb2bf', fontSize: '11px' } }
+                },
+                yAxis: {
+                    title: { text: 'Popularidad (0–100)', style: { color: '#abb2bf' } },
+                    labels: { style: { color: '#abb2bf' } },
+                    min: 0, max: 100
+                },
+                tooltip: {
+                    // @ts-ignore
+                    formatter: function() {
+                        const i = this.point.index;
+                        const artist = (d.artists || [])[i] || '';
+                        return `<b>${this.point.category}</b>${artist ? '<br>' + artist : ''}<br>Popularidad: <b>${this.y}</b>`;
+                    },
+                    backgroundColor: '#282c34',
+                    style: { color: '#abb2bf' }
+                },
+                series: d.series,
+                credits: { enabled: false }
             });
         })
         .catch(e => console.error('spotify:', e.message));
 
 
-        // 3. GitHub
+        // 3. GitHub → scatter: verde = países mencionados en repos de educación, azul tenue = proxy
         fetch('/api/integrations/tgg/github-literacy')
         .then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
 
-            Highcharts.chart('oauth-variablepie', {
-                chart: { type: 'column', backgroundColor: 'transparent' },
-                title: { text: 'GitHub vs Literacy', style: { color: '#e5c07b' } },
-                xAxis: { categories: d.categories },
-                series: d.series
+            const matched = d.matchedCountries?.length || 0;
+            const subtitle = matched
+                ? `${matched} países mencionados directamente · resto marcados (proxy)`
+                : 'Sin coincidencias directas — todos los puntos son proxy';
+
+            Highcharts.chart('oauth-github-scatter', {
+                chart: { type: 'scatter', backgroundColor: 'transparent', zoomType: 'xy' },
+                title: { text: `GitHub: ${(d.totalRepos || 0).toLocaleString()} repos de educación/literacy`, style: { color: '#e5c07b' } },
+                subtitle: { text: subtitle, style: { color: '#abb2bf' } },
+                xAxis: {
+                    title: { text: 'Brecha de género (%)', style: { color: '#abb2bf' } },
+                    labels: { style: { color: '#abb2bf' } },
+                    gridLineColor: '#3e4451'
+                },
+                yAxis: {
+                    title: { text: 'Alfabetización Total (%)', style: { color: '#abb2bf' } },
+                    labels: { style: { color: '#abb2bf' } },
+                    gridLineColor: '#3e4451'
+                },
+                tooltip: {
+                    formatter: function() {
+                        // @ts-ignore
+                        return `<b>${this.point.name}</b><br>Brecha: ${this.x}%<br>Alfabetización: ${this.y}%`;
+                    },
+                    backgroundColor: '#282c34',
+                    style: { color: '#abb2bf' }
+                },
+                plotOptions: {
+                    scatter: { marker: { radius: 5 } }
+                },
+                series: d.series,
+                credits: { enabled: false }
             });
         })
         .catch(e => console.error('github:', e.message));
@@ -139,18 +199,18 @@
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
 
+            const sats = d.satellites || {};
             c3.generate({
                 bindto: '#c3-sos14-donut',
-                data: {
-                    columns: d.columns,
-                    type: 'donut'
+                data: { columns: d.columns, type: 'donut' },
+                donut: { title: `${d.totalSatellites} satélites` },
+                tooltip: {
+                    format: {
+                        value: (value, _ratio, id) =>
+                            `Alfab.: ${value}% | Satélites: ${sats[id] ?? '—'}`
+                    }
                 },
-                donut: {
-                    title: `${d.totalSatellites} satélites`
-                },
-                color: {
-                    pattern: ['#98c379', '#61afef', '#e06c75', '#e5c07b']
-                }
+                color: { pattern: ['#98c379', '#61afef', '#e06c75', '#e5c07b'] }
             });
         })
         .catch(e => console.error('sos14-satellites:', e.message));
@@ -189,15 +249,17 @@
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
 
+            const cases = d.casesMap || {};
             c3.generate({
                 bindto: '#c3-cholera-pie',
-                data: {
-                    columns: d.columns,
-                    type: 'pie'
+                data: { columns: d.columns, type: 'pie' },
+                tooltip: {
+                    format: {
+                        value: (value, _ratio, id) =>
+                            `Alfab.: ${value}% | Casos: ${cases[id] ?? '—'}`
+                    }
                 },
-                color: {
-                    pattern: ['#98c379', '#61afef', '#e06c75', '#c678dd']
-                }
+                color: { pattern: ['#98c379', '#61afef', '#e06c75', '#c678dd'] }
             });
         })
         .catch(e => console.error('cholera-stats:', e.message));
@@ -340,17 +402,17 @@
     </div>
 
     <div class="chart-box">
-        <div id="oauth-pyramid" class="oauth-chart"></div>
+        <div id="oauth-spotify-gauge" class="oauth-chart"></div>
     </div>
 
     <div class="chart-box">
-        <div id="oauth-variablepie" class="oauth-chart"></div>
+        <div id="oauth-github-scatter" class="oauth-chart"></div>
     </div>
 
     <h1 style="margin-top: 3rem;">Integraciones APIs de compañeros SOS (C3.js)</h1>
 
     <div class="chart-box">
-        <p class="chart-label">SOS2526-14 — Satélites activos · C3.js donut</p>
+        <p class="chart-label">SOS2526-14 — Satélites activos · Alfabetización (%) + nº satélites en tooltip · C3.js donut</p>
         <div id="c3-sos14-donut" class="c3-chart"></div>
     </div>
 
@@ -360,7 +422,7 @@
     </div>
 
     <div class="chart-box">
-        <p class="chart-label">soporte-sos — Cholera stats · C3.js pie</p>
+        <p class="chart-label">soporte-sos — Cholera stats · Alfabetización (%) + casos en tooltip · C3.js pie</p>
         <div id="c3-cholera-pie" class="c3-chart"></div>
     </div>
 
