@@ -93,7 +93,7 @@
             backgroundColor: 'transparent',
             title: {
                 text: 'Especias y mortalidad vial por año',
-                subtext: 'SOS2526-20 spice-stats + SOS2526-11 road-fatalities-v2',
+                subtext: '',
                 left: 'center',
                 textStyle: { color: '#e5c07b' },
                 subtextStyle: { color: '#9ca3af' },
