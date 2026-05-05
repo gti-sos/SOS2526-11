@@ -7,6 +7,7 @@
 
     onMount(async () => {
         const [c3Module] = await Promise.all([
+            // @ts-ignore
             import('c3'),
             import('c3/c3.css')
         ]);
@@ -103,6 +104,7 @@
                     labels: { style: { color: '#abb2bf' } }
                 },
                 tooltip: { shared: true, valueSuffix: '' },
+                // @ts-ignore
                 series: d.series.map(s => ({
                     ...s,
                     color: '#61afef',
@@ -130,16 +132,18 @@
                     labels: { style: { color: '#abb2bf', fontSize: '11px' } }
                 },
                 yAxis: {
-                    title: { text: 'Popularidad (0–100)', style: { color: '#abb2bf' } },
+                    title: { text: 'Duración (segundos)', style: { color: '#abb2bf' } },
                     labels: { style: { color: '#abb2bf' } },
-                    min: 0, max: 100
+                    min: 0
                 },
                 tooltip: {
                     // @ts-ignore
                     formatter: function() {
+                        // @ts-ignore
                         const i = this.point.index;
                         const artist = (d.artists || [])[i] || '';
-                        return `<b>${this.point.category}</b>${artist ? '<br>' + artist : ''}<br>Popularidad: <b>${this.y}</b>`;
+                        // @ts-ignore
+                        return `<b>${this.point.category}</b>${artist ? '<br>' + artist : ''}<br>Duración: <b>${this.y}s</b>`;
                     },
                     backgroundColor: '#282c34',
                     style: { color: '#abb2bf' }
@@ -162,6 +166,7 @@
                 ? `${matched} países mencionados directamente · resto marcados (proxy)`
                 : 'Sin coincidencias directas — todos los puntos son proxy';
 
+            // @ts-ignore
             Highcharts.chart('oauth-github-scatter', {
                 chart: { type: 'scatter', backgroundColor: 'transparent', zoomType: 'xy' },
                 title: { text: `GitHub: ${(d.totalRepos || 0).toLocaleString()} repos de educación/literacy`, style: { color: '#e5c07b' } },
@@ -206,6 +211,7 @@
                 donut: { title: `${d.totalSatellites} satélites` },
                 tooltip: {
                     format: {
+                        // @ts-ignore
                         value: (value, _ratio, id) =>
                             `Alfab.: ${value}% | Satélites: ${sats[id] ?? '—'}`
                     }
@@ -255,6 +261,7 @@
                 data: { columns: d.columns, type: 'pie' },
                 tooltip: {
                     format: {
+                        // @ts-ignore
                         value: (value, _ratio, id) =>
                             `Alfab.: ${value}% | Casos: ${cases[id] ?? '—'}`
                     }

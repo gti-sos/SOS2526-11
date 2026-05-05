@@ -1,8 +1,11 @@
-import { dbLiteracy as db } from "./db.js";
+import Datastore from "nedb";
 
 export const BASE_URL_API_TGG = "/api/v1/literacy-rates";
 
 export function loadBackendTGG(app) {
+    // Inicializamos NeDB con persistencia en archivo
+    const db = new Datastore({ filename: './data/literacy-rates.db', autoload: false });
+    db.loadDatabase();
 
     // Función auxiliar para validar JSON de literacy rates
     function isValidLiteracyStats(body) {
@@ -73,8 +76,66 @@ export function loadBackendTGG(app) {
             { country: "Cuba", total: 99.8, male: 99.9, female: 99.8, gender_gap: 0.1, year: 2015 },
             { country: "Cyprus", total: 99.1, male: 99.5, female: 98.7, gender_gap: 0.8, year: 2015 },
             { country: "Czech Republic", total: 99.0, male: 99.0, female: 99.0, gender_gap: 0.0, year: 2011 },
-            { country: "Spain", total: 98.4, male: 98.9, female: 97.9, gender_gap: 1.0, year: 2020 },
-        ];
+            { country: "Dominican Republic", total: 93.8, male: 93.8, female: 93.8, gender_gap: 0.0, year: 2016 },
+            { country: "Ecuador", total: 93.6, male: 94.8, female: 92.5, gender_gap: 2.3, year: 2020 },
+            { country: "Egypt", total: 71.2, male: 76.5, female: 65.5, gender_gap: 11.0, year: 2017 },
+            { country: "El Salvador", total: 89.1, male: 91.3, female: 87.3, gender_gap: 4.0, year: 2019 },
+            { country: "Equatorial Guinea", total: 95.3, male: 97.4, female: 93.0, gender_gap: 4.4, year: 2015 },
+            { country: "Eritrea", total: 76.6, male: 84.4, female: 68.9, gender_gap: 15.5, year: 2018 },
+            { country: "Estonia", total: 99.8, male: 99.8, female: 99.8, gender_gap: 0.0, year: 2015 },
+            { country: "Ethiopia", total: 51.8, male: 57.2, female: 44.4, gender_gap: 12.8, year: 2017 },
+            { country: "Fiji", total: 99.1, male: 99.1, female: 99.1, gender_gap: 0.0, year: 2018 },
+            { country: "India", total: 74.4, male: 82.4, female: 65.8, gender_gap: 16.6, year: 2018 },
+            { country: "Indonesia", total: 96.0, male: 97.4, female: 94.6, gender_gap: 2.8, year: 2020 },
+            { country: "Iran", total: 85.5, male: 90.4, female: 80.8, gender_gap: 9.6, year: 2016 },
+            { country: "Iraq", total: 85.6, male: 91.2, female: 79.9, gender_gap: 11.3, year: 2017 },
+            { country: "Israel", total: 97.8, male: 98.7, female: 96.8, gender_gap: 1.9, year: 2011 },
+            { country: "Italy", total: 99.2, male: 99.4, female: 99.0, gender_gap: 0.4, year: 2018 },
+            { country: "Jamaica", total: 88.7, male: 84.0, female: 93.1, gender_gap: 9.1, year: 2015 },
+            { country: "Jordan", total: 98.2, male: 98.6, female: 97.8, gender_gap: 0.8, year: 2018 },
+            { country: "Kazakhstan", total: 99.8, male: 99.8, female: 99.7, gender_gap: 0.1, year: 2018 },
+            { country: "Kenya", total: 81.5, male: 85.0, female: 78.2, gender_gap: 6.8, year: 2018 },
+            { country: "Mexico", total: 95.2, male: 96.1, female: 94.5, gender_gap: 1.6, year: 2020 },
+            { country: "Morocco", total: 73.8, male: 83.3, female: 64.6, gender_gap: 18.7, year: 2018 },
+            { country: "Mozambique", total: 60.7, male: 72.6, female: 50.3, gender_gap: 22.3, year: 2017 },
+            { country: "Myanmar", total: 89.1, male: 92.4, female: 86.3, gender_gap: 6.1, year: 2019 },
+            { country: "Namibia", total: 91.5, male: 91.6, female: 91.4, gender_gap: 0.2, year: 2018 },
+            { country: "Nepal", total: 67.9, male: 78.6, female: 59.7, gender_gap: 18.9, year: 2018 },
+            { country: "Nicaragua", total: 82.6, male: 82.4, female: 82.8, gender_gap: 0.4, year: 2015 },
+            { country: "Niger", total: 35.1, male: 43.6, female: 26.7, gender_gap: 16.9, year: 2018 },
+            { country: "Nigeria", total: 62.0, male: 71.3, female: 52.7, gender_gap: 18.6, year: 2018 },
+            { country: "North Macedonia", total: 98.4, male: 99.1, female: 97.6, gender_gap: 1.5, year: 2020 },
+            { country: "Pakistan", total: 58.0, male: 69.3, female: 46.5, gender_gap: 22.8, year: 2019 },
+            { country: "Panama", total: 95.7, male: 98.8, female: 95.4, gender_gap: 3.4, year: 2019 },
+            { country: "Paraguay", total: 94.5, male: 94.9, female: 94.2, gender_gap: 0.7, year: 2020 },
+            { country: "Peru", total: 94.5, male: 97.0, female: 92.0, gender_gap: 5.0, year: 2020 },
+            { country: "Philippines", total: 96.3, male: 95.7, female: 96.9, gender_gap: 1.2, year: 2019 },
+            { country: "Poland", total: 99.8, male: 99.9, female: 99.7, gender_gap: 0.2, year: 2015 },
+            { country: "Portugal", total: 96.1, male: 97.4, female: 95.1, gender_gap: 2.3, year: 2018 },
+            { country: "Qatar", total: 93.5, male: 92.4, female: 94.7, gender_gap: 2.3, year: 2017 },
+            { country: "Romania", total: 98.8, male: 99.1, female: 98.6, gender_gap: 0.5, year: 2018 },
+            { country: "Russia", total: 99.7, male: 99.7, female: 99.7, gender_gap: 0.0, year: 2018 },
+            { country: "Rwanda", total: 73.2, male: 77.6, female: 69.4, gender_gap: 8.2, year: 2018 },
+            { country: "Saudi Arabia", total: 97.6, male: 98.6, female: 96.0, gender_gap: 2.6, year: 2020 },
+            { country: "Senegal", total: 51.9, male: 64.8, female: 39.8, gender_gap: 25.0, year: 2017 },
+            { country: "Serbia", total: 99.5, male: 99.9, female: 99.1, gender_gap: 0.8, year: 2019 },
+            { country: "Singapore", total: 97.5, male: 98.9, female: 96.1, gender_gap: 2.8, year: 2019 },
+            { country: "Slovenia", total: 99.7, male: 99.7, female: 99.7, gender_gap: 0.0, year: 2015 },
+            { country: "South Africa", total: 95.0, male: 95.5, female: 94.5, gender_gap: 1.0, year: 2019 },
+            { country: "South Sudan", total: 34.5, male: 40.3, female: 28.9, gender_gap: 11.4, year: 2018 },
+            { country: "Spain", total: 98.6, male: 99.0, female: 98.2, gender_gap: 0.8, year: 2020 },
+            { country: "Sri Lanka", total: 92.3, male: 93.0, female: 91.6, gender_gap: 1.4, year: 2019 },
+            { country: "Sudan", total: 60.7, male: 65.4, female: 56.1, gender_gap: 9.3, year: 2018 },
+            { country: "Turkey", total: 96.7, male: 99.1, female: 94.4, gender_gap: 4.7, year: 2019 },
+            { country: "Ukraine", total: 99.8, male: 99.8, female: 99.7, gender_gap: 0.1, year: 2015 },
+            { country: "United Arab Emirates", total: 97.6, male: 98.0, female: 96.9, gender_gap: 1.1, year: 2019 },
+            { country: "Uruguay", total: 98.8, male: 98.5, female: 99.0, gender_gap: 0.5, year: 2019 },
+            { country: "Uzbekistan", total: 100.0, male: 100.0, female: 100.0, gender_gap: 0.0, year: 2019 },
+            { country: "Vietnam", total: 95.8, male: 97.0, female: 94.6, gender_gap: 2.4, year: 2019 },
+            { country: "Yemen", total: 70.1, male: 85.1, female: 55.0, gender_gap: 30.1, year: 2015 },
+            { country: "Zambia", total: 86.7, male: 90.6, female: 83.1, gender_gap: 7.5, year: 2018 },
+            { country: "Zimbabwe", total: 86.5, male: 88.5, female: 84.6, gender_gap: 3.9, year: 2015 }
+];
 
         db.remove({}, { multi: true }, (err) => {
             if (err) return res.status(500).json({ error: "Error interno del servidor" });

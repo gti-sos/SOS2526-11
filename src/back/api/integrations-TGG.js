@@ -110,14 +110,14 @@ export function loadBackendIntegrationsTGG(app) {
       const n = t.name || "";
       return n.length > 28 ? n.substring(0, 25) + "…" : n;
     });
-    const popularity = tracks.map(t => t.popularity || 0);
-    const artists    = tracks.map(t => t.artists?.[0]?.name || "");
+    const duration = tracks.map(t => Math.round((t.duration_ms || 0) / 1000));
+    const artists  = tracks.map(t => t.artists?.[0]?.name || "");
 
     res.json({
       chartType: "bar",
       categories,
       artists,
-      series: [{ name: "Popularidad", data: popularity, color: "#1DB954" }]
+      series: [{ name: "Duración (seg)", data: duration, color: "#1DB954" }]
     });
   } catch (e) {
     res.status(500).json({ error: e.message });
