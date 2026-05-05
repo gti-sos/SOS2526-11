@@ -1,11 +1,8 @@
-import Datastore from "nedb";
+import { dbLiteracy as db } from "./db.js";
 
 export const BASE_URL_API_TGG = "/api/v1/literacy-rates";
 
 export function loadBackendTGG(app) {
-    // Inicializamos NeDB con persistencia en archivo
-    const db = new Datastore({ filename: './data/literacy-rates.db', autoload: false });
-    db.loadDatabase();
 
     // Función auxiliar para validar JSON de literacy rates
     function isValidLiteracyStats(body) {
@@ -76,6 +73,7 @@ export function loadBackendTGG(app) {
             { country: "Cuba", total: 99.8, male: 99.9, female: 99.8, gender_gap: 0.1, year: 2015 },
             { country: "Cyprus", total: 99.1, male: 99.5, female: 98.7, gender_gap: 0.8, year: 2015 },
             { country: "Czech Republic", total: 99.0, male: 99.0, female: 99.0, gender_gap: 0.0, year: 2011 },
+            { country: "Spain", total: 98.4, male: 98.9, female: 97.9, gender_gap: 1.0, year: 2020 },
         ];
 
         db.remove({}, { multi: true }, (err) => {
