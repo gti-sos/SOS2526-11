@@ -115,37 +115,80 @@
 
     function renderSos21Heatmap(d: any) {
         const el = document.getElementById('sos21-heatmap');
-        if (!el || !d?.chartData?.data?.length) return;
+        if (!el) return;
+
+        const cd = d?.chartData;
+        if (!cd?.data?.length) {
+            el.innerHTML = `<p style="color:#f87171;padding:1rem;font-size:0.9rem;">
+                No se encontraron años en común entre SOS2526-21 aids-deaths-stats y road-fatalities-v2.
+                Revisa el endpoint o los rangos de años de cada dataset.
+            </p>`;
+            return;
+        }
+
+        const existing = echarts.getInstanceByDom(el);
+        if (existing) existing.dispose();
+
         const chart = echarts.init(el);
-        const cd = d.chartData;
-        const maxVal = Math.max(...cd.data.map((p: any) => p[2]));
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: 'Muertes VIH/SIDA × mortalidad vial por año y grupo de edad', textStyle: { color: '#e5c07b' } },
+            title: {
+                text: 'VIH/SIDA y mortalidad vial por año',
+                subtext: 'SOS2526-21 aids-deaths-stats + SOS2526-11 road-fatalities-v2',
+                left: 'center',
+                textStyle: { color: '#e5c07b' },
+                subtextStyle: { color: '#98c379' }
+            },
             tooltip: {
-                position: 'top',
-                formatter: (info: any) => {
-                    const [yi, ai, val] = info.data;
-                    return `Año: <b>${cd.years[yi]}</b><br/>` +
-                        `Grupo: <b>${cd.ageGroups[ai]}</b><br/>` +
-                        `Valor combinado (SIDA × tasa vial): <b>${val?.toLocaleString() ?? 0}</b><br/>` +
+                trigger: 'item',
+                formatter: (params: any) => {
+                    const row = params.data?.raw;
+                    const metric = params.data?.metric;
+                    if (!row || !metric) return '';
+                    return `<strong>Año: ${row.year}</strong><br/>` +
+                        `Métrica: <b>${metric.label}</b><br/>` +
+                        `Valor real: <b>${row[metric.key]?.toLocaleString()}</b><br/>` +
+                        `Valor normalizado: <b>${Number(params.value[2]).toFixed(1)} / 100</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
-                        `Fuente: SOS2526-21 aids-deaths-stats + road-fatalities-v2<br/>` +
-                        `Fórmula: aids_deaths × population_death_rate por país<br/>` +
-                        `Proxy: /api/integrations/jfm/sos21-aids-deaths-stats<br/>` +
-                        `Widget: ECharts heatmap`;
+                        `Muertes VIH/SIDA: <b>${row.aids_total_deaths?.toLocaleString()}</b> (${row.aids_countries_count} países)<br/>` +
+                        `Muertes viales: <b>${row.road_total_death?.toLocaleString()}</b> (${row.road_countries_count} países)<br/>` +
+                        `Tasa vial población: ${row.population_death_rate} | Tasa vial vehículo: ${row.vehicle_death_rate}<br/>` +
+                        `Tasa VIH/SIDA: ${row.aids_death_rate || 'N/A'}<br/>` +
+                        `<hr style="margin:4px 0;border-color:#374151"/>` +
+                        `Fuente: SOS2526-21 + road-fatalities-v2`;
                 }
             },
-            grid: { top: '10%', bottom: '15%', left: '18%', right: '5%' },
-            xAxis: { type: 'category', data: cd.years, axisLabel: { color: '#abb2bf', rotate: 45 } },
-            yAxis: { type: 'category', data: cd.ageGroups, axisLabel: { color: '#abb2bf' } },
+            grid: { top: 110, left: 155, right: 40, bottom: 70 },
+            xAxis: {
+                type: 'category',
+                data: cd.years,
+                name: 'Año',
+                nameTextStyle: { color: '#abb2bf' },
+                axisLabel: { color: '#abb2bf', rotate: cd.years.length > 8 ? 35 : 0, fontSize: 11 }
+            },
+            yAxis: {
+                type: 'category',
+                data: cd.metrics,
+                axisLabel: { color: '#abb2bf', fontSize: 11 }
+            },
             visualMap: {
-                min: 0, max: maxVal, calculable: true,
-                orient: 'horizontal', left: 'center', bottom: 0,
+                min: 0, max: 100, calculable: true,
+                orient: 'horizontal', left: 'center', bottom: 10,
                 inRange: { color: ['#1c1f24', '#e06c75'] },
                 textStyle: { color: '#abb2bf' }
             },
-            series: [{ type: 'heatmap', data: cd.data, label: { show: false }, emphasis: { itemStyle: { shadowBlur: 10 } } }]
+            series: [{
+                name: 'Indicadores normalizados',
+                type: 'heatmap',
+                data: cd.data,
+                label: {
+                    show: true,
+                    formatter: (params: any) => Number(params.value[2]).toFixed(0),
+                    color: '#fff',
+                    fontSize: 9
+                },
+                emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.5)' } }
+            }]
         });
         window.addEventListener('resize', () => chart.resize());
     }

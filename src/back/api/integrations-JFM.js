@@ -1,4 +1,4 @@
-// =====================================================================
+﻿// =====================================================================
 // integrations-JFM.js  (José Fernández Montero)
 //
 // 3 widgets sobre road-fatalities con OAuth real:
@@ -260,6 +260,197 @@ function buildNationMap(docs) {
     delete v.count;
   });
   return map;
+}
+
+// ── Helpers SOS21 ─────────────────────────────────────────────────────
+
+function normalizeText(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^\w\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function pickFirstExisting(row, keys) {
+  for (const key of keys) {
+    if (row && row[key] !== undefined && row[key] !== null && row[key] !== "") return row[key];
+  }
+  return null;
+}
+
+function toNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
+const COUNTRY_NAME_MAP = {
+  // A
+  "afganistan": "afghanistan",
+  "alemania": "germany",
+  "argelia": "algeria",
+  "antigua y barbuda": "antigua and barbuda",
+  "arabia saudita": "saudi arabia",
+  "azerbaiyan": "azerbaijan",
+  // B
+  "banglades": "bangladesh",
+  "barein": "bahrain",
+  "belgica": "belgium",
+  "belice": "belize",
+  "bielorrusia": "belarus",
+  "birmania": "myanmar",
+  "bosnia y herzegovina": "bosnia and herzegovina",
+  "botsuana": "botswana",
+  "brasil": "brazil",
+  "butan": "bhutan",
+  // C
+  "cabo verde": "cabo verde",
+  "camboya": "cambodia",
+  "camerun": "cameroon",
+  "catar": "qatar",
+  "chipre": "cyprus",
+  "corea del norte": "democratic peoples republic of korea",
+  "corea del sur": "republic of korea",
+  "costa de marfil": "cote divoire",
+  // D
+  "dinamarca": "denmark",
+  "republica dominicana": "dominican republic",
+  // E
+  "egipto": "egypt",
+  "emiratos arabes unidos": "united arab emirates",
+  "eslovaquia": "slovakia",
+  "eslovenia": "slovenia",
+  "espana": "spain",
+  "estados unidos": "united states of america",
+  "etiopia": "ethiopia",
+  // F
+  "filipinas": "philippines",
+  "finlandia": "finland",
+  "fiyi": "fiji",
+  "francia": "france",
+  // G
+  "grecia": "greece",
+  "guinea-bisau": "guinea-bissau",
+  // H
+  "hungria": "hungary",
+  // I
+  "irak": "iraq",
+  "iran": "iran",
+  "irlanda": "ireland",
+  "islandia": "iceland",
+  "islas cooks": "cook islands",
+  "islas marshall": "marshall islands",
+  "islas solomon": "solomon islands",
+  "italia": "italy",
+  // J
+  "japon": "japan",
+  "jordania": "jordan",
+  // K
+  "kazajistan": "kazakhstan",
+  "kenia": "kenya",
+  "kirguistan": "kyrgyzstan",
+  // L
+  "letonia": "latvia",
+  "libano": "lebanon",
+  "lesoto": "lesotho",
+  "libia": "libya",
+  "lituania": "lithuania",
+  "luxemburgo": "luxembourg",
+  // M
+  "macedonia": "north macedonia",
+  "malaui": "malawi",
+  "malasia": "malaysia",
+  "maldivas": "maldives",
+  "marruecos": "morocco",
+  "mauricio": "mauritius",
+  "moldavia": "moldova",
+  // N
+  "noruega": "norway",
+  "nueva zelanda": "new zealand",
+  // O
+  "oman": "oman",
+  // P
+  "paises bajos": "netherlands",
+  "pakistan": "pakistan",
+  "palaos": "palau",
+  "papa nueva guinea": "papua new guinea",
+  "papua nueva guinea": "papua new guinea",
+  "peru": "peru",
+  "polonia": "poland",
+  // R
+  "reino unido": "united kingdom",
+  "republica centroafricana": "central african republic",
+  "republica checa": "czech republic",
+  "republica democratica del congo": "democratic republic of the congo",
+  "ruanda": "rwanda",
+  "rumania": "romania",
+  "rusia": "russian federation",
+  // S
+  "santa lucia": "saint lucia",
+  "san vincente y las granadinas": "saint vincent and the grenadines",
+  "santo tome y principe": "sao tome and principe",
+  "singapur": "singapore",
+  "sudafrica": "south africa",
+  "suazilandia": "eswatini",
+  "suecia": "sweden",
+  "suiza": "switzerland",
+  // T
+  "tailandia": "thailand",
+  "tayikistan": "tajikistan",
+  "timor oriental": "timor-leste",
+  "trinidad y tobago": "trinidad and tobago",
+  "tunez": "tunisia",
+  "turquia": "turkey",
+  "turkmenistan": "turkmenistan",
+  // U
+  "ucrania": "ukraine",
+  // V
+  "vietnam": "viet nam",
+  // Y
+  "yemen": "yemen",
+  "yibuti": "djibouti",
+  // Z
+  "zimbabue": "zimbabwe",
+};
+
+function getComparableCountryNameFromRoadFatality(row) {
+  const normalized = normalizeText(row.nation);
+  return COUNTRY_NAME_MAP[normalized] || normalized;
+}
+
+function getAidsCountry(row) {
+  return pickFirstExisting(row, ["country", "nation", "area", "location", "country_name", "Country", "Nation", "Area", "Location"]);
+}
+
+function getComparableCountryNameFromAids(row) {
+  const normalized = normalizeText(getAidsCountry(row));
+  return COUNTRY_NAME_MAP[normalized] || normalized;
+}
+
+function getAidsTotalDeaths(row) {
+  return toNumber(pickFirstExisting(row, ["aids_total_deaths", "total_deaths", "deaths", "aids_deaths", "deaths_aids", "hiv_deaths", "value", "AIDS_total_deaths", "Total_deaths"]));
+}
+
+function getAidsDeathRate(row) {
+  return toNumber(pickFirstExisting(row, ["aids_death_rate", "death_rate", "rate", "aids_rate", "hiv_death_rate", "AIDS_death_rate"]));
+}
+
+function dedupeRoadDataByCountry(data) {
+  const map = new Map();
+  for (const row of data) {
+    const key = getComparableCountryNameFromRoadFatality(row);
+    const previous = map.get(key);
+    if (!previous || Number(row.year) > Number(previous.year)) map.set(key, row);
+  }
+  return Array.from(map.values());
+}
+
+function normalizeTo100(value, max) {
+  const n = toNumber(value);
+  const m = Math.max(toNumber(max), 1);
+  return Math.max(0, Math.min(100, (n / m) * 100));
 }
 
 export function loadBackendIntegrationsJFM(app) {
@@ -1149,7 +1340,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   // -------------------------------------------------------------------
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos21-aids-deaths-stats", async (req, res) => {
     const SOURCE_URL = "https://soporte-sos.onrender.com/api/v1/aids-deaths-stats";
-    const FIELDS_SHOWN = ["country", "year", "under_5", "age_5_14", "age_15_49", "age_50_69", "age_70_plus", "total_deaths", "road_population_death_rate", "road_total_death"];
+    const FIELDS_SHOWN = ["year", "aids_total_deaths", "aids_deaths_under5", "road_total_death", "population_death_rate", "vehicle_death_rate", "aids_death_rate", "aids_countries_count", "road_countries_count"];
     try {
       const [r, ownDocs] = await Promise.all([
         fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
@@ -1164,85 +1355,105 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       }
       if (!r.ok) throw new Error(`HTTP ${r.status} desde SOS21: ${text.slice(0, 300)}`);
 
-      const items = extractArrayPayload(json);
-      const nationMap = buildNationMap(ownDocs);
+      const aidsItems = extractArrayPayload(json);
 
-      // Filas combinadas: campos SOS21 + road-fatalities cruzados por país
-      const normalizedRows = items.map(row => {
-        const key = String(row.country || '').toLowerCase().trim();
-        const own = nationMap[key] || null;
-        const total_deaths =
-          Number(row.death_count_hiv_aids_under_5  || 0) +
-          Number(row.death_count_hiv_aids_5_14     || 0) +
-          Number(row.death_count_hiv_aids_15_49    || 0) +
-          Number(row.death_count_hiv_aids_50_69    || 0) +
-          Number(row.death_count_hiv_aids_70_plus  || 0);
+      console.log(`[SOS21] endpoint: ${SOURCE_URL}`);
+      console.log(`[SOS21] registros externos: ${aidsItems.length}`);
+      if (aidsItems.length > 0) console.log(`[SOS21] muestra primeros 5:`, JSON.stringify(aidsItems.slice(0, 5)));
+
+      // Agrupa AIDS por año: suma muertes, media tasas
+      const aidsByYear = new Map();
+      for (const row of aidsItems) {
+        const year = toNumber(row.year);
+        if (!year) continue;
+        const deaths = getAidsTotalDeaths(row);
+        const rate = getAidsDeathRate(row);
+        if (!aidsByYear.has(year)) {
+          aidsByYear.set(year, { aids_total_deaths: 0, aids_deaths_under5: 0, aids_rate_sum: 0, aids_rate_count: 0, aids_countries_count: 0 });
+        }
+        const e = aidsByYear.get(year);
+        e.aids_total_deaths   += deaths;
+        e.aids_deaths_under5  += toNumber(row.death_count_hiv_aids_under_5);
+        if (rate > 0) { e.aids_rate_sum += rate; e.aids_rate_count += 1; }
+        e.aids_countries_count += 1;
+      }
+
+      // Agrupa road-fatalities por año: suma muertes, media tasas
+      const roadByYear = new Map();
+      for (const row of ownDocs) {
+        const year = toNumber(row.year);
+        if (!year) continue;
+        if (!roadByYear.has(year)) {
+          roadByYear.set(year, { road_total_death: 0, pop_rate_sum: 0, veh_rate_sum: 0, rate_count: 0, road_countries_count: 0 });
+        }
+        const e = roadByYear.get(year);
+        e.road_total_death += toNumber(row.total_death);
+        e.pop_rate_sum     += toNumber(row.population_death_rate);
+        e.veh_rate_sum     += toNumber(row.vehicle_death_rate);
+        e.rate_count       += 1;
+        e.road_countries_count += 1;
+      }
+
+      const aidsYears = [...aidsByYear.keys()].sort((a, b) => a - b);
+      const roadYears = [...roadByYear.keys()].sort((a, b) => a - b);
+      const commonYears = aidsYears.filter(y => roadByYear.has(y));
+
+      console.log(`[SOS21] años en AIDS: ${aidsYears.join(', ')}`);
+      console.log(`[SOS21] años en road-fatalities: ${roadYears.join(', ')}`);
+      console.log(`[SOS21] años en común: ${commonYears.join(', ')}`);
+
+      // Fila por año común con datos de ambas fuentes
+      const combinedData = commonYears.map(year => {
+        const a = aidsByYear.get(year);
+        const r = roadByYear.get(year);
         return {
-          country:     row.country,
-          codecountry: row.codecountry,
-          year:        row.year,
-          under_5:     row.death_count_hiv_aids_under_5,
-          age_5_14:    row.death_count_hiv_aids_5_14,
-          age_15_49:   row.death_count_hiv_aids_15_49,
-          age_50_69:   row.death_count_hiv_aids_50_69,
-          age_70_plus: row.death_count_hiv_aids_70_plus,
-          total_deaths,
-          road_population_death_rate: own?.population_death_rate ?? null,
-          road_total_death: own?.total_death ?? null,
+          year,
+          aids_total_deaths:    a.aids_total_deaths,
+          aids_deaths_under5:   a.aids_deaths_under5,
+          aids_death_rate:      a.aids_rate_count > 0 ? Number((a.aids_rate_sum / a.aids_rate_count).toFixed(4)) : 0,
+          aids_countries_count: a.aids_countries_count,
+          road_total_death:        r.road_total_death,
+          population_death_rate:   Number((r.pop_rate_sum / r.rate_count).toFixed(4)),
+          vehicle_death_rate:      Number((r.veh_rate_sum / r.rate_count).toFixed(4)),
+          road_countries_count:    r.road_countries_count,
         };
       });
 
-      const ageGroups21 = ["under_5", "age_5_14", "age_15_49", "age_50_69", "age_70_plus"];
-      const years21 = [...new Set(normalizedRows.map(r => r.year))].sort().slice(0, 10);
+      // Heatmap normalizado (0-100) por año × métrica
+      const maxAidsDeaths     = Math.max(...combinedData.map(d => d.aids_total_deaths), 1);
+      const maxAidsUnder5     = Math.max(...combinedData.map(d => d.aids_deaths_under5), 1);
+      const maxRoadDeaths     = Math.max(...combinedData.map(d => d.road_total_death), 1);
+      const maxPopulationRate = Math.max(...combinedData.map(d => d.population_death_rate), 1);
+      const maxVehicleRate    = Math.max(...combinedData.map(d => d.vehicle_death_rate), 1);
+      const maxAidsRate       = Math.max(...combinedData.map(d => d.aids_death_rate), 1);
+
+      const metrics21 = [
+        { key: "aids_deaths_under5",   label: "Muertes VIH <5 años",   max: maxAidsUnder5 },
+        { key: "road_total_death",     label: "Muertes viales",         max: maxRoadDeaths },
+        { key: "population_death_rate",label: "Tasa vial población",    max: maxPopulationRate },
+        { key: "vehicle_death_rate",   label: "Tasa vial vehículo",     max: maxVehicleRate },
+      ];
+
       const heatmapData21 = [];
-      years21.forEach((year, yi) => {
-        const rowsForYear = normalizedRows.filter(r => r.year === year);
-        ageGroups21.forEach((ag, ai) => {
-          // Valor combinado: muertes SIDA × tasa mortalidad vial por país
-          let combined = 0;
-          rowsForYear.forEach(r => {
-            const key = String(r.country || '').toLowerCase().trim();
-            const own = nationMap[key];
-            if (own) combined += Number(r[ag] || 0) * (own.population_death_rate || 1);
+      combinedData.forEach((row, xIndex) => {
+        metrics21.forEach((metric, yIndex) => {
+          heatmapData21.push({
+            value: [xIndex, yIndex, Math.round(normalizeTo100(row[metric.key], metric.max) * 10) / 10],
+            raw: row,
+            metric,
           });
-          heatmapData21.push([yi, ai, Math.round(combined)]);
         });
       });
-      const chartData21 = {
+
+      const chartData21 = combinedData.length > 0 ? {
         library: "ECharts",
         type: "heatmap",
-        years: years21.map(String),
-        ageGroups: ageGroups21,
+        description: "Indicadores normalizados VIH/SIDA y mortalidad vial por año (SOS2526-21 + road-fatalities-v2)",
+        years: combinedData.map(d => String(d.year)),
+        metrics: metrics21.map(m => m.label),
         data: heatmapData21,
-      };
-
-      // Agrega muertes SIDA por país para el scatter combinado
-      const byCountry21 = {};
-      normalizedRows.forEach(row => {
-        const c = String(row.country || 'Unknown');
-        if (!byCountry21[c]) byCountry21[c] = 0;
-        byCountry21[c] += Number(row.total_deaths || 0);
-      });
-
-      // Scatter combinado: total muertes SIDA por país (SOS21) × population_death_rate (propio)
-      const scatterPoints21 = Object.entries(byCountry21)
-        .map(([country, aidsDeaths]) => {
-          const key = country.toLowerCase().trim();
-          const own = nationMap[key] || null;
-          return own && aidsDeaths > 0 ? { name: country, x: aidsDeaths, y: own.population_death_rate } : null;
-        })
-        .filter(Boolean);
-
-      const combinedChartData21 = scatterPoints21.length > 0 ? {
-        library: "ECharts", type: "scatter",
-        description: "Muertes por SIDA (SOS21) vs mortalidad vial (road-fatalities-v2) por país",
-        xAxis: "aids_total_deaths (SOS2526-21)",
-        yAxis: "population_death_rate (road-fatalities-v2)",
-        matchedCount: scatterPoints21.length,
-        data: scatterPoints21,
+        matchedCount: combinedData.length,
       } : null;
-
-      const matchedCount = normalizedRows.filter(r => r.road_population_death_rate !== null).length;
 
       res.json({
         api: "SOS2526-21 aids-deaths-stats",
@@ -1255,14 +1466,19 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         group: "SOS2526-21",
         integratedBy: "JFM",
         fetchedAt: new Date().toISOString(),
-        count: normalizedRows.length,
-        matchedCountries: matchedCount,
+        count: combinedData.length,
+        matchedYears: combinedData.length,
         fieldsShown: FIELDS_SHOWN,
         chartData: chartData21,
-        combinedChartData: combinedChartData21,
-        explanation: `Combinación de muertes por VIH/SIDA por país (SOS2526-21) con mortalidad vial propia (road-fatalities-v2). El heatmap muestra el producto aids_deaths × population_death_rate por año y grupo de edad (combinando ambas fuentes). El scatter cruza aids_total_deaths (SOS21) con population_death_rate (propio) para los ${matchedCount} países coincidentes. La tabla incluye ambas fuentes.`,
-        ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
-        data: normalizedRows.slice(0, 50),
+        explanation: `Combinación de muertes por VIH/SIDA por año (SOS2526-21) con mortalidad vial propia (road-fatalities-v2). El heatmap compara indicadores normalizados (0-100) de ambas fuentes para los ${combinedData.length} años en común. La tabla incluye ambas fuentes.`,
+        ownApiFieldsUsed: ["year", "population_death_rate", "vehicle_death_rate", "total_death"],
+        data: combinedData,
+        debug: {
+          aidsRecords: aidsItems.length,
+          aidsYears: aidsYears.slice(0, 20),
+          roadYears: roadYears.slice(0, 20),
+          commonYears,
+        },
       });
     } catch (e) {
       res.json({
