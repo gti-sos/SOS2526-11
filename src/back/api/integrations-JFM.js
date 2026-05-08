@@ -986,7 +986,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       });
 
       let chartData12 = null;
-      let combinedChartData12 = null;
       if (items.length > 0) {
         const fKeys = Object.keys(items[0]);
         const bField = ['crude_birth_rate', 'birth_rate'].find(f => fKeys.includes(f)) || 'crude_birth_rate';
@@ -1021,27 +1020,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
           };
         }
 
-        // Scatter combinado: crude_death_rate (SOS12) × population_death_rate (propio) por país
-        const scatterPoints = items
-          .filter(row => {
-            const k = String(row[countryField] || '').toLowerCase().trim();
-            return nationMap[k] && Number(row[dField] || 0) > 0;
-          })
-          .map(row => {
-            const k = String(row[countryField] || '').toLowerCase().trim();
-            return { name: String(row[countryField] || ''), x: Number(row[dField] || 0), y: nationMap[k].population_death_rate };
-          });
-
-        if (scatterPoints.length > 0) {
-          combinedChartData12 = {
-            library: "ECharts", type: "scatter",
-            description: "Tasa de muerte demográfica (SOS12) vs mortalidad vial (road-fatalities-v2) por país",
-            xAxis: "crude_death_rate (SOS2526-12)",
-            yAxis: "population_death_rate (road-fatalities-v2)",
-            matchedCount: scatterPoints.length,
-            data: scatterPoints,
-          };
-        }
       }
 
       const matchedCount = combinedData.filter(r => r.road_population_death_rate !== null).length;
@@ -1152,15 +1130,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         })
         .filter(Boolean);
 
-      const combinedChartData14 = scatterPoints14.length > 0 ? {
-        library: "ECharts", type: "scatter",
-        description: "Nº meteoritos por país (SOS14) vs mortalidad vial (road-fatalities-v2)",
-        xAxis: "meteorite_count (SOS2526-14)",
-        yAxis: "population_death_rate (road-fatalities-v2)",
-        matchedCount: scatterPoints14.length,
-        data: scatterPoints14,
-      } : null;
-
       // Filas para la tabla: campos SOS14 + road-fatalities cruzados por país
       const normalizedRows = rows.slice(0, 50).map(row => {
         const key = String(row.country || '').toLowerCase().trim();
@@ -1192,7 +1161,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         matchedCountries: scatterPoints14.length,
         fieldsShown: FIELDS_SHOWN,
         chartData: chartData14,
-        combinedChartData: combinedChartData14,
         explanation: `Combinación de aterrizajes de meteoritos por país (SOS2526-14) con mortalidad vial propia (road-fatalities-v2). El treemap dimensiona cada país por meteorite_count × population_death_rate (ambas fuentes combinadas). El scatter cruza meteorite_count (SOS14) con population_death_rate (propio) para los ${scatterPoints14.length} países coincidentes. La tabla incluye ambas fuentes.`,
         ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
         data: normalizedRows,
@@ -1626,15 +1594,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         })
         .filter(Boolean);
 
-      const combinedChartData27 = scatterPoints27.length > 0 ? {
-        library: "ECharts", type: "scatter",
-        description: "Capacidad hidroeléctrica total MW (SOS27) vs mortalidad vial (road-fatalities-v2) por país",
-        xAxis: "total_capacity_mw (SOS2526-27)",
-        yAxis: "population_death_rate (road-fatalities-v2)",
-        matchedCount: scatterPoints27.length,
-        data: scatterPoints27,
-      } : null;
-
       // Filas para tabla: campos SOS27 + road-fatalities cruzados por país
       const normalizedRows = rows.slice(0, 50).map(row => {
         const key = String(row.country || '').toLowerCase().trim();
@@ -1669,7 +1628,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         matchedCountries: scatterPoints27.length,
         fieldsShown,
         chartData: chartData27,
-        combinedChartData: combinedChartData27,
         explanation: `Combinación de centrales hidroeléctricas por país (SOS2526-27) con mortalidad vial propia (road-fatalities-v2). El scatter muestra total_capacity_mw (SOS27) vs population_death_rate (propio) para ${chartData27.data.length} países coincidentes (combinando ambas fuentes). El scatter combinado cruza igualmente ambas fuentes. La tabla incluye ambas fuentes.`,
         ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
         data: normalizedRows,
