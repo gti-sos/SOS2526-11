@@ -235,13 +235,6 @@ function pickFields(rows, preferredFields = [], maxFields = 5) {
   return [...preferred, ...remaining].slice(0, maxFields);
 }
 
-function projectRows(rows, fields, limit = 10) {
-  return rows.slice(0, limit).map(row => {
-    const projected = {};
-    fields.forEach(f => { projected[f] = row?.[f]; });
-    return projected;
-  });
-}
 
 function buildNationMap(docs) {
   const map = {};
@@ -264,15 +257,6 @@ function buildNationMap(docs) {
 
 // ── Helpers SOS21 ─────────────────────────────────────────────────────
 
-function normalizeText(value) {
-  return String(value || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^\w\s]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
 
 function pickFirstExisting(row, keys) {
   for (const key of keys) {
@@ -286,148 +270,9 @@ function toNumber(value) {
   return Number.isFinite(n) ? n : 0;
 }
 
-const COUNTRY_NAME_MAP = {
-  // A
-  "afganistan": "afghanistan",
-  "alemania": "germany",
-  "argelia": "algeria",
-  "antigua y barbuda": "antigua and barbuda",
-  "arabia saudita": "saudi arabia",
-  "azerbaiyan": "azerbaijan",
-  // B
-  "banglades": "bangladesh",
-  "barein": "bahrain",
-  "belgica": "belgium",
-  "belice": "belize",
-  "bielorrusia": "belarus",
-  "birmania": "myanmar",
-  "bosnia y herzegovina": "bosnia and herzegovina",
-  "botsuana": "botswana",
-  "brasil": "brazil",
-  "butan": "bhutan",
-  // C
-  "cabo verde": "cabo verde",
-  "camboya": "cambodia",
-  "camerun": "cameroon",
-  "catar": "qatar",
-  "chipre": "cyprus",
-  "corea del norte": "democratic peoples republic of korea",
-  "corea del sur": "republic of korea",
-  "costa de marfil": "cote divoire",
-  // D
-  "dinamarca": "denmark",
-  "republica dominicana": "dominican republic",
-  // E
-  "egipto": "egypt",
-  "emiratos arabes unidos": "united arab emirates",
-  "eslovaquia": "slovakia",
-  "eslovenia": "slovenia",
-  "espana": "spain",
-  "estados unidos": "united states of america",
-  "etiopia": "ethiopia",
-  // F
-  "filipinas": "philippines",
-  "finlandia": "finland",
-  "fiyi": "fiji",
-  "francia": "france",
-  // G
-  "grecia": "greece",
-  "guinea-bisau": "guinea-bissau",
-  // H
-  "hungria": "hungary",
-  // I
-  "irak": "iraq",
-  "iran": "iran",
-  "irlanda": "ireland",
-  "islandia": "iceland",
-  "islas cooks": "cook islands",
-  "islas marshall": "marshall islands",
-  "islas solomon": "solomon islands",
-  "italia": "italy",
-  // J
-  "japon": "japan",
-  "jordania": "jordan",
-  // K
-  "kazajistan": "kazakhstan",
-  "kenia": "kenya",
-  "kirguistan": "kyrgyzstan",
-  // L
-  "letonia": "latvia",
-  "libano": "lebanon",
-  "lesoto": "lesotho",
-  "libia": "libya",
-  "lituania": "lithuania",
-  "luxemburgo": "luxembourg",
-  // M
-  "macedonia": "north macedonia",
-  "malaui": "malawi",
-  "malasia": "malaysia",
-  "maldivas": "maldives",
-  "marruecos": "morocco",
-  "mauricio": "mauritius",
-  "moldavia": "moldova",
-  // N
-  "noruega": "norway",
-  "nueva zelanda": "new zealand",
-  // O
-  "oman": "oman",
-  // P
-  "paises bajos": "netherlands",
-  "pakistan": "pakistan",
-  "palaos": "palau",
-  "papa nueva guinea": "papua new guinea",
-  "papua nueva guinea": "papua new guinea",
-  "peru": "peru",
-  "polonia": "poland",
-  // R
-  "reino unido": "united kingdom",
-  "republica centroafricana": "central african republic",
-  "republica checa": "czech republic",
-  "republica democratica del congo": "democratic republic of the congo",
-  "ruanda": "rwanda",
-  "rumania": "romania",
-  "rusia": "russian federation",
-  // S
-  "santa lucia": "saint lucia",
-  "san vincente y las granadinas": "saint vincent and the grenadines",
-  "santo tome y principe": "sao tome and principe",
-  "singapur": "singapore",
-  "sudafrica": "south africa",
-  "suazilandia": "eswatini",
-  "suecia": "sweden",
-  "suiza": "switzerland",
-  // T
-  "tailandia": "thailand",
-  "tayikistan": "tajikistan",
-  "timor oriental": "timor-leste",
-  "trinidad y tobago": "trinidad and tobago",
-  "tunez": "tunisia",
-  "turquia": "turkey",
-  "turkmenistan": "turkmenistan",
-  // U
-  "ucrania": "ukraine",
-  // V
-  "vietnam": "viet nam",
-  // Y
-  "yemen": "yemen",
-  "yibuti": "djibouti",
-  // Z
-  "zimbabue": "zimbabwe",
-};
 
-function getComparableCountryNameFromRoadFatality(row) {
-  const normalized = normalizeText(row.nation);
-  return COUNTRY_NAME_MAP[normalized] || normalized;
-}
 
-function getAidsCountry(row) {
-  return pickFirstExisting(row, ["country", "nation", "area", "location", "country_name", "Country", "Nation", "Area", "Location"]);
-}
 
-function getComparableCountryNameFromAids(row) {
-  const normalized = normalizeText(getAidsCountry(row));
-  return COUNTRY_NAME_MAP[normalized] || normalized;
-}
 
 function getAidsTotalDeaths(row) {
   return toNumber(pickFirstExisting(row, ["aids_total_deaths", "total_deaths", "deaths", "aids_deaths", "deaths_aids", "hiv_deaths", "value", "AIDS_total_deaths", "Total_deaths"]));
@@ -437,15 +282,6 @@ function getAidsDeathRate(row) {
   return toNumber(pickFirstExisting(row, ["aids_death_rate", "death_rate", "rate", "aids_rate", "hiv_death_rate", "AIDS_death_rate"]));
 }
 
-function dedupeRoadDataByCountry(data) {
-  const map = new Map();
-  for (const row of data) {
-    const key = getComparableCountryNameFromRoadFatality(row);
-    const previous = map.get(key);
-    if (!previous || Number(row.year) > Number(previous.year)) map.set(key, row);
-  }
-  return Array.from(map.values());
-}
 
 function normalizeTo100(value, max) {
   const n = toNumber(value);
@@ -989,7 +825,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       if (items.length > 0) {
         const fKeys = Object.keys(items[0]);
         const bField = ['crude_birth_rate', 'birth_rate'].find(f => fKeys.includes(f)) || 'crude_birth_rate';
-        const dField = deathField || ['crude_death_rate', 'death_rate'].find(f => fKeys.includes(f)) || 'crude_death_rate';
 
         // Bar combinado: crude_birth_rate (SOS12) vs population_death_rate (propio) por país
         const barItems = items
