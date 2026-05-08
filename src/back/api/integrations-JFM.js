@@ -1,12 +1,19 @@
 ﻿// =====================================================================
 // integrations-JFM.js  (José Fernández Montero)
 //
-// 3 widgets sobre road-fatalities con OAuth real:
+// Widgets OAuth2 (APIs externas reales):
 //   - Mastodon API              -> pie     (señal social × tasa de fallecidos DB)
 //   - Copernicus/ESA Data Space -> scatter (imágenes sat. × mortalidad DB)
 //   - FedEx Sandbox API         -> heatmap (puntos logísticos × muertes DB)
 //
-// Token endpoints:
+// Widgets SOS (APIs de compañeros):
+//   - SOS2526-12 birth-death-growth-rates   -> ECharts bar
+//   - SOS2526-14 meteorite-landings         -> ECharts treemap
+//   - SOS2526-20 spice-stats                -> ECharts radar
+//   - SOS2526-21 aids-deaths-stats          -> ECharts heatmap
+//   - SOS2526-27 world-hydroelectric-plants -> ECharts scatter
+//
+// Token endpoints OAuth2:
 //   Mastodon   : {MASTODON_INSTANCE}/oauth/token
 //   Copernicus : https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token
 //   FedEx      : https://apis-sandbox.fedex.com/oauth/token
@@ -15,6 +22,8 @@
 // - Mastodon usa OAuth2 client_credentials.
 // - FedEx usa OAuth2 client_credentials.
 // - Copernicus Data Space usa OAuth con grant_type=password y client_id=cdse-public.
+// - Las APIs SOS se inicializan automáticamente llamando a LoadInitialData antes
+//   de cada consulta principal. No es necesario ejecutarlo manualmente.
 // - Si falla una API externa, se devuelve fallback derivado de datos propios,
 //   pero también se devuelve apiError para poder depurar.
 // =====================================================================
@@ -925,7 +934,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       const rows = extractArrayPayload(json);
       const nationMap = buildNationMap(ownDocs);
 
-      // Agrega meteoritos por país para treemap y para scatter combinado
+      // Agrega meteoritos por país para el treemap
       const byCountry14 = {};
       rows.forEach(row => {
         const country = row.country || 'Unknown';
@@ -956,15 +965,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
           .slice(0, 15),
       };
 
-      // Scatter combinado: nº meteoritos por país (SOS14) × population_death_rate (propio)
-      const scatterPoints14 = Object.entries(byCountry14)
-        .map(([country, { count }]) => {
-          const key = country.toLowerCase().trim();
-          const own = nationMap[key] || null;
-          return own ? { name: country, x: count, y: own.population_death_rate } : null;
-        })
-        .filter(Boolean);
-
       // Filas para la tabla: campos SOS14 + road-fatalities cruzados por país
       const normalizedRows = rows.slice(0, 50).map(row => {
         const key = String(row.country || '').toLowerCase().trim();
@@ -993,10 +993,10 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         integratedBy: "JFM",
         fetchedAt: new Date().toISOString(),
         count: rows.length,
-        matchedCountries: scatterPoints14.length,
+        matchedCountries: chartData14.countries.length,
         fieldsShown: FIELDS_SHOWN,
         chartData: chartData14,
-        explanation: `Combinación de aterrizajes de meteoritos por país (SOS2526-14) con mortalidad vial propia (road-fatalities-v2). El treemap dimensiona cada país por meteorite_count × population_death_rate (ambas fuentes combinadas). El scatter cruza meteorite_count (SOS14) con population_death_rate (propio) para los ${scatterPoints14.length} países coincidentes. La tabla incluye ambas fuentes.`,
+        explanation: `Combinación de aterrizajes de meteoritos por país (SOS2526-14) con mortalidad vial propia (road-fatalities-v2). El treemap dimensiona cada país según meteorite_count × population_death_rate (ambas fuentes combinadas), mostrando los ${chartData14.countries.length} países con datos en ambas fuentes. La tabla incluye ambas fuentes.`,
         ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
         data: normalizedRows,
       });
@@ -1093,10 +1093,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       const spiceYears = [...spiceByYear.keys()].sort((a, b) => a - b);
       const commonYears20 = spiceYears.filter(y => roadByYear20.has(y));
 
-      console.log(`[SOS20] años en spice-stats: ${spiceYears.join(', ')}`);
-      console.log(`[SOS20] años en road-fatalities: ${[...roadByYear20.keys()].sort((a,b)=>a-b).join(', ')}`);
-      console.log(`[SOS20] años en común: ${commonYears20.join(', ')}`);
-
       // Fila por año común con datos de ambas fuentes
       const combinedData20 = commonYears20.map(year => {
         const s = spiceByYear.get(year);
@@ -1174,12 +1170,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         explanation: `Combinación de producción de especias por año (SOS2526-20) con mortalidad vial propia (road-fatalities-v2). El radar compara 5 métricas normalizadas (0-100) para los ${combinedData20.length} años en común: producción, consumo de especias, muertes viales, tasa vial por población y tasa vial por vehículo. El tooltip muestra las 3 especias más producidas de cada año y conteos de items y áreas. La tabla incluye todas las métricas de ambas fuentes.`,
         ownApiFieldsUsed: ["year", "population_death_rate", "total_death"],
         data: combinedData20,
-        debug: {
-          spiceRecords: items.length,
-          spiceYears: spiceYears.slice(0, 20),
-          roadYears: [...roadByYear20.keys()].sort((a,b)=>a-b).slice(0, 20),
-          commonYears: commonYears20,
-        },
       });
     } catch (e) {
       res.json({
@@ -1227,10 +1217,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
 
       const aidsItems = extractArrayPayload(json);
 
-      console.log(`[SOS21] endpoint: ${SOURCE_URL}`);
-      console.log(`[SOS21] registros externos: ${aidsItems.length}`);
-      if (aidsItems.length > 0) console.log(`[SOS21] muestra primeros 5:`, JSON.stringify(aidsItems.slice(0, 5)));
-
       // Agrupa AIDS por año: suma muertes, media tasas
       const aidsByYear = new Map();
       for (const row of aidsItems) {
@@ -1268,10 +1254,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       const roadYears = [...roadByYear.keys()].sort((a, b) => a - b);
       const commonYears = aidsYears.filter(y => roadByYear.has(y));
 
-      console.log(`[SOS21] años en AIDS: ${aidsYears.join(', ')}`);
-      console.log(`[SOS21] años en road-fatalities: ${roadYears.join(', ')}`);
-      console.log(`[SOS21] años en común: ${commonYears.join(', ')}`);
-
       // Fila por año común con datos de ambas fuentes
       const combinedData = commonYears.map(year => {
         const a = aidsByYear.get(year);
@@ -1290,12 +1272,10 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       });
 
       // Heatmap normalizado (0-100) por año × métrica
-      const maxAidsDeaths     = Math.max(...combinedData.map(d => d.aids_total_deaths), 1);
       const maxAidsUnder5     = Math.max(...combinedData.map(d => d.aids_deaths_under5), 1);
       const maxRoadDeaths     = Math.max(...combinedData.map(d => d.road_total_death), 1);
       const maxPopulationRate = Math.max(...combinedData.map(d => d.population_death_rate), 1);
       const maxVehicleRate    = Math.max(...combinedData.map(d => d.vehicle_death_rate), 1);
-      const maxAidsRate       = Math.max(...combinedData.map(d => d.aids_death_rate), 1);
 
       const metrics21 = [
         { key: "aids_deaths_under5",   label: "Muertes VIH <5 años",   max: maxAidsUnder5 },
@@ -1343,12 +1323,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         explanation: `Combinación de muertes por VIH/SIDA por año (SOS2526-21) con mortalidad vial propia (road-fatalities-v2). El heatmap compara indicadores normalizados (0-100) de ambas fuentes para los ${combinedData.length} años en común. La tabla incluye ambas fuentes.`,
         ownApiFieldsUsed: ["year", "population_death_rate", "vehicle_death_rate", "total_death"],
         data: combinedData,
-        debug: {
-          aidsRecords: aidsItems.length,
-          aidsYears: aidsYears.slice(0, 20),
-          roadYears: roadYears.slice(0, 20),
-          commonYears,
-        },
       });
     } catch (e) {
       res.json({
@@ -1420,15 +1394,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
           .slice(0, 30),
       };
 
-      // Scatter combinado: capacidad total MW por país (SOS27) × population_death_rate (propio)
-      const scatterPoints27 = Object.entries(byCountry27)
-        .map(([country, totalMW]) => {
-          const key = country.toLowerCase().trim();
-          const own = nationMap[key] || null;
-          return own && totalMW > 0 ? { name: country, x: Math.round(totalMW), y: own.population_death_rate } : null;
-        })
-        .filter(Boolean);
-
       // Filas para tabla: campos SOS27 + road-fatalities cruzados por país
       const normalizedRows = rows.slice(0, 50).map(row => {
         const key = String(row.country || '').toLowerCase().trim();
@@ -1460,10 +1425,10 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         integratedBy: "JFM",
         fetchedAt: new Date().toISOString(),
         count: rows.length,
-        matchedCountries: scatterPoints27.length,
+        matchedCountries: chartData27.data.length,
         fieldsShown,
         chartData: chartData27,
-        explanation: `Combinación de centrales hidroeléctricas por país (SOS2526-27) con mortalidad vial propia (road-fatalities-v2). El scatter muestra total_capacity_mw (SOS27) vs population_death_rate (propio) para ${chartData27.data.length} países coincidentes (combinando ambas fuentes). El scatter combinado cruza igualmente ambas fuentes. La tabla incluye ambas fuentes.`,
+        explanation: `Combinación de centrales hidroeléctricas por país (SOS2526-27) con mortalidad vial propia (road-fatalities-v2). El scatter muestra total_capacity_mw (SOS27) vs population_death_rate (propio) para ${chartData27.data.length} países con datos en ambas fuentes. La tabla incluye ambas fuentes.`,
         ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
         data: normalizedRows,
       });
