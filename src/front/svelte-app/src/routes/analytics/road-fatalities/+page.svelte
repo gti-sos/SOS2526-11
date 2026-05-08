@@ -965,7 +965,7 @@
             <p><strong>Grupo:</strong> {sos20Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos20Data.integratedBy}</p>
             <p><strong>Fuente:</strong> {sos20Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos20Data.count}</p>
             <p><strong>URL externa:</strong> <code>{sos20Data.sourceUrl}</code></p>
-            <p><strong>Widget:</strong> ECharts funnel</p>
+            <p><strong>Widget:</strong> ECharts radar</p>
             <p>{sos20Data.explanation}</p>
             {#if sos20Data.apiError}
                 <p class="api-error">Error: {sos20Data.apiError}</p>

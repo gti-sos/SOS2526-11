@@ -19,7 +19,7 @@
                 <li>FedEx Sandbox API (OAuth2 Client Credentials) → <b>heatmap</b> (Highcharts)</li>
                 <li>SOS2526-12 birth-death-growth-rates → <b>bar</b> (ECharts)</li>
                 <li>SOS2526-14 meteorite-landings → <b>treemap</b> (ECharts)</li>
-                <li>SOS2526-20 spice-stats → <b>funnel</b> (ECharts)</li>
+                <li>SOS2526-20 spice-stats → <b>radar</b> (ECharts)</li>
                 <li>SOS2526-21 aids-deaths-stats → <b>heatmap</b> (ECharts)</li>
                 <li>SOS2526-27 world-hydroelectric-plants → <b>scatter</b> (ECharts)</li>
             </ul>
