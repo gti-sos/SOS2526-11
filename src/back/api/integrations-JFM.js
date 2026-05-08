@@ -1251,7 +1251,6 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       }
 
       const aidsYears = [...aidsByYear.keys()].sort((a, b) => a - b);
-      const roadYears = [...roadByYear.keys()].sort((a, b) => a - b);
       const commonYears = aidsYears.filter(y => roadByYear.has(y));
 
       // Fila por año común con datos de ambas fuentes

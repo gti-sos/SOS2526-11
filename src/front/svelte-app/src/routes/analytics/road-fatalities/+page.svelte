@@ -274,57 +274,6 @@
         window.addEventListener('resize', () => chart.resize());
     }
 
-    // Scatter combinado genérico: métrica externa (x) × population_death_rate propia (y) por país
-    function renderCombinedScatter(divId: string, d: any) {
-        const el = document.getElementById(divId);
-        const pts = d?.combinedChartData?.data;
-        if (!el || !pts?.length) return;
-        const chart = echarts.init(el);
-        const cd = d.combinedChartData;
-        chart.setOption({
-            backgroundColor: 'transparent',
-            title: {
-                text: cd.description || 'Combinación por país',
-                textStyle: { color: '#e5c07b', fontSize: 13 },
-                subtext: `${d.group} + road-fatalities-v2  |  países cruzados: ${pts.length}`,
-                subtextStyle: { color: '#98c379', fontSize: 11 },
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: (info: any) => {
-                    const v = info.data;
-                    return `<b>${v.name}</b><br/>` +
-                        `${cd.xAxis || 'Eje X'}: <b>${v.value[0]}</b><br/>` +
-                        `${cd.yAxis || 'population_death_rate'}: <b>${v.value[1]}</b><br/>` +
-                        `<hr style="margin:4px 0;border-color:#374151"/>` +
-                        `Fuente externa: <b>${d.api}</b><br/>` +
-                        `Fuente propia: <b>road-fatalities-v2</b>`;
-                },
-            },
-            xAxis: {
-                name: cd.xAxis || '',
-                nameTextStyle: { color: '#abb2bf' },
-                nameLocation: 'middle',
-                nameGap: 30,
-                axisLabel: { color: '#abb2bf' },
-            },
-            yAxis: {
-                name: cd.yAxis || '',
-                nameTextStyle: { color: '#abb2bf' },
-                nameLocation: 'middle',
-                nameGap: 45,
-                axisLabel: { color: '#abb2bf' },
-            },
-            series: [{
-                type: 'scatter',
-                data: pts.map((p: any) => ({ value: [p.x, p.y], name: p.name })),
-                symbolSize: 10,
-                itemStyle: { color: '#e5c07b', opacity: 0.85 },
-            }],
-        });
-        window.addEventListener('resize', () => chart.resize());
-    }
-
     onMount(async () => {
         try {
             // Obtenemos los datos de road-fatalities
