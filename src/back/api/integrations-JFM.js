@@ -937,6 +937,10 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos12-birth-death-growth", async (req, res) => {
     const SOURCE_URL = "https://sos2526-12.onrender.com/api/v2/birth-death-growth-rates";
     try {
+      // Fuerza la carga inicial de datos de la API externa SOS
+      await fetch("https://sos2526-12.onrender.com/api/v2/birth-death-growth-rates/LoadInitialData")
+        .catch(() => {});
+
       const [r, ownDocs] = await Promise.all([
         fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
         dbFindAll(),
@@ -1088,6 +1092,10 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
     const SOURCE_URL = "https://meteorite-landings-tvcf.onrender.com/api/v2/meteorite-landings";
     const FIELDS_SHOWN = ["name", "year", "mass", "country", "geolocation", "id", "road_population_death_rate", "road_total_death"];
     try {
+      // Fuerza la carga inicial de datos de la API externa SOS
+      await fetch("https://meteorite-landings-tvcf.onrender.com/api/v2/meteorite-landings/LoadInitialData")
+        .catch(() => {});
+
       const [r, ownDocs] = await Promise.all([
         fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 45000),
         dbFindAll(),
@@ -1215,6 +1223,10 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos20-spice-stats", async (req, res) => {
     const SOURCE_URL = "https://sos2526-20-stable.onrender.com/api/v2/spice-stats/";
     try {
+      // Fuerza la carga inicial de datos de la API externa SOS
+      await fetch("https://sos2526-20-stable.onrender.com/api/v2/spice-stats/LoadInitialData")
+        .catch(() => {});
+
       const [r, ownDocs] = await Promise.all([
         fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 30000),
         dbFindAll(),
@@ -1393,6 +1405,10 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
     const SOURCE_URL = "https://soporte-sos.onrender.com/api/v1/aids-deaths-stats";
     const FIELDS_SHOWN = ["year", "aids_total_deaths", "aids_deaths_under5", "road_total_death", "population_death_rate", "vehicle_death_rate", "aids_death_rate", "aids_countries_count", "road_countries_count"];
     try {
+      // Fuerza la carga inicial de datos de la API externa SOS
+      await fetch("https://soporte-sos.onrender.com/api/v1/aids-deaths-stats/LoadInitialData")
+        .catch(() => {});
+
       const [r, ownDocs] = await Promise.all([
         fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
         dbFindAll(),
@@ -1556,6 +1572,10 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
     const SOURCE_URL = "https://sos2526-27.onrender.com/api/v1/world-hydroelectric-plants";
     const fieldsShown = ["country","name","year","river","plant_type","capacity_mw","head_m","dam_name","res_vol_km3","road_population_death_rate","road_total_death"];
     try {
+      // Fuerza la carga inicial de datos de la API externa SOS
+      await fetch("https://sos2526-27.onrender.com/api/v1/world-hydroelectric-plants/LoadInitialData")
+        .catch(() => {});
+
       const [r, ownDocs] = await Promise.all([
         fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 45000),
         dbFindAll(),
