@@ -17,11 +17,11 @@
                 <li>Mastodon API (OAuth2 Client Credentials) → <b>pie</b> (Highcharts)</li>
                 <li>Copernicus/ESA Data Space (OAuth2 Password Grant) → <b>scatter</b> (Highcharts)</li>
                 <li>FedEx Sandbox API (OAuth2 Client Credentials) → <b>heatmap</b> (Highcharts)</li>
-                <li>SOS2526-12 birth-death-growth-rates → <b>bar</b> (ECharts, combinado con road-fatality)</li>
-                <li>SOS2526-14 meteorite-landings → <b>treemap</b> (ECharts, combinado con road-fatality) + tabla plegable</li>
-                <li>SOS2526-20 spice-stats → <b>radar</b> (ECharts, combinado con road-fatality) + tabla plegable</li>
-                <li>SOS2526-21 aids-deaths-stats → <b>heatmap</b> (ECharts, combinado con road-fatality) + tabla plegable</li>
-                <li>SOS2526-27 world-hydroelectric-plants → <b>scatter</b> (ECharts, combinado con road-fatality) + tabla plegable</li>
+                <li>SOS2526-12 birth-death-growth-rates → <b>bar</b> (ECharts)</li>
+                <li>SOS2526-14 meteorite-landings → <b>treemap</b> (ECharts)</li>
+                <li>SOS2526-20 spice-stats → <b>funnel</b> (ECharts)</li>
+                <li>SOS2526-21 aids-deaths-stats → <b>heatmap</b> (ECharts)</li>
+                <li>SOS2526-27 world-hydroelectric-plants → <b>scatter</b> (ECharts)</li>
             </ul>
             <p class="signal-note">
                 JFM integra 3 APIs externas mediante OAuth2 y proxy propio: Mastodon (señal social sobre seguridad vial,
