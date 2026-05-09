@@ -288,6 +288,16 @@
         </div>
 
         <section>
+            <h2>🎥 Vídeos D03</h2>
+            <ul>
+                <li><a href="REEMPLAZAR_CON_URL_YOUTUBE_MRG" target="_blank" rel="noopener">Vídeo de Miguel Ridao Gallardo (MRG)</a> - <span class="label">alcohol-consumptions-per-capita</span></li>
+                <li><a href="REEMPLAZAR_CON_URL_YOUTUBE_TGG" target="_blank" rel="noopener">Vídeo de Tomás Gutiérrez García (TGG)</a> - <span class="label">literacy-rates</span></li>
+                <li><a href="REEMPLAZAR_CON_URL_YOUTUBE_JFM" target="_blank" rel="noopener">Vídeo de José Fernández Montero (JFM)</a> - <span class="label">road-fatalities</span></li>
+                <li><a href="/about">Ver todos en la página /about</a></li>
+            </ul>
+        </section>
+
+        <section>
             <h2>🔗 Interfaces de Gestión</h2>
             <ul>
                 <li><a href="/literacy-rates">Tasas de Alfabetización</a> - <span class="label">literacy-rates</span></li>
