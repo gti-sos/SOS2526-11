@@ -95,10 +95,8 @@
 
         // ---- Widgets OAuth2 (MRG: Vimeo, Dailymotion, Discord) ----
         try {
-            const More = (await import('highcharts/highcharts-more')).default;
-            More(Highcharts);
-            const Treemap = (await import('highcharts/modules/treemap')).default;
-            Treemap(Highcharts);
+            await import('highcharts/highcharts-more');
+            await import('highcharts/modules/treemap');
         } catch (e) { console.warn('Highcharts modules', e); }
 
         // 1. Vimeo -> bubble
