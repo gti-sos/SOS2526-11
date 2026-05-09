@@ -32,7 +32,7 @@
 
             Highcharts.chart('individual-chart-container', {
                 chart: {
-                    type: 'area', // Distinto a line y column
+                    type: 'column',
                     backgroundColor: 'transparent'
                 },
                 title: {
@@ -45,7 +45,6 @@
                 },
                 xAxis: {
                     categories: categories,
-                    tickmarkPlacement: 'on',
                     title: { enabled: false },
                     labels: { style: { color: '#abb2bf' } }
                 },
@@ -58,14 +57,9 @@
                     valueSuffix: ' litros'
                 },
                 plotOptions: {
-                    area: {
+                    column: {
                         stacking: 'normal',
-                        lineColor: '#666666',
-                        lineWidth: 1,
-                        marker: {
-                            lineWidth: 1,
-                            lineColor: '#666666'
-                        }
+                        borderWidth: 0
                     }
                 },
                 series: [

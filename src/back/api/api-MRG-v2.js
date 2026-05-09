@@ -209,11 +209,14 @@ const INITIAL_DATA = [
     { nation: "Vietnam", date_year: 2016, alcohol_litre: 10.1, recorded_consumption: 4.2, unrecorded_consumption: 5.9 },
 ];
 
+// Clona INITIAL_DATA para no mutar el array original (NeDB añade _id a cada doc al insertar).
+const cloneInitialData = () => INITIAL_DATA.map(d => ({ ...d }));
+
 export function loadBackendMRGv2(app) {
     // Auto-inicializar la BD si está vacía (evita gráficas vacías tras cada despliegue)
     db.count({}, (err, count) => {
         if (!err && count === 0) {
-            db.insert(INITIAL_DATA, (err2) => {
+            db.insert(cloneInitialData(), (err2) => {
                 if (!err2) console.log("[MRG-v2] BD inicializada con", INITIAL_DATA.length, "registros");
                 else console.error("[MRG-v2] Error al auto-inicializar BD:", err2);
             });
@@ -282,7 +285,7 @@ export function loadBackendMRGv2(app) {
             if (docs.length > 0) {
                 return res.status(400).json({ error: "Bad Request: Data already exists" });
             } else {
-                db.insert(INITIAL_DATA, (err, newDocs) => {
+                db.insert(cloneInitialData(), (err, newDocs) => {
                     if (err) return res.status(500).json({ error: "Error al insertar datos" });
                     newDocs.forEach(d => delete d._id);
                     res.status(200).json(newDocs);
