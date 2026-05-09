@@ -19,6 +19,25 @@ function fetchT(url, opts = {}, ms = 8000) {
   return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(t));
 }
 
+// Para APIs SOS de compañeros: si devuelven array vacío (BD reseteada tras deploy),
+// disparamos su /loadInitialData y reintentamos. Así las gráficas no quedan vacías
+// cuando otro grupo despliega y se le borra el almacenamiento efímero de Render.
+async function fetchSosJsonAutoload(sourceUrl, ms = 60000) {
+  const r1 = await fetchT(sourceUrl, { headers: { Accept: "application/json" } }, ms);
+  if (!r1.ok) throw new Error(`HTTP ${r1.status} en ${sourceUrl}`);
+  const data1 = await r1.json();
+  if (Array.isArray(data1) && data1.length > 0) return data1;
+
+  // BD del compañero vacía: intentamos cargar sus datos iniciales.
+  try {
+    await fetchT(sourceUrl.replace(/\/$/, "") + "/loadInitialData", { headers: { Accept: "application/json" } }, ms);
+  } catch (e) { console.warn(`loadInitialData fallback en ${sourceUrl}:`, e.message); }
+
+  const r2 = await fetchT(sourceUrl, { headers: { Accept: "application/json" } }, ms);
+  if (!r2.ok) throw new Error(`HTTP ${r2.status} (reintento) en ${sourceUrl}`);
+  return await r2.json();
+}
+
 async function getToken(key, fetcher) {
   const now = Date.now();
   const c = tokenCache.get(key);
@@ -180,13 +199,10 @@ export function loadBackendIntegrationsMRG(app) {
   app.get(BASE_URL_INTEGRATIONS_MRG + "/sos12-mid-population-ages", async (req, res) => {
     const SOURCE_URL = "https://sos2526-12.onrender.com/api/v2/mid-population-ages";
     try {
-      // Lanzamos en paralelo el fetch a la API SOS y la lectura de la DB propia
-      const [extRes, ownDocs] = await Promise.all([
-        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
+      const [items, ownDocs] = await Promise.all([
+        fetchSosJsonAutoload(SOURCE_URL),
         findAll(),
       ]);
-      if (!extRes.ok) throw new Error(`HTTP ${extRes.status} en SOS12`);
-      const items = await extRes.json();
 
       // Mapa nation->avg(alcohol_litre) de la DB propia para cruce por país
       const alcoholByNation = {};
@@ -254,12 +270,10 @@ export function loadBackendIntegrationsMRG(app) {
   app.get(BASE_URL_INTEGRATIONS_MRG + "/sos-religious-believes", async (req, res) => {
     const SOURCE_URL = "https://soporte-sos.onrender.com/api/v1/religious-believes-stats";
     try {
-      const [extRes, ownDocs] = await Promise.all([
-        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
+      const [items, ownDocs] = await Promise.all([
+        fetchSosJsonAutoload(SOURCE_URL),
         findAll(),
       ]);
-      if (!extRes.ok) throw new Error(`HTTP ${extRes.status} en religious-believes-stats`);
-      const items = await extRes.json();
 
       const alcoholByNation = {};
       ownDocs.forEach(d => {
@@ -324,12 +338,10 @@ export function loadBackendIntegrationsMRG(app) {
   app.get(BASE_URL_INTEGRATIONS_MRG + "/sos-space-launches", async (req, res) => {
     const SOURCE_URL = "https://space-launches-8cix.onrender.com/api/v2/space-launches";
     try {
-      const [extRes, ownDocs] = await Promise.all([
-        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
+      const [items, ownDocs] = await Promise.all([
+        fetchSosJsonAutoload(SOURCE_URL),
         findAll(),
       ]);
-      if (!extRes.ok) throw new Error(`HTTP ${extRes.status} en space-launches`);
-      const items = await extRes.json();
 
       const alcoholByNation = {};
       ownDocs.forEach(d => {
