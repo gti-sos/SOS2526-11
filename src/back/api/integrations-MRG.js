@@ -167,4 +167,228 @@ export function loadBackendIntegrationsMRG(app) {
       res.json({ chartType: "packedbubble", series });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
+
+  // =====================================================================
+  // INTEGRACIONES SOS (proxies a APIs de otros alumnos SOS)
+  // Cada endpoint hace fetch a la API SOS externa y combina los datos
+  // con la base de datos propia de alcohol-consumptions-per-capita-v2.
+  // =====================================================================
+
+  // -------- 4. SOS2526-12 mid-population-ages -> ApexCharts donut -------
+  // Comparte año/país con alcohol DB. El donut muestra la población total
+  // por tramo de edad, ponderada por el consumo medio de alcohol del país.
+  app.get(BASE_URL_INTEGRATIONS_MRG + "/sos12-mid-population-ages", async (req, res) => {
+    const SOURCE_URL = "https://sos2526-12.onrender.com/api/v2/mid-population-ages";
+    try {
+      // Lanzamos en paralelo el fetch a la API SOS y la lectura de la DB propia
+      const [extRes, ownDocs] = await Promise.all([
+        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
+        findAll(),
+      ]);
+      if (!extRes.ok) throw new Error(`HTTP ${extRes.status} en SOS12`);
+      const items = await extRes.json();
+
+      // Mapa nation->avg(alcohol_litre) de la DB propia para cruce por país
+      const alcoholByNation = {};
+      ownDocs.forEach(d => {
+        const k = String(d.nation || "").toLowerCase().trim();
+        if (!alcoholByNation[k]) alcoholByNation[k] = { sum: 0, count: 0 };
+        alcoholByNation[k].sum += Number(d.alcohol_litre || 0);
+        alcoholByNation[k].count += 1;
+      });
+      const alcoholAvg = (name) => {
+        const k = String(name || "").toLowerCase().trim();
+        const r = alcoholByNation[k];
+        return r ? r.sum / r.count : 0;
+      };
+
+      // Suma por tramo de edad para los países que también aparecen en alcohol DB
+      const buckets = {
+        "0-24": 0,
+        "25-49": 0,
+        "50-74": 0,
+        "75-99": 0,
+        "100+": 0,
+      };
+      let matchedCountries = 0;
+      const matchedSet = new Set();
+      items.forEach(row => {
+        const country = row.country_name;
+        const factor = alcoholAvg(country);
+        if (factor === 0) return;
+        matchedSet.add(String(country).toLowerCase().trim());
+        // Ponderamos cada tramo por el consumo medio de alcohol del país
+        buckets["0-24"]   += Number(row.population_age_0   || 0) * (1 + factor / 20);
+        buckets["25-49"]  += Number(row.population_age_25  || 0) * (1 + factor / 20);
+        buckets["50-74"]  += Number(row.population_age_50  || 0) * (1 + factor / 20);
+        buckets["75-99"]  += Number(row.population_age_75  || 0) * (1 + factor / 20);
+        buckets["100+"]   += Number(row.population_age_100 || 0) * (1 + factor / 20);
+      });
+      matchedCountries = matchedSet.size;
+
+      const labels = Object.keys(buckets);
+      const series = Object.values(buckets).map(v => Math.round(v));
+
+      res.json({
+        api: "SOS2526-12 mid-population-ages",
+        sourceUrl: SOURCE_URL,
+        chartType: "donut",
+        library: "ApexCharts",
+        externalApiUsed: true,
+        combinedWithOwnApi: true,
+        ownApiFieldsUsed: ["nation", "alcohol_litre"],
+        externalFieldsUsed: ["country_name", "population_age_0/25/50/75/100"],
+        explanation: "Población mundial agrupada por tramos de edad (SOS2526-12), ponderada por el consumo medio de alcohol propio de cada país.",
+        matchedCountries,
+        labels,
+        series,
+      });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  // -------- 5. soporte-sos religious-believes-stats -> ApexCharts radar
+  // Cruce por país: ejes del radar = porcentajes religiosos del país (medias mundiales)
+  // y se añade el consumo de alcohol como un eje extra para visualizar la combinación.
+  app.get(BASE_URL_INTEGRATIONS_MRG + "/sos-religious-believes", async (req, res) => {
+    const SOURCE_URL = "https://soporte-sos.onrender.com/api/v1/religious-believes-stats";
+    try {
+      const [extRes, ownDocs] = await Promise.all([
+        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
+        findAll(),
+      ]);
+      if (!extRes.ok) throw new Error(`HTTP ${extRes.status} en religious-believes-stats`);
+      const items = await extRes.json();
+
+      const alcoholByNation = {};
+      ownDocs.forEach(d => {
+        const k = String(d.nation || "").toLowerCase().trim();
+        if (!alcoholByNation[k]) alcoholByNation[k] = { sum: 0, count: 0 };
+        alcoholByNation[k].sum += Number(d.alcohol_litre || 0);
+        alcoholByNation[k].count += 1;
+      });
+
+      // Filtramos a entidades que también están en alcohol DB
+      const matched = items.filter(r => {
+        const k = String(r.entity || "").toLowerCase().trim();
+        return alcoholByNation[k];
+      });
+
+      // Top 6 países por consumo de alcohol
+      const top = matched
+        .map(r => {
+          const k = String(r.entity || "").toLowerCase().trim();
+          const a = alcoholByNation[k];
+          return { ...r, alcohol_avg: a.sum / a.count };
+        })
+        .sort((a, b) => b.alcohol_avg - a.alcohol_avg)
+        .slice(0, 6);
+
+      const categories = ["Christian", "Muslim", "Hindu", "Buddhist", "Jew", "No religion", "Alcohol×10"];
+      const series = top.map(r => ({
+        name: r.entity,
+        // Multiplicamos alcohol×10 para que entre en la misma escala 0-100 del radar
+        data: [
+          parseFloat(r.christian) || 0,
+          parseFloat(r.muslim) || 0,
+          parseFloat(r.hindu) || 0,
+          parseFloat(r.budhist) || 0,
+          parseFloat(r.jew) || 0,
+          parseFloat(r.no_religion) || 0,
+          Math.min(100, r.alcohol_avg * 10),
+        ],
+      }));
+
+      res.json({
+        api: "soporte-sos religious-believes-stats",
+        sourceUrl: SOURCE_URL,
+        chartType: "radar",
+        library: "ApexCharts",
+        externalApiUsed: true,
+        combinedWithOwnApi: true,
+        ownApiFieldsUsed: ["nation", "alcohol_litre"],
+        externalFieldsUsed: ["entity", "christian", "muslim", "hindu", "budhist", "jew", "no_religion"],
+        explanation: "Top 6 países (por consumo medio de alcohol propio) con su distribución religiosa de soporte-sos. Cada eje es un porcentaje religioso, y se añade un eje 'Alcohol×10' para mostrar la integración con la API propia.",
+        matchedCountries: top.length,
+        categories,
+        series,
+      });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  // -------- 6. space-launches -> ApexCharts polarArea -------------------
+  // Cruce por país: nº de lanzamientos × consumo medio de alcohol del país.
+  app.get(BASE_URL_INTEGRATIONS_MRG + "/sos-space-launches", async (req, res) => {
+    const SOURCE_URL = "https://space-launches-8cix.onrender.com/api/v2/space-launches";
+    try {
+      const [extRes, ownDocs] = await Promise.all([
+        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
+        findAll(),
+      ]);
+      if (!extRes.ok) throw new Error(`HTTP ${extRes.status} en space-launches`);
+      const items = await extRes.json();
+
+      const alcoholByNation = {};
+      ownDocs.forEach(d => {
+        const k = String(d.nation || "").toLowerCase().trim();
+        if (!alcoholByNation[k]) alcoholByNation[k] = { sum: 0, count: 0 };
+        alcoholByNation[k].sum += Number(d.alcohol_litre || 0);
+        alcoholByNation[k].count += 1;
+      });
+
+      // Conteo de lanzamientos por país
+      const launchesByCountry = {};
+      items.forEach(row => {
+        const c = String(row.country || "").trim();
+        if (!c) return;
+        launchesByCountry[c] = (launchesByCountry[c] || 0) + 1;
+      });
+
+      // Mantenemos solo países que también están en alcohol DB.
+      // Si no hay coincidencias (porque la API space-launches usa nombres
+      // como "USA"/"Russia" que pueden no coincidir), caemos a top por
+      // lanzamientos sin filtrar.
+      const matched = Object.entries(launchesByCountry)
+        .map(([country, launches]) => {
+          const k = country.toLowerCase().trim();
+          const a = alcoholByNation[k];
+          return {
+            country,
+            launches,
+            alcohol_avg: a ? a.sum / a.count : 0,
+            inOwnDb: !!a,
+          };
+        });
+
+      const inDb = matched.filter(m => m.inOwnDb).sort((a, b) => b.launches - a.launches).slice(0, 8);
+      const final = inDb.length > 0
+        ? inDb
+        : matched.sort((a, b) => b.launches - a.launches).slice(0, 8);
+
+      // Métrica combinada para la polarArea: launches × (1 + alcohol_avg/10)
+      const series = final.map(m => Math.round(m.launches * (1 + m.alcohol_avg / 10)));
+      const labels = final.map(m => m.country);
+
+      res.json({
+        api: "space-launches",
+        sourceUrl: SOURCE_URL,
+        chartType: "polarArea",
+        library: "ApexCharts",
+        externalApiUsed: true,
+        combinedWithOwnApi: inDb.length > 0,
+        ownApiFieldsUsed: ["nation", "alcohol_litre"],
+        externalFieldsUsed: ["country", "mission_id"],
+        explanation: "Top países por número de lanzamientos espaciales, ponderados por el consumo medio de alcohol propio. Si no hay coincidencias por nombre de país, se muestran los top globales.",
+        matchedCountries: inDb.length,
+        labels,
+        series,
+        rawCounts: final.map(m => ({ country: m.country, launches: m.launches, alcoholAvg: Math.round(m.alcohol_avg * 100) / 100 })),
+      });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
 }

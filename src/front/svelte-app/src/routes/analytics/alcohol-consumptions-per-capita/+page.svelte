@@ -141,6 +141,77 @@
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
         }).catch(e => console.error('packedbubble:', e.message));
+
+        // ---- Widgets SOS (ApexCharts: donut, radar, polarArea) ----
+        let ApexCharts;
+        try {
+            ApexCharts = (await import('apexcharts')).default;
+        } catch (e) { console.warn('No se pudo cargar ApexCharts:', e); return; }
+
+        const apexBaseTheme = {
+            chart: { background: 'transparent', foreColor: '#abb2bf' },
+            theme: { mode: 'dark' },
+            legend: { labels: { colors: '#abb2bf' } },
+            tooltip: { theme: 'dark' },
+        };
+
+        // 4. SOS2526-12 mid-population-ages -> donut
+        try {
+            const r = await fetch('/api/integrations/mrg/sos12-mid-population-ages');
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
+            new ApexCharts(document.querySelector('#sos12-donut'), {
+                ...apexBaseTheme,
+                chart: { ...apexBaseTheme.chart, type: 'donut', height: 420 },
+                series: d.series,
+                labels: d.labels,
+                title: { text: `Población mundial por tramo de edad (SOS12 + alcohol propio)`, style: { color: '#e5c07b' } },
+                subtitle: { text: `Países combinados: ${d.matchedCountries}. Tramos ponderados por consumo medio de alcohol.`, style: { color: '#abb2bf' } },
+                colors: ['#61afef', '#98c379', '#e5c07b', '#e06c75', '#c678dd'],
+                stroke: { colors: ['#282c34'] },
+                dataLabels: { style: { colors: ['#282c34'] } },
+                plotOptions: { pie: { donut: { labels: { show: true, total: { show: true, color: '#abb2bf' } } } } },
+            }).render();
+        } catch (e) { console.error('SOS12 donut:', e.message); }
+
+        // 5. soporte-sos religious-believes-stats -> radar
+        try {
+            const r = await fetch('/api/integrations/mrg/sos-religious-believes');
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
+            new ApexCharts(document.querySelector('#sos-religious-radar'), {
+                ...apexBaseTheme,
+                chart: { ...apexBaseTheme.chart, type: 'radar', height: 480 },
+                series: d.series,
+                xaxis: { categories: d.categories, labels: { style: { colors: Array(d.categories.length).fill('#abb2bf') } } },
+                yaxis: { labels: { style: { colors: ['#abb2bf'] } } },
+                title: { text: 'Distribución religiosa + alcohol propio (top 6 países)', style: { color: '#e5c07b' } },
+                subtitle: { text: `Países combinados: ${d.matchedCountries}. Eje 'Alcohol×10' representa el consumo medio.`, style: { color: '#abb2bf' } },
+                colors: ['#61afef', '#98c379', '#e5c07b', '#e06c75', '#c678dd', '#56b6c2'],
+                stroke: { width: 2 },
+                fill: { opacity: 0.2 },
+                markers: { size: 4 },
+            }).render();
+        } catch (e) { console.error('Religious radar:', e.message); }
+
+        // 6. space-launches -> polarArea
+        try {
+            const r = await fetch('/api/integrations/mrg/sos-space-launches');
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
+            new ApexCharts(document.querySelector('#sos-space-polar'), {
+                ...apexBaseTheme,
+                chart: { ...apexBaseTheme.chart, type: 'polarArea', height: 460 },
+                series: d.series,
+                labels: d.labels,
+                title: { text: 'Lanzamientos espaciales × alcohol propio', style: { color: '#e5c07b' } },
+                subtitle: { text: `Países combinados: ${d.matchedCountries}. Métrica = lanzamientos × (1 + alcoholAvg/10).`, style: { color: '#abb2bf' } },
+                colors: ['#61afef', '#98c379', '#e5c07b', '#e06c75', '#c678dd', '#56b6c2', '#d19a66', '#abb2bf'],
+                stroke: { colors: ['#282c34'] },
+                fill: { opacity: 0.85 },
+                yaxis: { labels: { style: { colors: ['#abb2bf'] } } },
+            }).render();
+        } catch (e) { console.error('Space polarArea:', e.message); }
     });
 </script>
 
@@ -234,4 +305,12 @@
     <div class="chart-box"><div id="oauth-bubble" class="oauth-chart"></div></div>
     <div class="chart-box"><div id="oauth-treemap" class="oauth-chart"></div></div>
     <div class="chart-box"><div id="oauth-packedbubble" class="oauth-chart"></div></div>
+
+    <h1 style="margin-top: 3rem;">Integraciones SOS (3 APIs de otros grupos)</h1>
+    <p style="text-align:center; color:#abb2bf; max-width:800px; margin:0 auto 1rem;">
+        Widgets <strong>ApexCharts</strong> que combinan APIs SOS de otros grupos con la API propia de alcohol.
+    </p>
+    <div class="chart-box"><div id="sos12-donut" class="oauth-chart"></div></div>
+    <div class="chart-box"><div id="sos-religious-radar" class="oauth-chart"></div></div>
+    <div class="chart-box"><div id="sos-space-polar" class="oauth-chart"></div></div>
 </main>
