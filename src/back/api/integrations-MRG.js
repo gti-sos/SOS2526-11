@@ -95,10 +95,10 @@ export function loadBackendIntegrationsMRG(app) {
 
       const docs = await findAll();
       const data = docs.map(d => ({
-        x: d.alcohol_consumption ?? d.consumption ?? 0,
-        y: 80 - (d.alcohol_consumption ?? d.consumption ?? 0) * 0.5,
+        x: d.alcohol_litre ?? 0,
+        y: 80 - (d.alcohol_litre ?? 0) * 0.5,
         z: Math.max(1, factor / 5),
-        name: d.country ?? d.nation,
+        name: d.nation,
       }));
 
       res.json({ chartType: "bubble", series: [{ name: "Alcohol vs salud", data }] });
@@ -121,12 +121,12 @@ export function loadBackendIntegrationsMRG(app) {
       const docs = await findAll();
       const byYear = {};
       docs.forEach(d => {
-        const y = String(d.year ?? d.date_year);
+        const y = String(d.date_year);
         if (!byYear[y]) byYear[y] = [];
         byYear[y].push({
-          name: `${d.country ?? d.nation} ${y}`,
+          name: `${d.nation} ${y}`,
           parent: y,
-          value: (d.alcohol_consumption ?? d.consumption ?? 0) * Math.log10(videoCount + 1),
+          value: (d.alcohol_litre ?? 0) * Math.log10(videoCount + 1),
         });
       });
       const data = [];
@@ -155,11 +155,11 @@ export function loadBackendIntegrationsMRG(app) {
       const docs = await findAll();
       const byCountry = {};
       docs.forEach(d => {
-        const c = d.country ?? d.nation;
+        const c = d.nation;
         if (!byCountry[c]) byCountry[c] = [];
         byCountry[c].push({
-          name: `${c} ${d.year ?? d.date_year}`,
-          value: (d.alcohol_consumption ?? d.consumption ?? 0) + discordFactor / 10,
+          name: `${c} ${d.date_year}`,
+          value: (d.alcohol_litre ?? 0) + discordFactor / 10,
         });
       });
       const series = Object.entries(byCountry).map(([name, data]) => ({ name, data }));
