@@ -21,7 +21,12 @@
         const cd = d.chartData;
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: '', textStyle: { color: '#e5c07b' } },
+            title: {
+                text: 'Natalidad y mortalidad vial por país',
+                left: 'center',
+                top: 0,
+                textStyle: { color: '#e5c07b', fontSize: 16, fontWeight: 'bold' }
+            },
             tooltip: {
                 trigger: 'axis',
                 formatter: (params: any) => {
@@ -34,7 +39,13 @@
                     return html;
                 }
             },
-            legend: { data: cd.series.map((s: any) => s.name), textStyle: { color: '#abb2bf' } },
+            legend: {
+                data: cd.series.map((s: any) => s.name),
+                bottom: 0,
+                left: 'center',
+                textStyle: { color: '#abb2bf' }
+            },
+            grid: { top: 60, bottom: 80, left: 70, right: 40, containLabel: true },
             xAxis: { type: 'category', data: cd.xAxis, axisLabel: { color: '#abb2bf', rotate: 45, fontSize: 10 } },
             yAxis: { axisLabel: { color: '#abb2bf' } },
             series: cd.series.map((s: any, i: number) => ({
@@ -51,7 +62,7 @@
         const chart = echarts.init(el);
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: d.chartData.description || 'Meteoritos × mortalidad vial por país', textStyle: { color: '#e5c07b' } },
+            title: { text: 'Meteoritos × mortalidad vial por país', left: 'center', textStyle: { color: '#e5c07b' } },
             tooltip: {
                 formatter: (info: any) => {
                     const v = info.data;
@@ -180,7 +191,7 @@
             backgroundColor: 'transparent',
             title: {
                 text: 'VIH/SIDA y mortalidad vial por año',
-                subtext: 'SOS2526-21 aids-deaths-stats + SOS2526-11 road-fatalities-v2',
+                subtext: '',
                 left: 'center',
                 textStyle: { color: '#e5c07b' },
                 subtextStyle: { color: '#98c379' }
@@ -191,10 +202,15 @@
                     const row = params.data?.raw;
                     const metric = params.data?.metric;
                     if (!row || !metric) return '';
+                    const rawVal = row[metric.key] ?? 0;
+                    const maxVal = metric.max ?? 1;
+                    const normVal = Number(params.value[2]).toFixed(1);
+                    const fmtN = (n: number) => Number.isInteger(n) ? n.toLocaleString() : Number(n).toFixed(2);
                     return `<strong>Año: ${row.year}</strong><br/>` +
                         `Métrica: <b>${metric.label}</b><br/>` +
-                        `Valor real: <b>${row[metric.key]?.toLocaleString()}</b><br/>` +
-                        `Valor normalizado: <b>${Number(params.value[2]).toFixed(1)} / 100</b><br/>` +
+                        `Valor real: <b>${fmtN(rawVal)}</b><br/>` +
+                        `Valor normalizado: <b>${normVal} / 100</b><br/>` +
+                        `Cálculo: <i>${fmtN(rawVal)} / ${fmtN(maxVal)} × 100 = ${normVal}</i><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
                         `<b>SOS2526-21 aids-deaths-stats</b><br/>` +
                         `Muertes VIH/SIDA totales: <b>${row.hiv_aids_total_deaths?.toLocaleString() ?? 'N/A'}</b><br/>` +
@@ -254,7 +270,7 @@
         const pts = d.chartData.data;
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: d.chartData.description || 'Capacidad hidroeléctrica vs mortalidad vial', textStyle: { color: '#e5c07b' } },
+            title: { text: 'Capacidad hidroeléctrica total MW por país vs mortalidad vial', left: 'center', textStyle: { color: '#e5c07b' } },
             tooltip: {
                 trigger: 'item',
                 formatter: (info: any) => {
