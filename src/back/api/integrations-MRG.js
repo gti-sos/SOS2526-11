@@ -1,9 +1,9 @@
 // =====================================================================
 // integrations-MRG.js  (Miguel Ridao)
 // 3 widgets sobre alcohol-consumptions-per-capita con OAuth2 real (client_credentials):
-//   - Vimeo        -> bubble
-//   - Dailymotion  -> treemap
-//   - Discord      -> packedbubble
+//   - Vimeo    -> bubble
+//   - Twitch   -> treemap
+//   - Discord  -> packedbubble
 // Combina los datos externos con la DB propia alcohol-consumptions-per-capita-v2.db.
 // =====================================================================
 

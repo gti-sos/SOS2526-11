@@ -1,150 +1,150 @@
-{"nation":"Spain","date_year":2019,"alcohol_litre":11.2,"recorded_consumption":10.7,"unrecorded_consumption":0.5,"_id":"ghbKYaOwBf425IHE"}
-{"nation":"Spain","date_year":2017,"alcohol_litre":10.8,"recorded_consumption":10.3,"unrecorded_consumption":0.5,"_id":"ZAxk9IzovnzeGYwy"}
-{"nation":"Spain","date_year":2016,"alcohol_litre":10.4,"recorded_consumption":9.9,"unrecorded_consumption":0.5,"_id":"xWtJMM7VySKGQz0v"}
-{"nation":"Afghanistan","date_year":2019,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"liHW4auRJgi99YjL"}
-{"nation":"Afghanistan","date_year":2017,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"G9KU7COIh41sdeGd"}
-{"nation":"Afghanistan","date_year":2016,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"m68ZLvIL6LBOBFtN"}
-{"nation":"Albania","date_year":2019,"alcohol_litre":5.1,"recorded_consumption":4.4,"unrecorded_consumption":0.7,"_id":"1OkZIovEeNf3vgqX"}
-{"nation":"Albania","date_year":2017,"alcohol_litre":5.5,"recorded_consumption":4.8,"unrecorded_consumption":0.7,"_id":"BpnnHo5OO4C6VPkf"}
-{"nation":"Albania","date_year":2016,"alcohol_litre":5.7,"recorded_consumption":5,"unrecorded_consumption":0.7,"_id":"ImE41kDd5Rb8wGPO"}
-{"nation":"Algeria","date_year":2019,"alcohol_litre":0.9,"recorded_consumption":0.6,"unrecorded_consumption":0.3,"_id":"JZq3IHUTgwgMZjgR"}
-{"nation":"Algeria","date_year":2017,"alcohol_litre":1.1,"recorded_consumption":0.8,"unrecorded_consumption":0.3,"_id":"Zi6NjOzCbfoMQhEk"}
-{"nation":"Algeria","date_year":2016,"alcohol_litre":1.2,"recorded_consumption":0.9,"unrecorded_consumption":0.3,"_id":"DnqcpC44nQeLtbUs"}
-{"nation":"Andorra","date_year":2019,"alcohol_litre":11.5,"recorded_consumption":11.1,"unrecorded_consumption":0.4,"_id":"3hCdQLL1p0a3dLuT"}
-{"nation":"Andorra","date_year":2017,"alcohol_litre":11.8,"recorded_consumption":11.4,"unrecorded_consumption":0.4,"_id":"GgwqynPsmuRMz2RI"}
-{"nation":"Andorra","date_year":2016,"alcohol_litre":12,"recorded_consumption":11.6,"unrecorded_consumption":0.4,"_id":"M8LbX8JPFYfsUmkY"}
-{"nation":"Angola","date_year":2019,"alcohol_litre":6.2,"recorded_consumption":5.3,"unrecorded_consumption":0.9,"_id":"QKxD6fKxMy3Et5TD"}
-{"nation":"Angola","date_year":2017,"alcohol_litre":6.6,"recorded_consumption":5.7,"unrecorded_consumption":0.9,"_id":"LVfGKt6qUiJeF8rz"}
-{"nation":"Angola","date_year":2016,"alcohol_litre":7,"recorded_consumption":6.1,"unrecorded_consumption":0.9,"_id":"ygApqr6IJu2bla0v"}
-{"nation":"Argentina","date_year":2019,"alcohol_litre":8,"recorded_consumption":7.6,"unrecorded_consumption":0.4,"_id":"yfJ2wuIgf4Kf8n9s"}
-{"nation":"Argentina","date_year":2017,"alcohol_litre":8.3,"recorded_consumption":7.9,"unrecorded_consumption":0.4,"_id":"8fnYe5HkMa3TwV4B"}
-{"nation":"Argentina","date_year":2016,"alcohol_litre":8.7,"recorded_consumption":8.3,"unrecorded_consumption":0.4,"_id":"fYOdTiF2wcogssz1"}
-{"nation":"Bangladesh","date_year":2019,"alcohol_litre":0,"recorded_consumption":0,"unrecorded_consumption":0,"_id":"iumrdMaN9wSf3U4J"}
-{"nation":"Bangladesh","date_year":2017,"alcohol_litre":0,"recorded_consumption":0,"unrecorded_consumption":0,"_id":"USM3kwehaC4Vom2t"}
-{"nation":"Bangladesh","date_year":2016,"alcohol_litre":0,"recorded_consumption":0,"unrecorded_consumption":0,"_id":"pY2vRf1TCvr3bLGr"}
-{"nation":"Brazil","date_year":2019,"alcohol_litre":7.7,"recorded_consumption":6.3,"unrecorded_consumption":1.4,"_id":"3dlcJCfl92Oyqqmz"}
-{"nation":"Brazil","date_year":2017,"alcohol_litre":8.1,"recorded_consumption":6.7,"unrecorded_consumption":1.4,"_id":"Pu6kbLIXyKRrnugf"}
-{"nation":"Brazil","date_year":2016,"alcohol_litre":8.5,"recorded_consumption":7.1,"unrecorded_consumption":1.4,"_id":"BUMiQIjnH60J9ePx"}
-{"nation":"Bulgaria","date_year":2019,"alcohol_litre":12,"recorded_consumption":11.4,"unrecorded_consumption":0.6,"_id":"PPHo2o3un4izKOkE"}
-{"nation":"Bulgaria","date_year":2017,"alcohol_litre":12.3,"recorded_consumption":11.7,"unrecorded_consumption":0.6,"_id":"yB9C3xc1M6Vjn7Sf"}
-{"nation":"Bulgaria","date_year":2016,"alcohol_litre":12.6,"recorded_consumption":12,"unrecorded_consumption":0.6,"_id":"EchNIL930ig7NXKf"}
-{"nation":"Cameroon","date_year":2019,"alcohol_litre":10.1,"recorded_consumption":4,"unrecorded_consumption":6.1,"_id":"lXenAlNk7rPOOp1u"}
-{"nation":"Cameroon","date_year":2017,"alcohol_litre":10.5,"recorded_consumption":4.4,"unrecorded_consumption":6.1,"_id":"YHHMv2L1kfnUWp0n"}
-{"nation":"Cameroon","date_year":2016,"alcohol_litre":10.8,"recorded_consumption":4.7,"unrecorded_consumption":6.1,"_id":"F9UlDcwpSOQ0q8vH"}
-{"nation":"Chile","date_year":2019,"alcohol_litre":6.8,"recorded_consumption":6.4,"unrecorded_consumption":0.4,"_id":"pPe9juRir6QdSxNR"}
-{"nation":"Chile","date_year":2017,"alcohol_litre":7.2,"recorded_consumption":6.8,"unrecorded_consumption":0.4,"_id":"nVjv071Py93dOy1J"}
-{"nation":"Chile","date_year":2016,"alcohol_litre":7.6,"recorded_consumption":7.2,"unrecorded_consumption":0.4,"_id":"Hoyl20d6aBLIqpqG"}
-{"nation":"China","date_year":2019,"alcohol_litre":5.7,"recorded_consumption":4.8,"unrecorded_consumption":0.9,"_id":"tbHRJ8HKnnjTnPwK"}
-{"nation":"China","date_year":2017,"alcohol_litre":5.5,"recorded_consumption":4.6,"unrecorded_consumption":0.9,"_id":"L2UA21chJLum9rpB"}
-{"nation":"China","date_year":2016,"alcohol_litre":5.2,"recorded_consumption":4.3,"unrecorded_consumption":0.9,"_id":"ZPDWpccNW1Xv8n2v"}
-{"nation":"Colombia","date_year":2019,"alcohol_litre":4.9,"recorded_consumption":4.2,"unrecorded_consumption":0.7,"_id":"n8jm5Oq7oMtTCfbq"}
-{"nation":"Colombia","date_year":2017,"alcohol_litre":5.3,"recorded_consumption":4.6,"unrecorded_consumption":0.7,"_id":"G1Z0Tgc44Zvi6n5T"}
-{"nation":"Colombia","date_year":2016,"alcohol_litre":5.6,"recorded_consumption":4.9,"unrecorded_consumption":0.7,"_id":"18AR5tSS6VGT9DPq"}
-{"nation":"Costa Rica","date_year":2019,"alcohol_litre":4.8,"recorded_consumption":4.4,"unrecorded_consumption":0.4,"_id":"l4tLjM4UxibV3AXG"}
-{"nation":"Costa Rica","date_year":2017,"alcohol_litre":5.1,"recorded_consumption":4.7,"unrecorded_consumption":0.4,"_id":"JOEzgFR93mfGGyjy"}
 {"nation":"Costa Rica","date_year":2016,"alcohol_litre":5.4,"recorded_consumption":5,"unrecorded_consumption":0.4,"_id":"0l7uqXih5yzAoQvm"}
-{"nation":"Cuba","date_year":2019,"alcohol_litre":6,"recorded_consumption":4.7,"unrecorded_consumption":1.3,"_id":"UL4eSVYxFujzcp7i"}
-{"nation":"Cuba","date_year":2017,"alcohol_litre":6.3,"recorded_consumption":5,"unrecorded_consumption":1.3,"_id":"qb51Fdj3PdipC3aF"}
-{"nation":"Cuba","date_year":2016,"alcohol_litre":6.7,"recorded_consumption":5.4,"unrecorded_consumption":1.3,"_id":"FAp4xbWSGl2l1TPD"}
-{"nation":"Czech Republic","date_year":2019,"alcohol_litre":13.3,"recorded_consumption":12.9,"unrecorded_consumption":0.4,"_id":"wcSUWV2jwhlNBIig"}
-{"nation":"Czech Republic","date_year":2017,"alcohol_litre":13.7,"recorded_consumption":13.3,"unrecorded_consumption":0.4,"_id":"G0Ocoph3roo99d19"}
-{"nation":"Czech Republic","date_year":2016,"alcohol_litre":14.1,"recorded_consumption":13.7,"unrecorded_consumption":0.4,"_id":"AihSvgywdaYxTa72"}
-{"nation":"DR Congo","date_year":2019,"alcohol_litre":2.5,"recorded_consumption":1.5,"unrecorded_consumption":1,"_id":"bhYlkigNUxWMUNPh"}
-{"nation":"DR Congo","date_year":2017,"alcohol_litre":2.8,"recorded_consumption":1.8,"unrecorded_consumption":1,"_id":"xnkvyWVB7OKN5kOL"}
-{"nation":"DR Congo","date_year":2016,"alcohol_litre":3.1,"recorded_consumption":2.1,"unrecorded_consumption":1,"_id":"3CTF0zm3TnoQAi2q"}
-{"nation":"Ecuador","date_year":2019,"alcohol_litre":4.4,"recorded_consumption":3.8,"unrecorded_consumption":0.6,"_id":"zgaSpIGya2mtprig"}
-{"nation":"Ecuador","date_year":2017,"alcohol_litre":4.8,"recorded_consumption":4.2,"unrecorded_consumption":0.6,"_id":"2eP6Wt0za3jzBG3x"}
-{"nation":"Ecuador","date_year":2016,"alcohol_litre":5.1,"recorded_consumption":4.5,"unrecorded_consumption":0.6,"_id":"vddzLo4qMhPEU43Z"}
-{"nation":"Egypt","date_year":2019,"alcohol_litre":0.2,"recorded_consumption":0.1,"unrecorded_consumption":0.1,"_id":"wnOQntR2NV2RGkyE"}
-{"nation":"Egypt","date_year":2017,"alcohol_litre":0.2,"recorded_consumption":0.1,"unrecorded_consumption":0.1,"_id":"o0nSjCMzPoOF4345"}
-{"nation":"Egypt","date_year":2016,"alcohol_litre":0.2,"recorded_consumption":0.1,"unrecorded_consumption":0.1,"_id":"QBaHHQykPaVWyHYg"}
-{"nation":"El Salvador","date_year":2019,"alcohol_litre":3.2,"recorded_consumption":2.6,"unrecorded_consumption":0.6,"_id":"lcsm8wsM40EH1zKi"}
-{"nation":"El Salvador","date_year":2017,"alcohol_litre":3.6,"recorded_consumption":3,"unrecorded_consumption":0.6,"_id":"Z8iPXkEeV9G1swKQ"}
-{"nation":"El Salvador","date_year":2016,"alcohol_litre":3.9,"recorded_consumption":3.3,"unrecorded_consumption":0.6,"_id":"87GWwVQrES2STaoQ"}
-{"nation":"Estonia","date_year":2019,"alcohol_litre":12.9,"recorded_consumption":11.8,"unrecorded_consumption":1.1,"_id":"aW2FhimFZim26plX"}
-{"nation":"Estonia","date_year":2017,"alcohol_litre":13.3,"recorded_consumption":12.2,"unrecorded_consumption":1.1,"_id":"aTOmM3PT7F1BwJbY"}
-{"nation":"Estonia","date_year":2016,"alcohol_litre":13.8,"recorded_consumption":12.7,"unrecorded_consumption":1.1,"_id":"4ps084cWnnjxzTnn"}
-{"nation":"India","date_year":2019,"alcohol_litre":5.5,"recorded_consumption":2.9,"unrecorded_consumption":2.6,"_id":"RDwVFkSowgZITgVU"}
-{"nation":"India","date_year":2017,"alcohol_litre":5.2,"recorded_consumption":2.6,"unrecorded_consumption":2.6,"_id":"nKJGuCqNnGE9MjaG"}
-{"nation":"India","date_year":2016,"alcohol_litre":4.9,"recorded_consumption":2.3,"unrecorded_consumption":2.6,"_id":"7acajDTA64u3mVdE"}
-{"nation":"Indonesia","date_year":2019,"alcohol_litre":0.3,"recorded_consumption":0.2,"unrecorded_consumption":0.1,"_id":"FhgH4kprcBoLK33H"}
-{"nation":"Indonesia","date_year":2017,"alcohol_litre":0.3,"recorded_consumption":0.2,"unrecorded_consumption":0.1,"_id":"I4QZ8KhljlVAabMI"}
-{"nation":"Indonesia","date_year":2016,"alcohol_litre":0.4,"recorded_consumption":0.3,"unrecorded_consumption":0.1,"_id":"erlNfwmXcndolHyx"}
-{"nation":"Iran","date_year":2019,"alcohol_litre":1,"recorded_consumption":0,"unrecorded_consumption":1,"_id":"GlPbDkDoKmhrwbkt"}
-{"nation":"Iran","date_year":2017,"alcohol_litre":1,"recorded_consumption":0,"unrecorded_consumption":1,"_id":"uy9EL7MH80fMXEHc"}
-{"nation":"Iran","date_year":2016,"alcohol_litre":1,"recorded_consumption":0,"unrecorded_consumption":1,"_id":"2t6Rd7gGukZ0OuO5"}
 {"nation":"Israel","date_year":2019,"alcohol_litre":3.2,"recorded_consumption":2.9,"unrecorded_consumption":0.3,"_id":"0o3m0Fhab36qqVvE"}
-{"nation":"Israel","date_year":2017,"alcohol_litre":3.4,"recorded_consumption":3.1,"unrecorded_consumption":0.3,"_id":"wA46l09ZAIUe74cR"}
-{"nation":"Israel","date_year":2016,"alcohol_litre":3.6,"recorded_consumption":3.3,"unrecorded_consumption":0.3,"_id":"8jhce7BqOUyYE1TV"}
-{"nation":"Italy","date_year":2019,"alcohol_litre":8.1,"recorded_consumption":7.6,"unrecorded_consumption":0.5,"_id":"Nlt8zoZZdohpNc4g"}
-{"nation":"Italy","date_year":2017,"alcohol_litre":8.4,"recorded_consumption":7.9,"unrecorded_consumption":0.5,"_id":"tiBcqMwqiV1x02EH"}
-{"nation":"Italy","date_year":2016,"alcohol_litre":8.8,"recorded_consumption":8.3,"unrecorded_consumption":0.5,"_id":"pJAZUrFOoHduUkgT"}
-{"nation":"Ivory Coast","date_year":2019,"alcohol_litre":2.8,"recorded_consumption":1.9,"unrecorded_consumption":0.9,"_id":"scwHQerXxcXufHgp"}
-{"nation":"Ivory Coast","date_year":2017,"alcohol_litre":3.1,"recorded_consumption":2.2,"unrecorded_consumption":0.9,"_id":"xxUnC0zpvyR2efqy"}
-{"nation":"Ivory Coast","date_year":2016,"alcohol_litre":3.4,"recorded_consumption":2.5,"unrecorded_consumption":0.9,"_id":"xcAhUMFh5yRaaZYW"}
-{"nation":"Kenya","date_year":2019,"alcohol_litre":2.8,"recorded_consumption":1.8,"unrecorded_consumption":1,"_id":"kNMFLXf6oCvD5bai"}
-{"nation":"Kenya","date_year":2017,"alcohol_litre":3.2,"recorded_consumption":2.2,"unrecorded_consumption":1,"_id":"OL8SYCy6lF2q8Eqp"}
-{"nation":"Kenya","date_year":2016,"alcohol_litre":3.6,"recorded_consumption":2.6,"unrecorded_consumption":1,"_id":"9exgvH3FpLbul3Sw"}
-{"nation":"Mexico","date_year":2019,"alcohol_litre":6,"recorded_consumption":4.8,"unrecorded_consumption":1.2,"_id":"8dUjPTTMBmZHJn8W"}
-{"nation":"Mexico","date_year":2017,"alcohol_litre":6.4,"recorded_consumption":5.2,"unrecorded_consumption":1.2,"_id":"2la3TK7RvoTp77ug"}
-{"nation":"Mexico","date_year":2016,"alcohol_litre":6.8,"recorded_consumption":5.6,"unrecorded_consumption":1.2,"_id":"XfFuECozdPuXXkuv"}
-{"nation":"Morocco","date_year":2019,"alcohol_litre":0.6,"recorded_consumption":0.4,"unrecorded_consumption":0.2,"_id":"cbg7PEpUDrAYBDR3"}
-{"nation":"Morocco","date_year":2017,"alcohol_litre":0.7,"recorded_consumption":0.5,"unrecorded_consumption":0.2,"_id":"lTVzVY1SWdS0v3gR"}
-{"nation":"Morocco","date_year":2016,"alcohol_litre":0.8,"recorded_consumption":0.6,"unrecorded_consumption":0.2,"_id":"xbbSirQT48uhwCqS"}
-{"nation":"Nigeria","date_year":2019,"alcohol_litre":4.2,"recorded_consumption":2.9,"unrecorded_consumption":1.3,"_id":"qgwV8eB9tYE3r0CZ"}
-{"nation":"Nigeria","date_year":2017,"alcohol_litre":4.6,"recorded_consumption":3.3,"unrecorded_consumption":1.3,"_id":"88oLaU3F0clYYL99"}
-{"nation":"Nigeria","date_year":2016,"alcohol_litre":5,"recorded_consumption":3.7,"unrecorded_consumption":1.3,"_id":"xiIzQB3SxjI9Xc6b"}
-{"nation":"Pakistan","date_year":2019,"alcohol_litre":0.3,"recorded_consumption":0,"unrecorded_consumption":0.3,"_id":"yKEjVhDLxrIs3INs"}
-{"nation":"Pakistan","date_year":2017,"alcohol_litre":0.3,"recorded_consumption":0,"unrecorded_consumption":0.3,"_id":"3qZ5KBCPcZktGaZm"}
-{"nation":"Pakistan","date_year":2016,"alcohol_litre":0.3,"recorded_consumption":0,"unrecorded_consumption":0.3,"_id":"iDgG7YMau5pjGifJ"}
-{"nation":"Panama","date_year":2019,"alcohol_litre":6.7,"recorded_consumption":6.3,"unrecorded_consumption":0.4,"_id":"aNz9BPnK1eOGPFuD"}
-{"nation":"Panama","date_year":2017,"alcohol_litre":7.1,"recorded_consumption":6.7,"unrecorded_consumption":0.4,"_id":"dtX9TwlnRtatFOHq"}
-{"nation":"Panama","date_year":2016,"alcohol_litre":7.5,"recorded_consumption":7.1,"unrecorded_consumption":0.4,"_id":"RJBQXyomLfmgsEo6"}
-{"nation":"Paraguay","date_year":2019,"alcohol_litre":5.8,"recorded_consumption":5.3,"unrecorded_consumption":0.5,"_id":"8w4qMDx6XQqORzXu"}
-{"nation":"Paraguay","date_year":2017,"alcohol_litre":6.2,"recorded_consumption":5.7,"unrecorded_consumption":0.5,"_id":"BIElzNG7qnil36oZ"}
-{"nation":"Paraguay","date_year":2016,"alcohol_litre":6.6,"recorded_consumption":6.1,"unrecorded_consumption":0.5,"_id":"KEYdU7O5ABfvbVUs"}
-{"nation":"Peru","date_year":2019,"alcohol_litre":7.5,"recorded_consumption":5.7,"unrecorded_consumption":1.8,"_id":"z2W3Sjkdoy0kHPG3"}
-{"nation":"Peru","date_year":2017,"alcohol_litre":7.9,"recorded_consumption":6.1,"unrecorded_consumption":1.8,"_id":"YKrqMbb5jPaf1zbl"}
-{"nation":"Peru","date_year":2016,"alcohol_litre":8.3,"recorded_consumption":6.5,"unrecorded_consumption":1.8,"_id":"3HQ4ozlRW4nUYIEI"}
-{"nation":"Philippines","date_year":2019,"alcohol_litre":6.2,"recorded_consumption":5,"unrecorded_consumption":1.2,"_id":"TbBUPlukPleJ4LLF"}
-{"nation":"Philippines","date_year":2017,"alcohol_litre":6.6,"recorded_consumption":5.4,"unrecorded_consumption":1.2,"_id":"4e6RLRfHlEmBTQPn"}
-{"nation":"Philippines","date_year":2016,"alcohol_litre":7,"recorded_consumption":5.8,"unrecorded_consumption":1.2,"_id":"NxdyaPptbJgnUjWx"}
-{"nation":"Poland","date_year":2019,"alcohol_litre":12.1,"recorded_consumption":10.7,"unrecorded_consumption":1.4,"_id":"bl8mVULAk9iAfOHt"}
-{"nation":"Poland","date_year":2017,"alcohol_litre":12.5,"recorded_consumption":11.1,"unrecorded_consumption":1.4,"_id":"lyNUfqP8pfJxvQkC"}
-{"nation":"Poland","date_year":2016,"alcohol_litre":12.9,"recorded_consumption":11.5,"unrecorded_consumption":1.4,"_id":"j4BuSNvL2p0rTr7M"}
-{"nation":"Portugal","date_year":2019,"alcohol_litre":10.8,"recorded_consumption":10.2,"unrecorded_consumption":0.6,"_id":"yJsPoEUUgnXUssYs"}
-{"nation":"Portugal","date_year":2017,"alcohol_litre":11.2,"recorded_consumption":10.6,"unrecorded_consumption":0.6,"_id":"oZpT2XcUeo8tlkAz"}
-{"nation":"Portugal","date_year":2016,"alcohol_litre":11.6,"recorded_consumption":11,"unrecorded_consumption":0.6,"_id":"achwBrSjFX7Ol1Ie"}
-{"nation":"Romania","date_year":2019,"alcohol_litre":16.9,"recorded_consumption":10.7,"unrecorded_consumption":6.2,"_id":"LZVupk9btqYilaHR"}
-{"nation":"Romania","date_year":2017,"alcohol_litre":17.3,"recorded_consumption":11.1,"unrecorded_consumption":6.2,"_id":"U3x9vunlIKIqdwnA"}
-{"nation":"Romania","date_year":2016,"alcohol_litre":17.7,"recorded_consumption":11.5,"unrecorded_consumption":6.2,"_id":"ObfL2pKoCeXeZh1O"}
-{"nation":"Russia","date_year":2019,"alcohol_litre":10.4,"recorded_consumption":7.1,"unrecorded_consumption":3.3,"_id":"yDGo8qqetewT7WUz"}
-{"nation":"Russia","date_year":2017,"alcohol_litre":11,"recorded_consumption":7.7,"unrecorded_consumption":3.3,"_id":"QbUae0BUl2h6DX9y"}
-{"nation":"Russia","date_year":2016,"alcohol_litre":11.6,"recorded_consumption":8.3,"unrecorded_consumption":3.3,"_id":"ePy3XpIYlk3E7irZ"}
-{"nation":"Saudi Arabia","date_year":2019,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"XCsBHJO1jXhAli1E"}
-{"nation":"Saudi Arabia","date_year":2017,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"noR6M2H6KbozRDq6"}
-{"nation":"Saudi Arabia","date_year":2016,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"C9v4HY9qfz7gEEuB"}
-{"nation":"Serbia","date_year":2019,"alcohol_litre":7.7,"recorded_consumption":6.9,"unrecorded_consumption":0.8,"_id":"ZhgWY3k29W1mW1fG"}
-{"nation":"Serbia","date_year":2017,"alcohol_litre":8.1,"recorded_consumption":7.3,"unrecorded_consumption":0.8,"_id":"ujP9OHPDablrIiBm"}
-{"nation":"Serbia","date_year":2016,"alcohol_litre":8.5,"recorded_consumption":7.7,"unrecorded_consumption":0.8,"_id":"u6EQK0BERcUNuZ0R"}
-{"nation":"South Africa","date_year":2019,"alcohol_litre":8.8,"recorded_consumption":7.4,"unrecorded_consumption":1.4,"_id":"CQpqRRDrG82HajLQ"}
-{"nation":"South Africa","date_year":2017,"alcohol_litre":9.3,"recorded_consumption":7.9,"unrecorded_consumption":1.4,"_id":"LjywoIfFFn2qWHDV"}
-{"nation":"South Africa","date_year":2016,"alcohol_litre":9.7,"recorded_consumption":8.3,"unrecorded_consumption":1.4,"_id":"NaRCVbZma9x1dIhC"}
-{"nation":"Sri Lanka","date_year":2019,"alcohol_litre":3,"recorded_consumption":1.5,"unrecorded_consumption":1.5,"_id":"62bCoVDAt7CA23zS"}
-{"nation":"Sri Lanka","date_year":2017,"alcohol_litre":3.4,"recorded_consumption":1.9,"unrecorded_consumption":1.5,"_id":"j6gxLxS3GwKVDbBk"}
-{"nation":"Sri Lanka","date_year":2016,"alcohol_litre":3.8,"recorded_consumption":2.3,"unrecorded_consumption":1.5,"_id":"Qe7LQj94hFd3xinQ"}
-{"nation":"Turkey","date_year":2019,"alcohol_litre":2,"recorded_consumption":1.3,"unrecorded_consumption":0.7,"_id":"TkNTUol0NawsnMLo"}
-{"nation":"Turkey","date_year":2017,"alcohol_litre":2.2,"recorded_consumption":1.5,"unrecorded_consumption":0.7,"_id":"H3CmCvxgRNftQBfE"}
-{"nation":"Turkey","date_year":2016,"alcohol_litre":2.4,"recorded_consumption":1.7,"unrecorded_consumption":0.7,"_id":"sK6aiMQ4YDkgLXqL"}
-{"nation":"Ukraine","date_year":2019,"alcohol_litre":8.7,"recorded_consumption":5.5,"unrecorded_consumption":3.2,"_id":"ZUzbhM5ot9XcP0Eo"}
-{"nation":"Ukraine","date_year":2017,"alcohol_litre":9.3,"recorded_consumption":6.1,"unrecorded_consumption":3.2,"_id":"OrbXrmNY7uBqIXN8"}
-{"nation":"Ukraine","date_year":2016,"alcohol_litre":9.8,"recorded_consumption":6.6,"unrecorded_consumption":3.2,"_id":"2okr5XhWHh1eU9b1"}
-{"nation":"United Arab Emirates","date_year":2019,"alcohol_litre":3.8,"recorded_consumption":3,"unrecorded_consumption":0.8,"_id":"6ZiaBNlcIGxff6Fc"}
-{"nation":"United Arab Emirates","date_year":2017,"alcohol_litre":4.1,"recorded_consumption":3.3,"unrecorded_consumption":0.8,"_id":"T0oF0h5ll9e2KJjy"}
-{"nation":"United Arab Emirates","date_year":2016,"alcohol_litre":4.4,"recorded_consumption":3.6,"unrecorded_consumption":0.8,"_id":"xnrlIoq3gvCsQaPF"}
-{"nation":"Uruguay","date_year":2019,"alcohol_litre":5.6,"recorded_consumption":5.2,"unrecorded_consumption":0.4,"_id":"aho11LjPCfkvLcZF"}
-{"nation":"Uruguay","date_year":2017,"alcohol_litre":5.9,"recorded_consumption":5.5,"unrecorded_consumption":0.4,"_id":"VwAce0SDMXsnaDv6"}
+{"nation":"Colombia","date_year":2016,"alcohol_litre":5.6,"recorded_consumption":4.9,"unrecorded_consumption":0.7,"_id":"18AR5tSS6VGT9DPq"}
+{"nation":"Albania","date_year":2019,"alcohol_litre":5.1,"recorded_consumption":4.4,"unrecorded_consumption":0.7,"_id":"1OkZIovEeNf3vgqX"}
 {"nation":"Uruguay","date_year":2016,"alcohol_litre":6.3,"recorded_consumption":5.9,"unrecorded_consumption":0.4,"_id":"1kMfg9NuRbkkHfx9"}
+{"nation":"Ecuador","date_year":2017,"alcohol_litre":4.8,"recorded_consumption":4.2,"unrecorded_consumption":0.6,"_id":"2eP6Wt0za3jzBG3x"}
+{"nation":"Mexico","date_year":2017,"alcohol_litre":6.4,"recorded_consumption":5.2,"unrecorded_consumption":1.2,"_id":"2la3TK7RvoTp77ug"}
+{"nation":"Ukraine","date_year":2016,"alcohol_litre":9.8,"recorded_consumption":6.6,"unrecorded_consumption":3.2,"_id":"2okr5XhWHh1eU9b1"}
+{"nation":"Iran","date_year":2016,"alcohol_litre":1,"recorded_consumption":0,"unrecorded_consumption":1,"_id":"2t6Rd7gGukZ0OuO5"}
+{"nation":"DR Congo","date_year":2016,"alcohol_litre":3.1,"recorded_consumption":2.1,"unrecorded_consumption":1,"_id":"3CTF0zm3TnoQAi2q"}
+{"nation":"Peru","date_year":2016,"alcohol_litre":8.3,"recorded_consumption":6.5,"unrecorded_consumption":1.8,"_id":"3HQ4ozlRW4nUYIEI"}
+{"nation":"Brazil","date_year":2019,"alcohol_litre":7.7,"recorded_consumption":6.3,"unrecorded_consumption":1.4,"_id":"3dlcJCfl92Oyqqmz"}
+{"nation":"Andorra","date_year":2019,"alcohol_litre":11.5,"recorded_consumption":11.1,"unrecorded_consumption":0.4,"_id":"3hCdQLL1p0a3dLuT"}
+{"nation":"Pakistan","date_year":2017,"alcohol_litre":0.3,"recorded_consumption":0,"unrecorded_consumption":0.3,"_id":"3qZ5KBCPcZktGaZm"}
+{"nation":"Philippines","date_year":2017,"alcohol_litre":6.6,"recorded_consumption":5.4,"unrecorded_consumption":1.2,"_id":"4e6RLRfHlEmBTQPn"}
+{"nation":"Estonia","date_year":2016,"alcohol_litre":13.8,"recorded_consumption":12.7,"unrecorded_consumption":1.1,"_id":"4ps084cWnnjxzTnn"}
+{"nation":"Sri Lanka","date_year":2019,"alcohol_litre":3,"recorded_consumption":1.5,"unrecorded_consumption":1.5,"_id":"62bCoVDAt7CA23zS"}
+{"nation":"United Arab Emirates","date_year":2019,"alcohol_litre":3.8,"recorded_consumption":3,"unrecorded_consumption":0.8,"_id":"6ZiaBNlcIGxff6Fc"}
+{"nation":"India","date_year":2016,"alcohol_litre":4.9,"recorded_consumption":2.3,"unrecorded_consumption":2.6,"_id":"7acajDTA64u3mVdE"}
+{"nation":"El Salvador","date_year":2016,"alcohol_litre":3.9,"recorded_consumption":3.3,"unrecorded_consumption":0.6,"_id":"87GWwVQrES2STaoQ"}
+{"nation":"Nigeria","date_year":2017,"alcohol_litre":4.6,"recorded_consumption":3.3,"unrecorded_consumption":1.3,"_id":"88oLaU3F0clYYL99"}
+{"nation":"Mexico","date_year":2019,"alcohol_litre":6,"recorded_consumption":4.8,"unrecorded_consumption":1.2,"_id":"8dUjPTTMBmZHJn8W"}
+{"nation":"Argentina","date_year":2017,"alcohol_litre":8.3,"recorded_consumption":7.9,"unrecorded_consumption":0.4,"_id":"8fnYe5HkMa3TwV4B"}
+{"nation":"Israel","date_year":2016,"alcohol_litre":3.6,"recorded_consumption":3.3,"unrecorded_consumption":0.3,"_id":"8jhce7BqOUyYE1TV"}
+{"nation":"Paraguay","date_year":2019,"alcohol_litre":5.8,"recorded_consumption":5.3,"unrecorded_consumption":0.5,"_id":"8w4qMDx6XQqORzXu"}
+{"nation":"Kenya","date_year":2016,"alcohol_litre":3.6,"recorded_consumption":2.6,"unrecorded_consumption":1,"_id":"9exgvH3FpLbul3Sw"}
+{"nation":"Czech Republic","date_year":2016,"alcohol_litre":14.1,"recorded_consumption":13.7,"unrecorded_consumption":0.4,"_id":"AihSvgywdaYxTa72"}
+{"nation":"Paraguay","date_year":2017,"alcohol_litre":6.2,"recorded_consumption":5.7,"unrecorded_consumption":0.5,"_id":"BIElzNG7qnil36oZ"}
+{"nation":"Brazil","date_year":2016,"alcohol_litre":8.5,"recorded_consumption":7.1,"unrecorded_consumption":1.4,"_id":"BUMiQIjnH60J9ePx"}
+{"nation":"Albania","date_year":2017,"alcohol_litre":5.5,"recorded_consumption":4.8,"unrecorded_consumption":0.7,"_id":"BpnnHo5OO4C6VPkf"}
+{"nation":"Saudi Arabia","date_year":2016,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"C9v4HY9qfz7gEEuB"}
+{"nation":"South Africa","date_year":2019,"alcohol_litre":8.8,"recorded_consumption":7.4,"unrecorded_consumption":1.4,"_id":"CQpqRRDrG82HajLQ"}
+{"nation":"Algeria","date_year":2016,"alcohol_litre":1.2,"recorded_consumption":0.9,"unrecorded_consumption":0.3,"_id":"DnqcpC44nQeLtbUs"}
+{"nation":"Bulgaria","date_year":2016,"alcohol_litre":12.6,"recorded_consumption":12,"unrecorded_consumption":0.6,"_id":"EchNIL930ig7NXKf"}
+{"nation":"Cameroon","date_year":2016,"alcohol_litre":10.8,"recorded_consumption":4.7,"unrecorded_consumption":6.1,"_id":"F9UlDcwpSOQ0q8vH"}
+{"nation":"Cuba","date_year":2016,"alcohol_litre":6.7,"recorded_consumption":5.4,"unrecorded_consumption":1.3,"_id":"FAp4xbWSGl2l1TPD"}
+{"nation":"Indonesia","date_year":2019,"alcohol_litre":0.3,"recorded_consumption":0.2,"unrecorded_consumption":0.1,"_id":"FhgH4kprcBoLK33H"}
+{"nation":"Czech Republic","date_year":2017,"alcohol_litre":13.7,"recorded_consumption":13.3,"unrecorded_consumption":0.4,"_id":"G0Ocoph3roo99d19"}
+{"nation":"Colombia","date_year":2017,"alcohol_litre":5.3,"recorded_consumption":4.6,"unrecorded_consumption":0.7,"_id":"G1Z0Tgc44Zvi6n5T"}
+{"nation":"Afghanistan","date_year":2017,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"G9KU7COIh41sdeGd"}
+{"nation":"Andorra","date_year":2017,"alcohol_litre":11.8,"recorded_consumption":11.4,"unrecorded_consumption":0.4,"_id":"GgwqynPsmuRMz2RI"}
+{"nation":"Iran","date_year":2019,"alcohol_litre":1,"recorded_consumption":0,"unrecorded_consumption":1,"_id":"GlPbDkDoKmhrwbkt"}
+{"nation":"Turkey","date_year":2017,"alcohol_litre":2.2,"recorded_consumption":1.5,"unrecorded_consumption":0.7,"_id":"H3CmCvxgRNftQBfE"}
 {"nation":"Vietnam","date_year":2019,"alcohol_litre":9.3,"recorded_consumption":3.4,"unrecorded_consumption":5.9,"_id":"HBFesjHoXw6euySG"}
-{"nation":"Vietnam","date_year":2017,"alcohol_litre":9.7,"recorded_consumption":3.8,"unrecorded_consumption":5.9,"_id":"pS1pzO1k57zvHVa5"}
+{"nation":"Chile","date_year":2016,"alcohol_litre":7.6,"recorded_consumption":7.2,"unrecorded_consumption":0.4,"_id":"Hoyl20d6aBLIqpqG"}
+{"nation":"Indonesia","date_year":2017,"alcohol_litre":0.3,"recorded_consumption":0.2,"unrecorded_consumption":0.1,"_id":"I4QZ8KhljlVAabMI"}
+{"nation":"Albania","date_year":2016,"alcohol_litre":5.7,"recorded_consumption":5,"unrecorded_consumption":0.7,"_id":"ImE41kDd5Rb8wGPO"}
+{"nation":"Costa Rica","date_year":2017,"alcohol_litre":5.1,"recorded_consumption":4.7,"unrecorded_consumption":0.4,"_id":"JOEzgFR93mfGGyjy"}
+{"nation":"Algeria","date_year":2019,"alcohol_litre":0.9,"recorded_consumption":0.6,"unrecorded_consumption":0.3,"_id":"JZq3IHUTgwgMZjgR"}
+{"nation":"Paraguay","date_year":2016,"alcohol_litre":6.6,"recorded_consumption":6.1,"unrecorded_consumption":0.5,"_id":"KEYdU7O5ABfvbVUs"}
+{"nation":"China","date_year":2017,"alcohol_litre":5.5,"recorded_consumption":4.6,"unrecorded_consumption":0.9,"_id":"L2UA21chJLum9rpB"}
+{"nation":"Angola","date_year":2017,"alcohol_litre":6.6,"recorded_consumption":5.7,"unrecorded_consumption":0.9,"_id":"LVfGKt6qUiJeF8rz"}
+{"nation":"Romania","date_year":2019,"alcohol_litre":16.9,"recorded_consumption":10.7,"unrecorded_consumption":6.2,"_id":"LZVupk9btqYilaHR"}
+{"nation":"South Africa","date_year":2017,"alcohol_litre":9.3,"recorded_consumption":7.9,"unrecorded_consumption":1.4,"_id":"LjywoIfFFn2qWHDV"}
+{"nation":"Andorra","date_year":2016,"alcohol_litre":12,"recorded_consumption":11.6,"unrecorded_consumption":0.4,"_id":"M8LbX8JPFYfsUmkY"}
+{"nation":"South Africa","date_year":2016,"alcohol_litre":9.7,"recorded_consumption":8.3,"unrecorded_consumption":1.4,"_id":"NaRCVbZma9x1dIhC"}
+{"nation":"Italy","date_year":2019,"alcohol_litre":8.1,"recorded_consumption":7.6,"unrecorded_consumption":0.5,"_id":"Nlt8zoZZdohpNc4g"}
+{"nation":"Philippines","date_year":2016,"alcohol_litre":7,"recorded_consumption":5.8,"unrecorded_consumption":1.2,"_id":"NxdyaPptbJgnUjWx"}
+{"nation":"Kenya","date_year":2017,"alcohol_litre":3.2,"recorded_consumption":2.2,"unrecorded_consumption":1,"_id":"OL8SYCy6lF2q8Eqp"}
+{"nation":"Romania","date_year":2016,"alcohol_litre":17.7,"recorded_consumption":11.5,"unrecorded_consumption":6.2,"_id":"ObfL2pKoCeXeZh1O"}
+{"nation":"Ukraine","date_year":2017,"alcohol_litre":9.3,"recorded_consumption":6.1,"unrecorded_consumption":3.2,"_id":"OrbXrmNY7uBqIXN8"}
+{"nation":"Bulgaria","date_year":2019,"alcohol_litre":12,"recorded_consumption":11.4,"unrecorded_consumption":0.6,"_id":"PPHo2o3un4izKOkE"}
+{"nation":"Brazil","date_year":2017,"alcohol_litre":8.1,"recorded_consumption":6.7,"unrecorded_consumption":1.4,"_id":"Pu6kbLIXyKRrnugf"}
+{"nation":"Egypt","date_year":2016,"alcohol_litre":0.2,"recorded_consumption":0.1,"unrecorded_consumption":0.1,"_id":"QBaHHQykPaVWyHYg"}
+{"nation":"Angola","date_year":2019,"alcohol_litre":6.2,"recorded_consumption":5.3,"unrecorded_consumption":0.9,"_id":"QKxD6fKxMy3Et5TD"}
+{"nation":"Russia","date_year":2017,"alcohol_litre":11,"recorded_consumption":7.7,"unrecorded_consumption":3.3,"_id":"QbUae0BUl2h6DX9y"}
+{"nation":"Sri Lanka","date_year":2016,"alcohol_litre":3.8,"recorded_consumption":2.3,"unrecorded_consumption":1.5,"_id":"Qe7LQj94hFd3xinQ"}
+{"nation":"India","date_year":2019,"alcohol_litre":5.5,"recorded_consumption":2.9,"unrecorded_consumption":2.6,"_id":"RDwVFkSowgZITgVU"}
+{"nation":"Panama","date_year":2016,"alcohol_litre":7.5,"recorded_consumption":7.1,"unrecorded_consumption":0.4,"_id":"RJBQXyomLfmgsEo6"}
+{"nation":"United Arab Emirates","date_year":2017,"alcohol_litre":4.1,"recorded_consumption":3.3,"unrecorded_consumption":0.8,"_id":"T0oF0h5ll9e2KJjy"}
 {"nation":"Vietnam","date_year":2016,"alcohol_litre":10.1,"recorded_consumption":4.2,"unrecorded_consumption":5.9,"_id":"TZtQ5AkLkH5cYNMH"}
+{"nation":"Philippines","date_year":2019,"alcohol_litre":6.2,"recorded_consumption":5,"unrecorded_consumption":1.2,"_id":"TbBUPlukPleJ4LLF"}
+{"nation":"Turkey","date_year":2019,"alcohol_litre":2,"recorded_consumption":1.3,"unrecorded_consumption":0.7,"_id":"TkNTUol0NawsnMLo"}
+{"nation":"Romania","date_year":2017,"alcohol_litre":17.3,"recorded_consumption":11.1,"unrecorded_consumption":6.2,"_id":"U3x9vunlIKIqdwnA"}
+{"nation":"Cuba","date_year":2019,"alcohol_litre":6,"recorded_consumption":4.7,"unrecorded_consumption":1.3,"_id":"UL4eSVYxFujzcp7i"}
+{"nation":"Bangladesh","date_year":2017,"alcohol_litre":0,"recorded_consumption":0,"unrecorded_consumption":0,"_id":"USM3kwehaC4Vom2t"}
+{"nation":"Uruguay","date_year":2017,"alcohol_litre":5.9,"recorded_consumption":5.5,"unrecorded_consumption":0.4,"_id":"VwAce0SDMXsnaDv6"}
+{"nation":"Saudi Arabia","date_year":2019,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"XCsBHJO1jXhAli1E"}
+{"nation":"Mexico","date_year":2016,"alcohol_litre":6.8,"recorded_consumption":5.6,"unrecorded_consumption":1.2,"_id":"XfFuECozdPuXXkuv"}
+{"nation":"Cameroon","date_year":2017,"alcohol_litre":10.5,"recorded_consumption":4.4,"unrecorded_consumption":6.1,"_id":"YHHMv2L1kfnUWp0n"}
+{"nation":"Peru","date_year":2017,"alcohol_litre":7.9,"recorded_consumption":6.1,"unrecorded_consumption":1.8,"_id":"YKrqMbb5jPaf1zbl"}
+{"nation":"El Salvador","date_year":2017,"alcohol_litre":3.6,"recorded_consumption":3,"unrecorded_consumption":0.6,"_id":"Z8iPXkEeV9G1swKQ"}
+{"nation":"Spain","date_year":2017,"alcohol_litre":10.8,"recorded_consumption":10.3,"unrecorded_consumption":0.5,"_id":"ZAxk9IzovnzeGYwy"}
+{"nation":"China","date_year":2016,"alcohol_litre":5.2,"recorded_consumption":4.3,"unrecorded_consumption":0.9,"_id":"ZPDWpccNW1Xv8n2v"}
+{"nation":"Ukraine","date_year":2019,"alcohol_litre":8.7,"recorded_consumption":5.5,"unrecorded_consumption":3.2,"_id":"ZUzbhM5ot9XcP0Eo"}
+{"nation":"Serbia","date_year":2019,"alcohol_litre":7.7,"recorded_consumption":6.9,"unrecorded_consumption":0.8,"_id":"ZhgWY3k29W1mW1fG"}
+{"nation":"Algeria","date_year":2017,"alcohol_litre":1.1,"recorded_consumption":0.8,"unrecorded_consumption":0.3,"_id":"Zi6NjOzCbfoMQhEk"}
+{"nation":"Panama","date_year":2019,"alcohol_litre":6.7,"recorded_consumption":6.3,"unrecorded_consumption":0.4,"_id":"aNz9BPnK1eOGPFuD"}
+{"nation":"Estonia","date_year":2017,"alcohol_litre":13.3,"recorded_consumption":12.2,"unrecorded_consumption":1.1,"_id":"aTOmM3PT7F1BwJbY"}
+{"nation":"Estonia","date_year":2019,"alcohol_litre":12.9,"recorded_consumption":11.8,"unrecorded_consumption":1.1,"_id":"aW2FhimFZim26plX"}
+{"nation":"Portugal","date_year":2016,"alcohol_litre":11.6,"recorded_consumption":11,"unrecorded_consumption":0.6,"_id":"achwBrSjFX7Ol1Ie"}
+{"nation":"Uruguay","date_year":2019,"alcohol_litre":5.6,"recorded_consumption":5.2,"unrecorded_consumption":0.4,"_id":"aho11LjPCfkvLcZF"}
+{"nation":"DR Congo","date_year":2019,"alcohol_litre":2.5,"recorded_consumption":1.5,"unrecorded_consumption":1,"_id":"bhYlkigNUxWMUNPh"}
+{"nation":"Poland","date_year":2019,"alcohol_litre":12.1,"recorded_consumption":10.7,"unrecorded_consumption":1.4,"_id":"bl8mVULAk9iAfOHt"}
+{"nation":"Morocco","date_year":2019,"alcohol_litre":0.6,"recorded_consumption":0.4,"unrecorded_consumption":0.2,"_id":"cbg7PEpUDrAYBDR3"}
+{"nation":"Panama","date_year":2017,"alcohol_litre":7.1,"recorded_consumption":6.7,"unrecorded_consumption":0.4,"_id":"dtX9TwlnRtatFOHq"}
+{"nation":"Russia","date_year":2016,"alcohol_litre":11.6,"recorded_consumption":8.3,"unrecorded_consumption":3.3,"_id":"ePy3XpIYlk3E7irZ"}
+{"nation":"Indonesia","date_year":2016,"alcohol_litre":0.4,"recorded_consumption":0.3,"unrecorded_consumption":0.1,"_id":"erlNfwmXcndolHyx"}
+{"nation":"Argentina","date_year":2016,"alcohol_litre":8.7,"recorded_consumption":8.3,"unrecorded_consumption":0.4,"_id":"fYOdTiF2wcogssz1"}
+{"nation":"Spain","date_year":2019,"alcohol_litre":11.2,"recorded_consumption":10.7,"unrecorded_consumption":0.5,"_id":"ghbKYaOwBf425IHE"}
+{"nation":"Pakistan","date_year":2016,"alcohol_litre":0.3,"recorded_consumption":0,"unrecorded_consumption":0.3,"_id":"iDgG7YMau5pjGifJ"}
+{"nation":"Bangladesh","date_year":2019,"alcohol_litre":0,"recorded_consumption":0,"unrecorded_consumption":0,"_id":"iumrdMaN9wSf3U4J"}
+{"nation":"Poland","date_year":2016,"alcohol_litre":12.9,"recorded_consumption":11.5,"unrecorded_consumption":1.4,"_id":"j4BuSNvL2p0rTr7M"}
+{"nation":"Sri Lanka","date_year":2017,"alcohol_litre":3.4,"recorded_consumption":1.9,"unrecorded_consumption":1.5,"_id":"j6gxLxS3GwKVDbBk"}
+{"nation":"Kenya","date_year":2019,"alcohol_litre":2.8,"recorded_consumption":1.8,"unrecorded_consumption":1,"_id":"kNMFLXf6oCvD5bai"}
+{"nation":"Costa Rica","date_year":2019,"alcohol_litre":4.8,"recorded_consumption":4.4,"unrecorded_consumption":0.4,"_id":"l4tLjM4UxibV3AXG"}
+{"nation":"Morocco","date_year":2017,"alcohol_litre":0.7,"recorded_consumption":0.5,"unrecorded_consumption":0.2,"_id":"lTVzVY1SWdS0v3gR"}
+{"nation":"Cameroon","date_year":2019,"alcohol_litre":10.1,"recorded_consumption":4,"unrecorded_consumption":6.1,"_id":"lXenAlNk7rPOOp1u"}
+{"nation":"El Salvador","date_year":2019,"alcohol_litre":3.2,"recorded_consumption":2.6,"unrecorded_consumption":0.6,"_id":"lcsm8wsM40EH1zKi"}
+{"nation":"Afghanistan","date_year":2019,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"liHW4auRJgi99YjL"}
+{"nation":"Poland","date_year":2017,"alcohol_litre":12.5,"recorded_consumption":11.1,"unrecorded_consumption":1.4,"_id":"lyNUfqP8pfJxvQkC"}
+{"nation":"Afghanistan","date_year":2016,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"m68ZLvIL6LBOBFtN"}
+{"nation":"Colombia","date_year":2019,"alcohol_litre":4.9,"recorded_consumption":4.2,"unrecorded_consumption":0.7,"_id":"n8jm5Oq7oMtTCfbq"}
+{"nation":"India","date_year":2017,"alcohol_litre":5.2,"recorded_consumption":2.6,"unrecorded_consumption":2.6,"_id":"nKJGuCqNnGE9MjaG"}
+{"nation":"Chile","date_year":2017,"alcohol_litre":7.2,"recorded_consumption":6.8,"unrecorded_consumption":0.4,"_id":"nVjv071Py93dOy1J"}
+{"nation":"Saudi Arabia","date_year":2017,"alcohol_litre":0.2,"recorded_consumption":0,"unrecorded_consumption":0.2,"_id":"noR6M2H6KbozRDq6"}
+{"nation":"Egypt","date_year":2017,"alcohol_litre":0.2,"recorded_consumption":0.1,"unrecorded_consumption":0.1,"_id":"o0nSjCMzPoOF4345"}
+{"nation":"Portugal","date_year":2017,"alcohol_litre":11.2,"recorded_consumption":10.6,"unrecorded_consumption":0.6,"_id":"oZpT2XcUeo8tlkAz"}
+{"nation":"Italy","date_year":2016,"alcohol_litre":8.8,"recorded_consumption":8.3,"unrecorded_consumption":0.5,"_id":"pJAZUrFOoHduUkgT"}
+{"nation":"Chile","date_year":2019,"alcohol_litre":6.8,"recorded_consumption":6.4,"unrecorded_consumption":0.4,"_id":"pPe9juRir6QdSxNR"}
+{"nation":"Vietnam","date_year":2017,"alcohol_litre":9.7,"recorded_consumption":3.8,"unrecorded_consumption":5.9,"_id":"pS1pzO1k57zvHVa5"}
+{"nation":"Bangladesh","date_year":2016,"alcohol_litre":0,"recorded_consumption":0,"unrecorded_consumption":0,"_id":"pY2vRf1TCvr3bLGr"}
+{"nation":"Cuba","date_year":2017,"alcohol_litre":6.3,"recorded_consumption":5,"unrecorded_consumption":1.3,"_id":"qb51Fdj3PdipC3aF"}
+{"nation":"Nigeria","date_year":2019,"alcohol_litre":4.2,"recorded_consumption":2.9,"unrecorded_consumption":1.3,"_id":"qgwV8eB9tYE3r0CZ"}
+{"nation":"Turkey","date_year":2016,"alcohol_litre":2.4,"recorded_consumption":1.7,"unrecorded_consumption":0.7,"_id":"sK6aiMQ4YDkgLXqL"}
+{"nation":"Ivory Coast","date_year":2019,"alcohol_litre":2.8,"recorded_consumption":1.9,"unrecorded_consumption":0.9,"_id":"scwHQerXxcXufHgp"}
+{"nation":"China","date_year":2019,"alcohol_litre":5.7,"recorded_consumption":4.8,"unrecorded_consumption":0.9,"_id":"tbHRJ8HKnnjTnPwK"}
+{"nation":"Italy","date_year":2017,"alcohol_litre":8.4,"recorded_consumption":7.9,"unrecorded_consumption":0.5,"_id":"tiBcqMwqiV1x02EH"}
+{"nation":"Serbia","date_year":2016,"alcohol_litre":8.5,"recorded_consumption":7.7,"unrecorded_consumption":0.8,"_id":"u6EQK0BERcUNuZ0R"}
+{"nation":"Serbia","date_year":2017,"alcohol_litre":8.1,"recorded_consumption":7.3,"unrecorded_consumption":0.8,"_id":"ujP9OHPDablrIiBm"}
+{"nation":"Iran","date_year":2017,"alcohol_litre":1,"recorded_consumption":0,"unrecorded_consumption":1,"_id":"uy9EL7MH80fMXEHc"}
+{"nation":"Ecuador","date_year":2016,"alcohol_litre":5.1,"recorded_consumption":4.5,"unrecorded_consumption":0.6,"_id":"vddzLo4qMhPEU43Z"}
+{"nation":"Israel","date_year":2017,"alcohol_litre":3.4,"recorded_consumption":3.1,"unrecorded_consumption":0.3,"_id":"wA46l09ZAIUe74cR"}
+{"nation":"Czech Republic","date_year":2019,"alcohol_litre":13.3,"recorded_consumption":12.9,"unrecorded_consumption":0.4,"_id":"wcSUWV2jwhlNBIig"}
+{"nation":"Egypt","date_year":2019,"alcohol_litre":0.2,"recorded_consumption":0.1,"unrecorded_consumption":0.1,"_id":"wnOQntR2NV2RGkyE"}
+{"nation":"Spain","date_year":2016,"alcohol_litre":10.4,"recorded_consumption":9.9,"unrecorded_consumption":0.5,"_id":"xWtJMM7VySKGQz0v"}
+{"nation":"Morocco","date_year":2016,"alcohol_litre":0.8,"recorded_consumption":0.6,"unrecorded_consumption":0.2,"_id":"xbbSirQT48uhwCqS"}
+{"nation":"Ivory Coast","date_year":2016,"alcohol_litre":3.4,"recorded_consumption":2.5,"unrecorded_consumption":0.9,"_id":"xcAhUMFh5yRaaZYW"}
+{"nation":"Nigeria","date_year":2016,"alcohol_litre":5,"recorded_consumption":3.7,"unrecorded_consumption":1.3,"_id":"xiIzQB3SxjI9Xc6b"}
+{"nation":"DR Congo","date_year":2017,"alcohol_litre":2.8,"recorded_consumption":1.8,"unrecorded_consumption":1,"_id":"xnkvyWVB7OKN5kOL"}
+{"nation":"United Arab Emirates","date_year":2016,"alcohol_litre":4.4,"recorded_consumption":3.6,"unrecorded_consumption":0.8,"_id":"xnrlIoq3gvCsQaPF"}
+{"nation":"Ivory Coast","date_year":2017,"alcohol_litre":3.1,"recorded_consumption":2.2,"unrecorded_consumption":0.9,"_id":"xxUnC0zpvyR2efqy"}
+{"nation":"Bulgaria","date_year":2017,"alcohol_litre":12.3,"recorded_consumption":11.7,"unrecorded_consumption":0.6,"_id":"yB9C3xc1M6Vjn7Sf"}
+{"nation":"Russia","date_year":2019,"alcohol_litre":10.4,"recorded_consumption":7.1,"unrecorded_consumption":3.3,"_id":"yDGo8qqetewT7WUz"}
+{"nation":"Portugal","date_year":2019,"alcohol_litre":10.8,"recorded_consumption":10.2,"unrecorded_consumption":0.6,"_id":"yJsPoEUUgnXUssYs"}
+{"nation":"Pakistan","date_year":2019,"alcohol_litre":0.3,"recorded_consumption":0,"unrecorded_consumption":0.3,"_id":"yKEjVhDLxrIs3INs"}
+{"nation":"Argentina","date_year":2019,"alcohol_litre":8,"recorded_consumption":7.6,"unrecorded_consumption":0.4,"_id":"yfJ2wuIgf4Kf8n9s"}
+{"nation":"Angola","date_year":2016,"alcohol_litre":7,"recorded_consumption":6.1,"unrecorded_consumption":0.9,"_id":"ygApqr6IJu2bla0v"}
+{"nation":"Peru","date_year":2019,"alcohol_litre":7.5,"recorded_consumption":5.7,"unrecorded_consumption":1.8,"_id":"z2W3Sjkdoy0kHPG3"}
+{"nation":"Ecuador","date_year":2019,"alcohol_litre":4.4,"recorded_consumption":3.8,"unrecorded_consumption":0.6,"_id":"zgaSpIGya2mtprig"}

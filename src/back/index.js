@@ -1,4 +1,10 @@
 import "dotenv/config";
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const util = require('util');
+if (!util.isDate)   util.isDate   = (o) => o instanceof Date;
+if (!util.isRegExp) util.isRegExp = (o) => o instanceof RegExp;
+if (!util.isArray)  util.isArray  = Array.isArray;
 
 import express from 'express';
 import cors from 'cors';
