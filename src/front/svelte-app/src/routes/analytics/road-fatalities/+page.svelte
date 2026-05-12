@@ -721,59 +721,15 @@
         font-size: 1.2rem;
     }
 
-    .sos-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 1rem;
-        font-size: 0.85rem;
-    }
-
-    .sos-table th,
-    .sos-table td {
-        border: 1px solid #374151;
-        padding: 0.5rem;
-        text-align: left;
-    }
-
-    .sos-table th {
-        background: #1f2937;
-        color: #fbbf24;
-    }
-
-    .sos-table td {
-        color: #e5e7eb;
-    }
-
     .api-error {
         color: #f87171;
         font-weight: 600;
-    }
-
-    .sos-table-scroll {
-        overflow-x: auto;
-        margin-top: 0.4rem;
     }
 
     .echarts-sos-chart {
         width: 100%;
         height: 430px;
         margin-top: 1rem;
-    }
-
-    .sos-table-details {
-        margin-top: 1rem;
-    }
-
-    .sos-table-details summary {
-        cursor: pointer;
-        color: #60a5fa;
-        font-size: 0.85rem;
-        padding: 0.3rem 0;
-        user-select: none;
-    }
-
-    .sos-table-details summary:hover {
-        color: #93c5fd;
     }
 </style>
 
@@ -863,18 +819,6 @@
             {#if sos12Data.dataSource === 'api'}
                 <div id="sos12-bar" class="echarts-sos-chart"></div>
             {/if}
-            {#if sos12Data.data?.length}
-                {@const headers12 = sos12Data.fieldsShown?.length ? sos12Data.fieldsShown : Object.keys(sos12Data.data[0]).slice(0, 6)}
-                <details class="sos-table-details">
-                    <summary>Ver tabla de datos ({sos12Data.data.length} de {sos12Data.count} registros)</summary>
-                    <div class="sos-table-scroll">
-                        <table class="sos-table">
-                            <thead><tr>{#each headers12 as key}<th>{key}</th>{/each}</tr></thead>
-                            <tbody>{#each sos12Data.data as row}<tr>{#each headers12 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>{/each}</tbody>
-                        </table>
-                    </div>
-                </details>
-            {/if}
         </div>
         {/if}
 
@@ -890,18 +834,6 @@
             {/if}
             {#if sos14Data.dataSource === 'api'}
                 <div id="sos14-treemap" class="echarts-sos-chart"></div>
-            {/if}
-            {#if sos14Data.data?.length}
-                {@const headers14 = sos14Data.fieldsShown?.length ? sos14Data.fieldsShown : Object.keys(sos14Data.data[0]).slice(0, 6)}
-                <details class="sos-table-details">
-                    <summary>Ver tabla de datos ({sos14Data.data.length} de {sos14Data.count} registros)</summary>
-                    <div class="sos-table-scroll">
-                        <table class="sos-table">
-                            <thead><tr>{#each headers14 as key}<th>{key}</th>{/each}</tr></thead>
-                            <tbody>{#each sos14Data.data as row}<tr>{#each headers14 as key}<td>{row[key] ?? 'N/A'}</td>{/each}</tr>{/each}</tbody>
-                        </table>
-                    </div>
-                </details>
             {/if}
         </div>
         {/if}
@@ -919,18 +851,6 @@
             {#if sos20Data.dataSource === 'api'}
                 <div id="sos20-radar" class="echarts-sos-chart"></div>
             {/if}
-            {#if sos20Data.data?.length}
-                {@const headers20 = sos20Data.fieldsShown?.length ? sos20Data.fieldsShown : Object.keys(sos20Data.data[0]).slice(0, 7)}
-                <details class="sos-table-details">
-                    <summary>Ver tabla de datos ({sos20Data.data.length} de {sos20Data.count} registros)</summary>
-                    <div class="sos-table-scroll">
-                        <table class="sos-table">
-                            <thead><tr>{#each headers20 as key}<th>{key}</th>{/each}</tr></thead>
-                            <tbody>{#each sos20Data.data as row}<tr>{#each headers20 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>{/each}</tbody>
-                        </table>
-                    </div>
-                </details>
-            {/if}
         </div>
         {/if}
 
@@ -947,18 +867,6 @@
             {#if sos21Data.dataSource === 'api'}
                 <div id="sos21-heatmap" class="echarts-sos-chart"></div>
             {/if}
-            {#if sos21Data.data?.length}
-                {@const headers21 = sos21Data.fieldsShown?.length ? sos21Data.fieldsShown : Object.keys(sos21Data.data[0]).slice(0, 8)}
-                <details class="sos-table-details">
-                    <summary>Ver tabla de datos ({sos21Data.data.length} de {sos21Data.count} registros)</summary>
-                    <div class="sos-table-scroll">
-                        <table class="sos-table">
-                            <thead><tr>{#each headers21 as key}<th>{key}</th>{/each}</tr></thead>
-                            <tbody>{#each sos21Data.data as row}<tr>{#each headers21 as key}<td>{row[key] ?? '—'}</td>{/each}</tr>{/each}</tbody>
-                        </table>
-                    </div>
-                </details>
-            {/if}
         </div>
         {/if}
 
@@ -974,18 +882,6 @@
             {/if}
             {#if sos27Data.dataSource === 'api'}
                 <div id="sos27-scatter" class="echarts-sos-chart"></div>
-            {/if}
-            {#if sos27Data.data?.length}
-                {@const headers27 = sos27Data.fieldsShown?.length ? sos27Data.fieldsShown : Object.keys(sos27Data.data[0]).slice(0, 9)}
-                <details class="sos-table-details">
-                    <summary>Ver tabla de datos ({sos27Data.data.length} de {sos27Data.count} registros)</summary>
-                    <div class="sos-table-scroll">
-                        <table class="sos-table">
-                            <thead><tr>{#each headers27 as key}<th>{key}</th>{/each}</tr></thead>
-                            <tbody>{#each sos27Data.data as row}<tr>{#each headers27 as key}<td>{row[key] ?? 'N/A'}</td>{/each}</tr>{/each}</tbody>
-                        </table>
-                    </div>
-                </details>
             {/if}
         </div>
         {/if}
