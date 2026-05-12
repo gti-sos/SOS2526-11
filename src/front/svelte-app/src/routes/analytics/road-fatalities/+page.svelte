@@ -758,7 +758,7 @@
     <div class="chart-box"><div id="oauth-pie" class="oauth-chart"></div></div>
 
     <!--
-      Nota para la corrección:
+      Apunte:
       Este bloque explica la integración real entre la API propia y Mastodon.
       Mastodon aporta el número de publicaciones públicas por hashtag.
       La API propia aporta la tasa media de mortalidad, usada para calcular weightedScore.

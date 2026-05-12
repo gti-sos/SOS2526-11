@@ -883,7 +883,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         matchedCountries: matchedCount,
         fieldsShown,
         chartData: chartData12,
-        explanation: `Combinación de tasas de natalidad por país (SOS2526-12) con mortalidad vial propia (road-fatalities-v2). El gráfico de barras compara crude_birth_rate (SOS12) con population_death_rate (propio) para ${chartData12?.xAxis?.length ?? 0} países coincidentes. La tabla incluye ambas fuentes.`,
+        explanation: `Combinación de tasas de natalidad por país (SOS2526-12) con mortalidad vial propia (road-fatalities-v2). El gráfico de barras compara crude_birth_rate (SOS12) con population_death_rate (propio) para ${chartData12?.xAxis?.length ?? 0} países coincidentes.`,
         ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
         data: combinedData,
       });
@@ -996,7 +996,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         matchedCountries: chartData14.countries.length,
         fieldsShown: FIELDS_SHOWN,
         chartData: chartData14,
-        explanation: `Combinación de aterrizajes de meteoritos por país (SOS2526-14) con mortalidad vial propia (road-fatalities-v2). El treemap dimensiona cada país según meteorite_count × population_death_rate (ambas fuentes combinadas), mostrando los ${chartData14.countries.length} países con datos en ambas fuentes. La tabla incluye ambas fuentes.`,
+        explanation: `Combinación de aterrizajes de meteoritos por país (SOS2526-14) con mortalidad vial propia (road-fatalities-v2). El treemap dimensiona cada país según meteorite_count × population_death_rate (ambas fuentes combinadas), mostrando los ${chartData14.countries.length} países con datos en ambas fuentes.`,
         ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
         data: normalizedRows,
       });
@@ -1167,7 +1167,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         matchedYears: combinedData20.length,
         fieldsShown,
         chartData: chartData20,
-        explanation: `Combinación de producción de especias por año (SOS2526-20) con mortalidad vial propia (road-fatalities-v2). El radar compara 5 métricas normalizadas (0-100) para los ${combinedData20.length} años en común: producción, consumo de especias, muertes viales, tasa vial por población y tasa vial por vehículo. El tooltip muestra las 3 especias más producidas de cada año y conteos de items y áreas. La tabla incluye todas las métricas de ambas fuentes.`,
+        explanation: `Combinación de producción de especias por año (SOS2526-20) con mortalidad vial propia (road-fatalities-v2). El radar compara 5 métricas normalizadas (0-100) para los ${combinedData20.length} años en común: producción, consumo de especias, muertes viales, tasa vial por población y tasa vial por vehículo. El tooltip muestra las 3 especias más producidas de cada año y conteos de items y áreas.`,
         ownApiFieldsUsed: ["year", "population_death_rate", "total_death"],
         data: combinedData20,
       });
@@ -1319,7 +1319,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         matchedYears: combinedData.length,
         fieldsShown: FIELDS_SHOWN,
         chartData: chartData21,
-        explanation: `Combinación de muertes por VIH/SIDA por año (SOS2526-21) con mortalidad vial propia (road-fatalities-v2). El heatmap compara indicadores normalizados (0-100) de ambas fuentes para los ${combinedData.length} años en común. La tabla incluye ambas fuentes.`,
+        explanation: `Combinación de muertes por VIH/SIDA por año (SOS2526-21) con mortalidad vial propia (road-fatalities-v2). El heatmap compara indicadores normalizados (0-100) de ambas fuentes para los ${combinedData.length} años en común.`,
         ownApiFieldsUsed: ["year", "population_death_rate", "vehicle_death_rate", "total_death"],
         data: combinedData,
       });
@@ -1427,7 +1427,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         matchedCountries: chartData27.data.length,
         fieldsShown,
         chartData: chartData27,
-        explanation: `Combinación de centrales hidroeléctricas por país (SOS2526-27) con mortalidad vial propia (road-fatalities-v2). El scatter muestra total_capacity_mw (SOS27) vs population_death_rate (propio) para ${chartData27.data.length} países con datos en ambas fuentes. La tabla incluye ambas fuentes.`,
+        explanation: `Combinación de centrales hidroeléctricas por país (SOS2526-27) con mortalidad vial propia (road-fatalities-v2). El scatter muestra total_capacity_mw (SOS27) vs population_death_rate (propio) para ${chartData27.data.length} países con datos en ambas fuentes.`,
         ownApiFieldsUsed: ["nation", "population_death_rate", "total_death"],
         data: normalizedRows,
       });
