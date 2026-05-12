@@ -38,14 +38,14 @@
             <p class="who">Miguel Ridao</p>
             <ul>
                 <li>Vimeo (OAuth2 Client Credentials) → <b>bubble</b> (Highcharts)</li>
-                <li>Dailymotion (OAuth2 Client Credentials) → <b>treemap</b> (Highcharts)</li>
+                <li>Twitch (OAuth2 Client Credentials) → <b>treemap</b> (Highcharts)</li>
                 <li>Discord (OAuth2 Client Credentials) → <b>packedbubble</b> (Highcharts)</li>
                 <li>SOS2526-12 mid-population-ages → <b>donut</b> (ApexCharts, combinado con alcohol)</li>
                 <li>soporte-sos religious-believes-stats → <b>radar</b> (ApexCharts, combinado con alcohol)</li>
                 <li>space-launches (SOS) → <b>polarArea</b> (ApexCharts, combinado con alcohol)</li>
             </ul>
             <p class="signal-note">
-                MRG integra 3 APIs externas mediante OAuth2 Client Credentials (Vimeo, Dailymotion, Discord)
+                MRG integra 3 APIs externas mediante OAuth2 Client Credentials (Vimeo, Twitch, Discord)
                 con widgets Highcharts y, además, integra 3 APIs SOS de otros grupos
                 (SOS2526-12, soporte-sos y space-launches) con widgets ApexCharts. Todos los widgets
                 cruzan los datos externos con la base de datos propia de alcohol-consumptions-per-capita-v2
@@ -82,7 +82,7 @@
             <li><code>GET /api/integrations/jfm/sos21-aids-deaths-stats</code></li>
             <li><code>GET /api/integrations/jfm/sos27-world-hydroelectric-plants</code></li>
             <li><code>GET /api/integrations/mrg/vimeo-alcohol</code></li>
-            <li><code>GET /api/integrations/mrg/dailymotion-alcohol</code></li>
+            <li><code>GET /api/integrations/mrg/twitch-alcohol</code></li>
             <li><code>GET /api/integrations/mrg/discord-alcohol</code></li>
             <li><code>GET /api/integrations/mrg/sos12-mid-population-ages</code></li>
             <li><code>GET /api/integrations/mrg/sos-religious-believes</code></li>

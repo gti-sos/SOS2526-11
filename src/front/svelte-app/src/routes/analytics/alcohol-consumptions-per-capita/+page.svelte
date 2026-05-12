@@ -108,14 +108,15 @@
             });
         }).catch(e => console.error('bubble:', e.message));
 
-        // 2. Dailymotion -> treemap
-        fetch('/api/integrations/mrg/dailymotion-alcohol').then(async r => {
+        // 2. Twitch -> treemap
+        fetch('/api/integrations/mrg/twitch-alcohol').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
             Highcharts.chart('oauth-treemap', {
                 chart: { backgroundColor: 'transparent' },
-                title: { text: 'Consumo año/país (Dailymotion + DB propia)', style: { color: '#e5c07b' } },
-                tooltip: { pointFormat: '<b>{point.name}</b>: {point.value}' },
+                title: { text: 'Consumo año/país (Twitch + DB propia)', style: { color: '#e5c07b' } },
+                subtitle: { text: `Canales Twitch sobre alcohol encontrados: ${d.twitchChannels ?? '?'}`, style: { color: '#abb2bf' } },
+                tooltip: { pointFormat: '<b>{point.name}</b>: {point.value:.1f} L' },
                 series: [{ type: 'treemap', layoutAlgorithm: 'squarified', allowTraversingTree: true, data: d.data }]
             });
         }).catch(e => console.error('treemap:', e.message));

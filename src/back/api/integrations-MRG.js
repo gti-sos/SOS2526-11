@@ -63,17 +63,17 @@ async function vimeoToken() {
   return { token: j.access_token, expiresIn: j.expires_in || 3600 };
 }
 
-async function dailymotionToken() {
-  const r = await fetchT("https://api.dailymotion.com/oauth/token", {
+async function twitchToken() {
+  const r = await fetchT("https://id.twitch.tv/oauth2/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      client_id: process.env.DAILYMOTION_CLIENT_ID,
-      client_secret: process.env.DAILYMOTION_CLIENT_SECRET,
+      client_id: process.env.TWITCH_CLIENT_ID,
+      client_secret: process.env.TWITCH_CLIENT_SECRET,
       grant_type: "client_credentials",
     }),
   });
-  if (!r.ok) throw new Error(`Dailymotion OAuth -> ${r.status}`);
+  if (!r.ok) throw new Error(`Twitch OAuth -> ${r.status}`);
   const j = await r.json();
   return { token: j.access_token, expiresIn: j.expires_in || 3600 };
 }
@@ -124,18 +124,18 @@ export function loadBackendIntegrationsMRG(app) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  // -------- 2. Dailymotion -> treemap -----------------------------------
-  app.get(BASE_URL_INTEGRATIONS_MRG + "/dailymotion-alcohol", async (req, res) => {
+  // -------- 2. Twitch -> treemap -----------------------------------
+  app.get(BASE_URL_INTEGRATIONS_MRG + "/twitch-alcohol", async (req, res) => {
     try {
-      let videoCount = 12;
+      let channelCount = 12;
       try {
-        const token = await getToken("mrg_dailymotion", dailymotionToken);
+        const token = await getToken("mrg_twitch", twitchToken);
         const ext = await fetchT(
-          "https://api.dailymotion.com/videos?search=alcohol&limit=20&fields=id,title",
-          { headers: { Authorization: `Bearer ${token}` } }
+          "https://api.twitch.tv/helix/search/channels?query=alcohol&first=20",
+          { headers: { Authorization: `Bearer ${token}`, "Client-Id": process.env.TWITCH_CLIENT_ID } }
         ).then(r => r.json());
-        videoCount = ext.list?.length || 12;
-      } catch (e) { console.warn("Dailymotion fallback:", e.message); }
+        channelCount = ext.data?.length ?? 12;
+      } catch (e) { console.warn("Twitch fallback:", e.message); }
 
       const docs = await findAll();
       const byYear = {};
@@ -145,7 +145,7 @@ export function loadBackendIntegrationsMRG(app) {
         byYear[y].push({
           name: `${d.nation} ${y}`,
           parent: y,
-          value: (d.alcohol_litre ?? 0) * Math.log10(videoCount + 1),
+          value: Number(d.alcohol_litre ?? 0) * Math.log10(channelCount + 1),
         });
       });
       const data = [];
@@ -154,7 +154,7 @@ export function loadBackendIntegrationsMRG(app) {
         data.push(...byYear[y]);
       });
 
-      res.json({ chartType: "treemap", data });
+      res.json({ chartType: "treemap", data, twitchChannels: channelCount });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
