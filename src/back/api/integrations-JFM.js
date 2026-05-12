@@ -267,29 +267,11 @@ function buildNationMap(docs) {
 // ── Helpers SOS21 ─────────────────────────────────────────────────────
 
 
-function pickFirstExisting(row, keys) {
-  for (const key of keys) {
-    if (row && row[key] !== undefined && row[key] !== null && row[key] !== "") return row[key];
-  }
-  return null;
-}
-
 function toNumber(value) {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
 }
 
-
-
-
-
-function getAidsTotalDeaths(row) {
-  return toNumber(pickFirstExisting(row, ["aids_total_deaths", "total_deaths", "deaths", "aids_deaths", "deaths_aids", "hiv_deaths", "value", "AIDS_total_deaths", "Total_deaths"]));
-}
-
-function getAidsDeathRate(row) {
-  return toNumber(pickFirstExisting(row, ["aids_death_rate", "death_rate", "rate", "aids_rate", "hiv_death_rate", "AIDS_death_rate"]));
-}
 
 
 function normalizeTo100(value, max) {
