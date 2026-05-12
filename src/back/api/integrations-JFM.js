@@ -1167,7 +1167,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         matchedYears: combinedData20.length,
         fieldsShown,
         chartData: chartData20,
-        explanation: `Combinación de producción de especias por año (SOS2526-20) con mortalidad vial propia (road-fatalities-v2). El radar compara 5 métricas normalizadas (0-100) para los ${combinedData20.length} años en común: producción, consumo de especias, muertes viales, tasa vial por población y tasa vial por vehículo. El tooltip muestra las 3 especias más producidas de cada año y conteos de items y áreas.`,
+        explanation: `Combinación de producción de especias por año (SOS2526-20) con mortalidad vial propia (road-fatalities-v2). El radar compara 5 métricas normalizadas (0-100) para los ${combinedData20.length} años en común: producción, consumo de especias, muertes viales, tasa vial por población y tasa vial por vehículo.`,
         ownApiFieldsUsed: ["year", "population_death_rate", "total_death"],
         data: combinedData20,
       });
@@ -1196,7 +1196,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   // -------------------------------------------------------------------
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos21-aids-deaths-stats", async (req, res) => {
     const SOURCE_URL = "https://soporte-sos.onrender.com/api/v1/aids-deaths-stats";
-    const FIELDS_SHOWN = ["year", "aids_total_deaths", "aids_deaths_under5", "road_total_death", "population_death_rate", "vehicle_death_rate", "aids_death_rate", "aids_countries_count", "road_countries_count"];
+    const FIELDS_SHOWN = ["year", "hiv_aids_total_deaths", "aids_under5", "aids_5_14", "aids_15_49", "aids_50_69", "aids_70plus", "road_total_death", "population_death_rate", "vehicle_death_rate", "aids_countries_count", "road_countries_count"];
     try {
       // Fuerza la carga inicial de datos de la API externa SOS
       await fetch("https://soporte-sos.onrender.com/api/v1/aids-deaths-stats/LoadInitialData")
@@ -1222,15 +1222,15 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       for (const row of aidsItems) {
         const year = toNumber(row.year);
         if (!year) continue;
-        const deaths = getAidsTotalDeaths(row);
-        const rate = getAidsDeathRate(row);
         if (!aidsByYear.has(year)) {
-          aidsByYear.set(year, { aids_total_deaths: 0, aids_deaths_under5: 0, aids_rate_sum: 0, aids_rate_count: 0, aids_countries_count: 0 });
+          aidsByYear.set(year, { aids_under5: 0, aids_5_14: 0, aids_15_49: 0, aids_50_69: 0, aids_70plus: 0, aids_countries_count: 0 });
         }
         const e = aidsByYear.get(year);
-        e.aids_total_deaths   += deaths;
-        e.aids_deaths_under5  += toNumber(row.death_count_hiv_aids_under_5);
-        if (rate > 0) { e.aids_rate_sum += rate; e.aids_rate_count += 1; }
+        e.aids_under5  += toNumber(row.death_count_hiv_aids_under_5);
+        e.aids_5_14    += toNumber(row.death_count_hiv_aids_5_14);
+        e.aids_15_49   += toNumber(row.death_count_hiv_aids_15_49);
+        e.aids_50_69   += toNumber(row.death_count_hiv_aids_50_69);
+        e.aids_70plus  += toNumber(row.death_count_hiv_aids_70_plus);
         e.aids_countries_count += 1;
       }
 
@@ -1257,11 +1257,15 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       const combinedData = commonYears.map(year => {
         const a = aidsByYear.get(year);
         const r = roadByYear.get(year);
+        const hiv_aids_total_deaths = a.aids_under5 + a.aids_5_14 + a.aids_15_49 + a.aids_50_69 + a.aids_70plus;
         return {
           year,
-          aids_total_deaths:    a.aids_total_deaths,
-          aids_deaths_under5:   a.aids_deaths_under5,
-          aids_death_rate:      a.aids_rate_count > 0 ? Number((a.aids_rate_sum / a.aids_rate_count).toFixed(4)) : 0,
+          hiv_aids_total_deaths,
+          aids_under5:          a.aids_under5,
+          aids_5_14:            a.aids_5_14,
+          aids_15_49:           a.aids_15_49,
+          aids_50_69:           a.aids_50_69,
+          aids_70plus:          a.aids_70plus,
           aids_countries_count: a.aids_countries_count,
           road_total_death:        r.road_total_death,
           population_death_rate:   Number((r.pop_rate_sum / r.rate_count).toFixed(4)),
@@ -1271,16 +1275,18 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
       });
 
       // Heatmap normalizado (0-100) por año × métrica
-      const maxAidsUnder5     = Math.max(...combinedData.map(d => d.aids_deaths_under5), 1);
+      const maxHivTotal       = Math.max(...combinedData.map(d => d.hiv_aids_total_deaths), 1);
+      const maxAidsUnder5     = Math.max(...combinedData.map(d => d.aids_under5), 1);
       const maxRoadDeaths     = Math.max(...combinedData.map(d => d.road_total_death), 1);
       const maxPopulationRate = Math.max(...combinedData.map(d => d.population_death_rate), 1);
       const maxVehicleRate    = Math.max(...combinedData.map(d => d.vehicle_death_rate), 1);
 
       const metrics21 = [
-        { key: "aids_deaths_under5",   label: "Muertes VIH <5 años",   max: maxAidsUnder5 },
-        { key: "road_total_death",     label: "Muertes viales",         max: maxRoadDeaths },
-        { key: "population_death_rate",label: "Tasa vial población",    max: maxPopulationRate },
-        { key: "vehicle_death_rate",   label: "Tasa vial vehículo",     max: maxVehicleRate },
+        { key: "hiv_aids_total_deaths", label: "Muertes VIH/SIDA totales", max: maxHivTotal },
+        { key: "aids_under5",           label: "Muertes VIH <5 años",       max: maxAidsUnder5 },
+        { key: "road_total_death",      label: "Muertes viales",             max: maxRoadDeaths },
+        { key: "population_death_rate", label: "Tasa vial población",        max: maxPopulationRate },
+        { key: "vehicle_death_rate",    label: "Tasa vial vehículo",         max: maxVehicleRate },
       ];
 
       const heatmapData21 = [];
@@ -1319,7 +1325,7 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         matchedYears: combinedData.length,
         fieldsShown: FIELDS_SHOWN,
         chartData: chartData21,
-        explanation: `Combinación de muertes por VIH/SIDA por año (SOS2526-21) con mortalidad vial propia (road-fatalities-v2). El heatmap compara indicadores normalizados (0-100) de ambas fuentes para los ${combinedData.length} años en común.`,
+        explanation: `Combinación de muertes por VIH/SIDA desglosadas por edad (<5, 5-14, 15-49, 50-69, 70+ años) de SOS2526-21 con mortalidad vial propia (road-fatalities-v2). El heatmap compara indicadores normalizados (0-100) de ambas fuentes para los ${combinedData.length} años en común.`,
         ownApiFieldsUsed: ["year", "population_death_rate", "vehicle_death_rate", "total_death"],
         data: combinedData,
       });

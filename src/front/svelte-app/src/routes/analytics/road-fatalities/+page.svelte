@@ -77,6 +77,12 @@
         window.addEventListener('resize', () => chart.resize());
     }
 
+    function truncateText(value: any, maxLength = 100): string {
+        if (!value) return 'N/A';
+        const text = String(value);
+        return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+    }
+
     function renderSos20Radar(d: any) {
         const el = document.getElementById('sos20-radar');
         if (!el) return;
@@ -105,6 +111,8 @@
             },
             tooltip: {
                 trigger: 'item',
+                confine: true,
+                extraCssText: 'max-width:320px;white-space:normal;word-break:break-word;',
                 formatter: (info: any) => {
                     const s = info.data;
                     const raw = s.raw;
@@ -116,14 +124,15 @@
                         `Importación: <b>${raw?.spice_total_import?.toLocaleString() ?? 'N/A'} t</b><br/>` +
                         `Exportación: <b>${raw?.spice_total_export?.toLocaleString() ?? 'N/A'} t</b><br/>` +
                         `Items únicos: <b>${raw?.spice_unique_items ?? 'N/A'}</b> | Áreas: <b>${raw?.spice_unique_areas ?? 'N/A'}</b><br/>` +
-                        `Top 3 especias: <b>${raw?.spice_top_items ?? '—'}</b><br/>` +
+                        `Top especias: <b>${truncateText(raw?.spice_top_items, 100)}</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
                         `<b>road-fatalities-v2</b><br/>` +
                         `Muertes viales: <b>${raw?.road_total_death?.toLocaleString() ?? 'N/A'}</b><br/>` +
                         `Tasa vial población: <b>${raw?.population_death_rate ?? 'N/A'}</b><br/>` +
                         `Tasa vial vehículo: <b>${raw?.vehicle_death_rate ?? 'N/A'}</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
-                        `Valores normalizados 0-100 · Widget: ECharts radar`;
+                        `<div>Escala del gráfico: valores normalizados de 0 a 100</div>` +
+                        `<div>Widget: ECharts radar</div>`;
                 }
             },
             radar: {
@@ -187,10 +196,18 @@
                         `Valor real: <b>${row[metric.key]?.toLocaleString()}</b><br/>` +
                         `Valor normalizado: <b>${Number(params.value[2]).toFixed(1)} / 100</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
-                        `Muertes VIH/SIDA: <b>${row.aids_total_deaths?.toLocaleString()}</b> (${row.aids_countries_count} países)<br/>` +
-                        `Muertes viales: <b>${row.road_total_death?.toLocaleString()}</b> (${row.road_countries_count} países)<br/>` +
-                        `Tasa vial población: ${row.population_death_rate} | Tasa vial vehículo: ${row.vehicle_death_rate}<br/>` +
-                        `Tasa VIH/SIDA: ${row.aids_death_rate || 'N/A'}<br/>` +
+                        `<b>SOS2526-21 aids-deaths-stats</b><br/>` +
+                        `Muertes VIH/SIDA totales: <b>${row.hiv_aids_total_deaths?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `Menores de 5 años: <b>${row.aids_under5?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `5-14 años: <b>${row.aids_5_14?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `15-49 años: <b>${row.aids_15_49?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `50-69 años: <b>${row.aids_50_69?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `70+ años: <b>${row.aids_70plus?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `<hr style="margin:4px 0;border-color:#374151"/>` +
+                        `<b>road-fatalities-v2</b><br/>` +
+                        `Muertes viales: <b>${row.road_total_death?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `Tasa vial población: <b>${row.population_death_rate ?? 'N/A'}</b><br/>` +
+                        `Tasa vial vehículo: <b>${row.vehicle_death_rate ?? 'N/A'}</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
                         `Fuente: SOS2526-21 + road-fatalities-v2`;
                 }
