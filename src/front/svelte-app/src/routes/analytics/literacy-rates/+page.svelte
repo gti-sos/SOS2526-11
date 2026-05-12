@@ -118,62 +118,43 @@
         .catch(e => console.error('newsapi:', e.message));
 
 
-        // 2. Spotify → funnel: ranking de top tracks "literacy/education" por duración
+        // 2. Spotify → C3.js gauge: duración total acumulada de top tracks "literacy/education"
         fetch('/api/integrations/tgg/spotify-literacy')
         .then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
 
-            await import('highcharts/modules/funnel');
-
             const rawDurations = (d.series[0]?.data || []);
-            const funnelData = rawDurations
-                // @ts-ignore
-                .map((y, i) => ({
-                    name: d.categories[i] || `Track ${i + 1}`,
-                    y,
-                    artist: (d.artists || [])[i] || ''
-                }))
-                // @ts-ignore
-                .sort((a, b) => b.y - a.y);
+            // @ts-ignore
+            const totalSeconds = rawDurations.reduce((acc, v) => acc + (Number(v) || 0), 0);
+            const trackCount = rawDurations.length;
+            const maxSeconds = 1800; // referencia: 30 min de escucha
 
-            Highcharts.chart('oauth-spotify-gauge', {
-                chart: { type: 'funnel', backgroundColor: 'transparent' },
-                title: { text: 'Top tracks "literacy / education" · Spotify (ranking por duración)', style: { color: '#e5c07b' } },
-                tooltip: {
-                    // @ts-ignore
-                    formatter: function() {
-                        // @ts-ignore
-                        const artist = this.point.artist || '';
-                        // @ts-ignore
-                        return `<b>${this.point.name}</b>${artist ? '<br>' + artist : ''}<br>Duración: <b>${this.y}s</b>`;
-                    },
-                    backgroundColor: '#282c34',
-                    style: { color: '#abb2bf' }
+            c3.generate({
+                bindto: '#oauth-spotify-gauge',
+                title: { text: 'Top tracks "literacy / education" · Spotify (duración acumulada)' },
+                data: {
+                    columns: [['Duración acumulada', totalSeconds]],
+                    type: 'gauge'
                 },
-                plotOptions: {
-                    series: {
-                        dataLabels: {
-                            enabled: true,
-                            // @ts-ignore
-                            formatter: function() { return `${this.point.name}: ${this.y}s`; },
-                            softConnector: true,
-                            style: { color: '#abb2bf', fontSize: '10px', fontWeight: 'normal', textOutline: 'none' }
-                        },
-                        center: ['40%', '50%'],
-                        neckWidth: '20%',
-                        neckHeight: '25%',
-                        width: '60%'
+                gauge: {
+                    label: {
+                        // @ts-ignore
+                        format: (value) => `${value}s (${trackCount} tracks)`,
+                        show: true
+                    },
+                    min: 0,
+                    max: maxSeconds,
+                    units: ' s',
+                    width: 39
+                },
+                color: {
+                    pattern: ['#e06c75', '#e5c07b', '#98c379', '#61afef'],
+                    threshold: {
+                        values: [maxSeconds * 0.25, maxSeconds * 0.5, maxSeconds * 0.75, maxSeconds]
                     }
                 },
-                series: [{
-                    name: 'Duración',
-                    data: funnelData,
-                    colorByPoint: true,
-                    colors: ['#98c379', '#61afef', '#e06c75', '#e5c07b', '#c678dd', '#56b6c2', '#d19a66', '#abb2bf']
-                }],
-                legend: { enabled: false },
-                credits: { enabled: false }
+                size: { height: 360 }
             });
         })
         .catch(e => console.error('spotify:', e.message));
