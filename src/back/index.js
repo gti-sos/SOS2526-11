@@ -33,9 +33,6 @@ const __dirname = dirname(__filename);
 const app = express();
 const port = process.env.PORT || 8080;
 
-console.log("MASTODON_CLIENT_ID cargado:", !!process.env.MASTODON_CLIENT_ID);
-console.log("COPERNICUS_USERNAME cargado:", !!process.env.COPERNICUS_USERNAME);
-console.log("FEDEX_CLIENT_ID cargado:", !!process.env.FEDEX_CLIENT_ID);
 
 app.use(cors());
 app.use(express.json());
