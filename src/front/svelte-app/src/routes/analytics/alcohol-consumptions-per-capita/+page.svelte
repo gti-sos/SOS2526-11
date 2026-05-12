@@ -368,7 +368,7 @@
     <div class="chart-box"><div id="oauth-treemap" class="oauth-chart"></div></div>
     <div class="chart-box"><div id="oauth-packedbubble" class="oauth-chart"></div></div>
 
-    <h1 style="margin-top: 3rem;">Integraciones SOS (3 APIs de otros grupos)</h1>
+    <h1 style="margin-top: 3rem;">Integraciones SOS (4 APIs de otros grupos)</h1>
     <p style="text-align:center; color:#abb2bf; max-width:800px; margin:0 auto 1rem;">
         Widgets <strong>ApexCharts</strong> que combinan APIs SOS de otros grupos con la API propia de alcohol.
     </p>
