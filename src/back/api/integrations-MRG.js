@@ -477,4 +477,73 @@ export function loadBackendIntegrationsMRG(app) {
       res.status(500).json({ error: e.message });
     }
   });
+
+  // -------- 7. SOS2526-27 drinking-water-services -> ApexCharts bar -------
+  // Cruce por país: países que aparecen en la DB de agua potable (SOS2526-27)
+  // y en la propia DB de alcohol. Se muestra el consumo medio de alcohol
+  // para esos países, con el acceso a agua urbana en el tooltip.
+  app.get(BASE_URL_INTEGRATIONS_MRG + "/sos27-drinking-water", async (req, res) => {
+    const SOURCE_URL = "https://sos2526-27.onrender.com/api/v1/drinking-water-services";
+    try {
+      const [items, ownDocs] = await Promise.all([
+        fetchSosJsonAutoload(SOURCE_URL),
+        findAll(),
+      ]);
+
+      // Consumo medio de alcohol por país
+      const alcoholByNation = {};
+      ownDocs.forEach(d => {
+        const k = String(d.nation || "").toLowerCase().trim();
+        if (!alcoholByNation[k]) alcoholByNation[k] = { sum: 0, count: 0 };
+        alcoholByNation[k].sum += Number(d.alcohol_litre || 0);
+        alcoholByNation[k].count += 1;
+      });
+
+      // Valor más reciente (no nulo) de acceso a agua por país
+      const waterByEntity = {};
+      items.forEach(row => {
+        const val = Number(row.wat_bas_pop_residence_urban);
+        if (!row.entity || isNaN(val) || val <= 0) return;
+        const k = String(row.entity).toLowerCase().trim();
+        if (!waterByEntity[k] || row.year > waterByEntity[k].year) {
+          waterByEntity[k] = { entity: row.entity, value: val, year: row.year };
+        }
+      });
+
+      // Cruce por nombre de país
+      const matched = [];
+      Object.entries(waterByEntity).forEach(([k, water]) => {
+        const alc = alcoholByNation[k];
+        if (!alc) return;
+        matched.push({
+          country: water.entity,
+          alcoholAvg: Math.round((alc.sum / alc.count) * 10) / 10,
+          waterMillions: Math.round(water.value / 100000) / 10, // en millones
+          waterYear: water.year,
+        });
+      });
+
+      // Top 15 por consumo medio de alcohol (desc)
+      matched.sort((a, b) => b.alcoholAvg - a.alcoholAvg);
+      const top = matched.slice(0, 15);
+
+      res.json({
+        api: "SOS2526-27 drinking-water-services",
+        sourceUrl: SOURCE_URL,
+        chartType: "bar",
+        library: "ApexCharts",
+        externalApiUsed: true,
+        combinedWithOwnApi: true,
+        ownApiFieldsUsed: ["nation", "alcohol_litre"],
+        externalFieldsUsed: ["entity", "wat_bas_pop_residence_urban", "year"],
+        explanation: "Top 15 países con mayor consumo medio de alcohol que también tienen datos de acceso a agua potable urbana (SOS2526-27). El tooltip muestra la población con acceso a agua potable del año más reciente disponible.",
+        matchedCountries: matched.length,
+        labels: top.map(m => m.country),
+        series: [{ name: "Alcohol (L/cápita)", data: top.map(m => m.alcoholAvg) }],
+        waterData: top.map(m => ({ waterMillions: m.waterMillions, year: m.waterYear })),
+      });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
 }
