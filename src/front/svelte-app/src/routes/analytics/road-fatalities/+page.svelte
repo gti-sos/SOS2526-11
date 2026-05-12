@@ -59,7 +59,7 @@
                         `Valor combinado (meteoritos × tasa vial): <b>${v.value}</b><br/>` +
                         `Meteoritos: <b>${v.meteoriteCount ?? 'N/A'}</b><br/>` +
                         `Masa total: <b>${v.totalMass?.toLocaleString() ?? 'N/A'} g</b><br/>` +
-                        `Mortalidad vial: <b>${v.road_population_death_rate ?? 'N/A'}</b><br/>` +
+                        `Mortalidad vial (population_death_rate): <b>${v.road_population_death_rate ?? 'N/A'}</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
                         `Fuente: SOS2526-14 meteorite-landings + road-fatalities-v2<br/>` +
                         `Fórmula: meteorite_count × population_death_rate<br/>` +
@@ -127,9 +127,9 @@
                         `Top especias: <b>${truncateText(raw?.spice_top_items, 100)}</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
                         `<b>road-fatalities-v2</b><br/>` +
-                        `Muertes viales: <b>${raw?.road_total_death?.toLocaleString() ?? 'N/A'}</b><br/>` +
-                        `Tasa vial población: <b>${raw?.population_death_rate ?? 'N/A'}</b><br/>` +
-                        `Tasa vial vehículo: <b>${raw?.vehicle_death_rate ?? 'N/A'}</b><br/>` +
+                        `Muertes viales (total_death): <b>${raw?.road_total_death?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `Tasa vial población (population_death_rate): <b>${raw?.population_death_rate ?? 'N/A'}</b><br/>` +
+                        `Tasa vial vehículo (vehicle_death_rate): <b>${raw?.vehicle_death_rate ?? 'N/A'}</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
                         `<div>Escala del gráfico: valores normalizados de 0 a 100</div>` +
                         `<div>Widget: ECharts radar</div>`;
@@ -205,9 +205,9 @@
                         `70+ años: <b>${row.aids_70plus?.toLocaleString() ?? 'N/A'}</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
                         `<b>road-fatalities-v2</b><br/>` +
-                        `Muertes viales: <b>${row.road_total_death?.toLocaleString() ?? 'N/A'}</b><br/>` +
-                        `Tasa vial población: <b>${row.population_death_rate ?? 'N/A'}</b><br/>` +
-                        `Tasa vial vehículo: <b>${row.vehicle_death_rate ?? 'N/A'}</b><br/>` +
+                        `Muertes viales (total_death): <b>${row.road_total_death?.toLocaleString() ?? 'N/A'}</b><br/>` +
+                        `Tasa vial población (population_death_rate): <b>${row.population_death_rate ?? 'N/A'}</b><br/>` +
+                        `Tasa vial vehículo (vehicle_death_rate): <b>${row.vehicle_death_rate ?? 'N/A'}</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
                         `Fuente: SOS2526-21 + road-fatalities-v2`;
                 }
@@ -261,7 +261,7 @@
                     const v = info.data;
                     return `<b>${v.name}</b><br/>` +
                         `Capacidad total MW (SOS27): <b>${v.capacity_mw?.toLocaleString() ?? 'N/A'}</b><br/>` +
-                        `Mortalidad vial (road-fatalities-v2): <b>${v.road_population_death_rate ?? 'N/A'}</b><br/>` +
+                        `Mortalidad vial (population_death_rate): <b>${v.road_population_death_rate ?? 'N/A'}</b><br/>` +
                         `<hr style="margin:4px 0;border-color:#374151"/>` +
                         `Fuente: SOS2526-27 world-hydroelectric-plants + road-fatalities-v2<br/>` +
                         `Widget: ECharts scatter`;
@@ -369,9 +369,9 @@
                         
                         let tooltipHTML = `<div style="font-size: 12px;">`;
                         tooltipHTML += `<strong>${this.points?.[0]?.key}</strong><br/>`;
-                        tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Nivel de Ingresos: <b>${pointData.income_level}</b></span><br/>`;
-                        tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Lado de Conducción: <b>${pointData.traffic_side}</b></span><br/>`;
-                        tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Muertes Totales: <b>${pointData.total_death}</b></span><br/>`; // <--- AÑADIDO
+                        tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Nivel de ingresos (income_level): <b>${pointData.income_level}</b></span><br/>`;
+                        tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Lado de conducción (traffic_side): <b>${pointData.traffic_side}</b></span><br/>`;
+                        tooltipHTML += `<span style="color: #abb2bf; font-size: 10px;">Muertes totales (total_death): <b>${pointData.total_death}</b></span><br/>`; // <--- AÑADIDO
                         tooltipHTML += `<hr style="margin: 5px 0; border-color: #3e4451;">`;
                         
                         // @ts-ignore
@@ -392,17 +392,17 @@
                 },
                 series: [
                     {
-                        name: 'Tasa de Mortalidad por Población',
+                        name: 'Tasa de Mortalidad por Población (population_death_rate)',
                         data: populationDeathRateData,
                         color: '#e06c75'
                     },
                     {
-                        name: 'Tasa de Mortalidad por Vehículos',
+                        name: 'Tasa de Mortalidad por Vehículos (vehicle_death_rate)',
                         data: vehicleDeathRateData,
                         color: '#61afef'
                     },
                     {
-                        name: 'Tasa de Mortalidad por Distancia',
+                        name: 'Tasa de Mortalidad por Distancia (distance_death_rate)',
                         data: distanceDeathRateData,
                         color: '#98c379'
                     }
