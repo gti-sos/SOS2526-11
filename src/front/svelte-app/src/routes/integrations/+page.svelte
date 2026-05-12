@@ -58,8 +58,8 @@
             <h2>TGG — Literacy Rates</h2>
             <p class="who">Tomás Gutiérrez García</p>
             <ul>
-                <li>NewsAPI (API key) → <b>funnel</b> (Highcharts)</li>
-                <li>Spotify (Client Credentials) → <b>pyramid</b> (Highcharts)</li>
+                <li>NewsAPI (API key) → <b>spiderweb</b> (Highcharts)</li>
+                <li>Spotify (Client Credentials) → <b>funnel</b> (Highcharts)</li>
                 <li>GitHub (API pública) → <b>column</b> (Highcharts)</li>
                 <li>SOS2526-14 active-satellites → <b>donut</b> (C3.js)</li>
                 <li>SOS2526-20 coffee-stats → <b>bar</b> (C3.js)</li>

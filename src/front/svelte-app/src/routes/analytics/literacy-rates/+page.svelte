@@ -179,7 +179,7 @@
         .catch(e => console.error('spotify:', e.message));
 
 
-        // 3. GitHub → scatter: verde = países mencionados en repos de educación, azul tenue = proxy
+        // 3. GitHub → column: alfabetización por país (verde = mencionados en repos, azul = proxy)
         fetch('/api/integrations/tgg/github-literacy')
         .then(async r => {
             const d = await r.json();
@@ -190,14 +190,28 @@
                 ? `${matched} países mencionados directamente · resto marcados (proxy)`
                 : 'Sin coincidencias directas — todos los puntos son proxy';
 
+            // Transformar datos scatter {x,y,name} a formato column por país
+            const allCountries = [];
+            d.series.forEach((/** @type {any} */ s) => s.data.forEach((/** @type {any} */ pt) => {
+                if (!allCountries.includes(pt.name)) allCountries.push(pt.name);
+            }));
+            const columnSeries = d.series.map((/** @type {any} */ s) => ({
+                name: s.name,
+                color: s.color,
+                data: allCountries.map((/** @type {any} */ c) => {
+                    const pt = s.data.find((/** @type {any} */ p) => p.name === c);
+                    return pt ? pt.y : null;
+                })
+            }));
+
             // @ts-ignore
             Highcharts.chart('oauth-github-scatter', {
-                chart: { type: 'scatter', backgroundColor: 'transparent', zoomType: 'xy' },
+                chart: { type: 'column', backgroundColor: 'transparent' },
                 title: { text: `GitHub: ${(d.totalRepos || 0).toLocaleString()} repos de educación/literacy`, style: { color: '#e5c07b' } },
                 subtitle: { text: subtitle, style: { color: '#abb2bf' } },
                 xAxis: {
-                    title: { text: 'Brecha de género (%)', style: { color: '#abb2bf' } },
-                    labels: { style: { color: '#abb2bf' } },
+                    categories: allCountries,
+                    labels: { style: { color: '#abb2bf' }, rotation: -45, align: 'right' },
                     gridLineColor: '#3e4451'
                 },
                 yAxis: {
@@ -208,15 +222,15 @@
                 tooltip: {
                     formatter: function() {
                         // @ts-ignore
-                        return `<b>${this.point.name}</b><br>Brecha: ${this.x}%<br>Alfabetización: ${this.y}%`;
+                        return `<b>${this.x}</b><br>${this.series.name}: <b>${this.y}%</b>`;
                     },
                     backgroundColor: '#282c34',
                     style: { color: '#abb2bf' }
                 },
                 plotOptions: {
-                    scatter: { marker: { radius: 5 } }
+                    column: { borderWidth: 0, borderRadius: 2 }
                 },
-                series: d.series,
+                series: columnSeries,
                 credits: { enabled: false }
             });
         })

@@ -32,7 +32,7 @@
 
             Highcharts.chart('individual-chart-container', {
                 chart: {
-                    type: 'column',
+                    type: 'area',
                     backgroundColor: 'transparent'
                 },
                 title: {
@@ -57,9 +57,9 @@
                     valueSuffix: ' litros'
                 },
                 plotOptions: {
-                    column: {
+                    area: {
                         stacking: 'normal',
-                        borderWidth: 0
+                        fillOpacity: 0.5
                     }
                 },
                 series: [
