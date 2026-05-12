@@ -118,23 +118,29 @@
         .catch(e => console.error('newsapi:', e.message));
 
 
-        // 2. Spotify → bar: top tracks "literacy/education" por popularidad
+        // 2. Spotify → waterfall: duración acumulada de top tracks "literacy/education"
         fetch('/api/integrations/tgg/spotify-literacy')
         .then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
 
+            const rawDurations = (d.series[0]?.data || []);
+            const waterfallData = rawDurations.map((y, i) => ({
+                name: d.categories[i] || `Track ${i + 1}`,
+                y
+            }));
+            waterfallData.push({ name: 'Total', isSum: true, color: '#e5c07b' });
+
             Highcharts.chart('oauth-spotify-gauge', {
-                chart: { type: 'bar', backgroundColor: 'transparent' },
-                title: { text: 'Top tracks "literacy / education" · Spotify', style: { color: '#e5c07b' } },
+                chart: { type: 'waterfall', backgroundColor: 'transparent' },
+                title: { text: 'Top tracks "literacy / education" · Spotify (duración acumulada)', style: { color: '#e5c07b' } },
                 xAxis: {
-                    categories: d.categories,
-                    labels: { style: { color: '#abb2bf', fontSize: '11px' } }
+                    type: 'category',
+                    labels: { style: { color: '#abb2bf', fontSize: '11px' }, rotation: -30 }
                 },
                 yAxis: {
-                    title: { text: 'Duración (segundos)', style: { color: '#abb2bf' } },
-                    labels: { style: { color: '#abb2bf' } },
-                    min: 0
+                    title: { text: 'Duración acumulada (segundos)', style: { color: '#abb2bf' } },
+                    labels: { style: { color: '#abb2bf' } }
                 },
                 tooltip: {
                     // @ts-ignore
@@ -143,12 +149,24 @@
                         const i = this.point.index;
                         const artist = (d.artists || [])[i] || '';
                         // @ts-ignore
-                        return `<b>${this.point.category}</b>${artist ? '<br>' + artist : ''}<br>Duración: <b>${this.y}s</b>`;
+                        return `<b>${this.point.name}</b>${artist ? '<br>' + artist : ''}<br>Duración: <b>${this.y}s</b>`;
                     },
                     backgroundColor: '#282c34',
                     style: { color: '#abb2bf' }
                 },
-                series: d.series,
+                plotOptions: {
+                    waterfall: {
+                        upColor: '#61afef',
+                        color: '#98c379',
+                        dataLabels: {
+                            enabled: true,
+                            // @ts-ignore
+                            formatter: function() { return this.y + 's'; },
+                            style: { color: '#abb2bf', fontSize: '10px', fontWeight: 'normal', textOutline: 'none' }
+                        }
+                    }
+                },
+                series: [{ name: 'Duración', data: waterfallData }],
                 credits: { enabled: false }
             });
         })
