@@ -125,72 +125,139 @@ export function loadBackendIntegrationsMRG(app) {
   });
 
   // -------- 2. Twitch -> treemap -----------------------------------
+  // Relación real: broadcaster_language de cada canal → países en alcohol DB
+  // Los países cuyo idioma está representado en Twitch reciben un bonus proporcional
+  // al nº de canales que lo hablan, haciendo su tile más grande en el treemap.
   app.get(BASE_URL_INTEGRATIONS_MRG + "/twitch-alcohol", async (req, res) => {
     try {
-      let channelCount = 12;
+      let channels = [];
       try {
         const token = await getToken("mrg_twitch", twitchToken);
         const ext = await fetchT(
           "https://api.twitch.tv/helix/search/channels?query=alcohol&first=20",
           { headers: { Authorization: `Bearer ${token}`, "Client-Id": process.env.TWITCH_CLIENT_ID } }
         ).then(r => r.json());
-        channelCount = ext.data?.length ?? 12;
+        channels = ext.data || [];
       } catch (e) { console.warn("Twitch fallback:", e.message); }
+
+      // Idioma Twitch → países en la DB de alcohol (nombres en inglés)
+      const LANG_NATIONS = {
+        en: ["United Kingdom", "Australia", "Ireland", "New Zealand"],
+        es: ["Spain", "Argentina", "Colombia", "Chile"],
+        de: ["Germany", "Austria"],
+        fr: ["France", "Belgium"],
+        pt: ["Brazil", "Portugal"],
+        ru: ["Russia"],
+        pl: ["Poland"],
+        nl: ["Netherlands"],
+        zh: ["China"],
+        ja: ["Japan"],
+        ko: ["South Korea"],
+        it: ["Italy"],
+        cs: ["Czech Republic"],
+        sv: ["Sweden"],
+        da: ["Denmark"],
+        fi: ["Finland"],
+        no: ["Norway"],
+        hu: ["Hungary"],
+        ro: ["Romania"],
+        bg: ["Bulgaria"],
+        tr: ["Turkey"],
+        uk: ["Ukraine"],
+        hr: ["Croatia"],
+      };
+
+      // Peso por nación: cuántos canales Twitch hablan su idioma
+      const nationBonus = {};
+      channels.forEach(ch => {
+        const lang = (ch.broadcaster_language || "").toLowerCase();
+        (LANG_NATIONS[lang] || []).forEach(n => {
+          nationBonus[n.toLowerCase()] = (nationBonus[n.toLowerCase()] || 0) + 1;
+        });
+      });
 
       const docs = await findAll();
       const byYear = {};
       docs.forEach(d => {
         const y = String(d.date_year);
         if (!byYear[y]) byYear[y] = [];
+        const nKey = (d.nation || "").toLowerCase();
+        const bonus = nationBonus[nKey] || 0;
         byYear[y].push({
           name: `${d.nation} ${y}`,
           parent: y,
-          value: Number(d.alcohol_litre ?? 0) * Math.log10(channelCount + 1),
+          // El bonus amplifica el tile: +25% por cada canal Twitch en su idioma
+          value: Math.round(Number(d.alcohol_litre ?? 0) * (1 + bonus * 0.25) * 10) / 10,
+          twitchBonus: bonus,
         });
       });
+
       const data = [];
-      Object.keys(byYear).forEach(y => {
+      Object.keys(byYear).sort().forEach(y => {
         data.push({ id: y, name: y });
         data.push(...byYear[y]);
       });
 
-      res.json({ chartType: "treemap", data, twitchChannels: channelCount });
+      const channelNames = channels.map(ch => ({
+        name: ch.display_name,
+        lang: ch.broadcaster_language,
+        live: ch.is_live,
+      }));
+
+      res.json({
+        chartType: "treemap",
+        data,
+        twitchChannels: channels.length,
+        channelNames,
+      });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   // -------- 3. Discord -> packedbubble ----------------------------------
+  // Discord actúa como proveedor OAuth2 (client_credentials → /oauth2/@me).
+  // Los datos son de la DB propia de alcohol. Los países se agrupan por nivel
+  // de consumo medio según la escala de la OMS: alto ≥10 L, medio 5-10 L, bajo <5 L.
   app.get(BASE_URL_INTEGRATIONS_MRG + "/discord-alcohol", async (req, res) => {
     try {
-      // discordMultiplier: derivado del application_id de Discord (últimos 4 dígitos → 1.0–1.9999)
-      // Si la credencial falla se usa el fallback 1.5 para que los datos sigan siendo visibles
-      let discordMultiplier = 1.5;
-      let discordAppId = null;
+      let appName = "Discord OAuth2";
+
       try {
         const token = await getToken("mrg_discord", discordToken);
         const ext = await fetchT("https://discord.com/api/oauth2/@me", {
           headers: { Authorization: `Bearer ${token}` }
         }).then(r => r.json());
-        // application.id es un Snowflake (string de dígitos); usamos sus últimos 4 como fracción
-        discordAppId = ext.application?.id ?? ext.user?.id ?? null;
-        if (discordAppId) {
-          const last4 = parseInt(String(discordAppId).slice(-4), 10);
-          discordMultiplier = 1 + last4 / 10000; // rango 1.0 – 1.9999
-        }
+        appName = ext.application?.name ?? "Discord OAuth2";
       } catch (e) { console.warn("Discord fallback:", e.message); }
 
       const docs = await findAll();
+
+      // Consumo medio por país (todos los años disponibles)
       const byCountry = {};
       docs.forEach(d => {
         const c = d.nation;
-        if (!byCountry[c]) byCountry[c] = [];
-        byCountry[c].push({
-          name: `${c} ${d.date_year}`,
-          value: Math.round(Number(d.alcohol_litre ?? 0) * discordMultiplier * 10) / 10,
-        });
+        if (!c) return;
+        if (!byCountry[c]) byCountry[c] = { sum: 0, count: 0 };
+        byCountry[c].sum += Number(d.alcohol_litre || 0);
+        byCountry[c].count += 1;
       });
-      const series = Object.entries(byCountry).map(([name, data]) => ({ name, data }));
 
-      res.json({ chartType: "packedbubble", series, discordAppId, discordMultiplier });
+      // Clasificación por niveles OMS
+      const high = [], medium = [], low = [];
+      Object.entries(byCountry).forEach(([nation, info]) => {
+        const avg = Math.round((info.sum / info.count) * 10) / 10;
+        const point = { name: nation, value: avg };
+        if (avg >= 10) high.push(point);
+        else if (avg >= 5) medium.push(point);
+        else low.push(point);
+      });
+
+      const series = [
+        { name: 'Consumo alto (≥10 L/cápita)', data: high, color: '#e06c75' },
+        { name: 'Consumo medio (5–10 L/cápita)', data: medium, color: '#e5c07b' },
+        { name: 'Consumo bajo (<5 L/cápita)', data: low, color: '#98c379' },
+      ];
+
+      res.json({ chartType: "packedbubble", series, appName });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

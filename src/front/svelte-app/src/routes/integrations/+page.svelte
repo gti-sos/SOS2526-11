@@ -39,7 +39,7 @@
             <ul>
                 <li>Vimeo (OAuth2 Client Credentials) → <b>bubble</b> (Highcharts)</li>
                 <li>Twitch (OAuth2 Client Credentials) → <b>treemap</b> (Highcharts)</li>
-                <li>Discord (OAuth2 Client Credentials) → <b>packedbubble</b> (Highcharts)</li>
+                <li>Discord (OAuth2 Client Credentials) → <b>packedbubble</b> (Highcharts) · países por nivel OMS</li>
                 <li>SOS2526-12 mid-population-ages → <b>donut</b> (ApexCharts, combinado con alcohol)</li>
                 <li>soporte-sos religious-believes-stats → <b>radar</b> (ApexCharts, combinado con alcohol)</li>
                 <li>space-launches (SOS) → <b>polarArea</b> (ApexCharts, combinado con alcohol)</li>
@@ -58,8 +58,8 @@
             <h2>TGG — Literacy Rates</h2>
             <p class="who">Tomás Gutiérrez García</p>
             <ul>
-                <li>NewsAPI (API key) → <b>funnel</b> (Highcharts)</li>
-                <li>Spotify (Client Credentials) → <b>pyramid</b> (Highcharts)</li>
+                <li>NewsAPI (API key) → <b>spiderweb</b> (Highcharts)</li>
+                <li>Spotify (Client Credentials) → <b>gauge</b> (C3.js)</li>
                 <li>GitHub (API pública) → <b>column</b> (Highcharts)</li>
                 <li>SOS2526-14 active-satellites → <b>donut</b> (C3.js)</li>
                 <li>SOS2526-20 coffee-stats → <b>bar</b> (C3.js)</li>

@@ -32,7 +32,7 @@
 
             Highcharts.chart('individual-chart-container', {
                 chart: {
-                    type: 'column',
+                    type: 'area',
                     backgroundColor: 'transparent'
                 },
                 title: {
@@ -57,9 +57,9 @@
                     valueSuffix: ' litros'
                 },
                 plotOptions: {
-                    column: {
+                    area: {
                         stacking: 'normal',
-                        borderWidth: 0
+                        fillOpacity: 0.5
                     }
                 },
                 series: [
@@ -109,31 +109,59 @@
         }).catch(e => console.error('bubble:', e.message));
 
         // 2. Twitch -> treemap
+        // Relación: broadcaster_language de cada canal → países del DB → bonus en el treemap
         fetch('/api/integrations/mrg/twitch-alcohol').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
+
+            const names = (d.channelNames || []).map((/** @type {any} */ c) => c.name);
+            const preview = names.slice(0, 6).join(', ') + (names.length > 6 ? ` y ${names.length - 6} más` : '');
+            const subtitle = `${d.twitchChannels} canales encontrados: ${preview || '—'} · Países en su idioma aparecen amplificados`;
+
             Highcharts.chart('oauth-treemap', {
                 chart: { backgroundColor: 'transparent' },
-                title: { text: 'Consumo año/país (Twitch + DB propia)', style: { color: '#e5c07b' } },
-                subtitle: { text: `Canales Twitch sobre alcohol encontrados: ${d.twitchChannels ?? '?'}`, style: { color: '#abb2bf' } },
-                tooltip: { pointFormat: '<b>{point.name}</b>: {point.value:.1f} L' },
+                title: { text: 'Consumo de alcohol por país/año · amplificado por presencia en Twitch', style: { color: '#e5c07b' } },
+                subtitle: { text: subtitle, style: { color: '#abb2bf', fontSize: '11px' } },
+                tooltip: {
+                    formatter: function() {
+                        // @ts-ignore
+                        const pt = this.point;
+                        const bonus = pt.twitchBonus || 0;
+                        return `<b>${pt.name}</b><br/>` +
+                            `Consumo: <b>${(pt.value ?? 0).toFixed(1)} L/cápita</b><br/>` +
+                            (bonus > 0
+                                ? `🎮 <span style="color:#9146ff">${bonus} canal${bonus > 1 ? 'es' : ''} Twitch en su idioma → +${(bonus * 25)}% amplificación</span>`
+                                : `<span style="color:#7f848e">Sin canales Twitch directos en su idioma</span>`);
+                    },
+                    useHTML: true,
+                    backgroundColor: '#282c34',
+                    style: { color: '#abb2bf' }
+                },
                 series: [{ type: 'treemap', layoutAlgorithm: 'squarified', allowTraversingTree: true, data: d.data }]
             });
         }).catch(e => console.error('treemap:', e.message));
 
         // 3. Discord -> packedbubble
+        // Discord actúa como proveedor OAuth2. Los datos son de la DB propia.
+        // Países agrupados por nivel de consumo medio (escala OMS).
         fetch('/api/integrations/mrg/discord-alcohol').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
-            const subtitle = d.discordAppId
-                ? `App ID Discord: ${d.discordAppId} → multiplicador ${d.discordMultiplier.toFixed(4)}`
-                : `Sin credenciales Discord — multiplicador fallback ${d.discordMultiplier}`;
             Highcharts.chart('oauth-packedbubble', {
                 chart: { type: 'packedbubble', backgroundColor: 'transparent' },
-                title: { text: 'Consumo agrupado por país (Discord + DB propia)', style: { color: '#e5c07b' } },
-                subtitle: { text: subtitle, style: { color: '#abb2bf' } },
-                tooltip: { useHTML: true, pointFormat: '<b>{point.name}</b>: {point.value} L' },
-                plotOptions: { packedbubble: { minSize: '20%', maxSize: '100%', layoutAlgorithm: { gravitationalConstant: 0.05 } } },
+                title: { text: 'Consumo de alcohol por país · Autenticado vía Discord OAuth2', style: { color: '#e5c07b' } },
+                subtitle: { text: `Países agrupados por nivel de consumo medio (escala OMS) · App: ${d.appName}`, style: { color: '#abb2bf', fontSize: '11px' } },
+                tooltip: {
+                    useHTML: true,
+                    formatter: function() {
+                        // @ts-ignore
+                        const pt = this.point;
+                        return `<b>${pt.name}</b><br/>Consumo medio: <b>${pt.value} L/cápita</b>`;
+                    },
+                    backgroundColor: '#282c34',
+                    style: { color: '#abb2bf' }
+                },
+                plotOptions: { packedbubble: { minSize: '15%', maxSize: '80%', layoutAlgorithm: { gravitationalConstant: 0.05 } } },
                 series: d.series,
                 legend: { itemStyle: { color: '#abb2bf' } }
             });
