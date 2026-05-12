@@ -8,6 +8,41 @@ import { dbLiteracy as db } from "./db.js";
 
 export const BASE_URL_INTEGRATIONS_TGG = "/api/integrations/tgg";
 
+// Nombre de país (DB) → ISO 3166-1 alpha-2 (para llamadas a Spotify search por market)
+const COUNTRY_TO_ISO = {
+  "Afghanistan":"AF","Albania":"AL","Algeria":"DZ","Angola":"AO","Antigua and Barbuda":"AG",
+  "Argentina":"AR","Armenia":"AM","Azerbaijan":"AZ","Bahrain":"BH","Bangladesh":"BD",
+  "Barbados":"BB","Belarus":"BY","Benin":"BJ","Bhutan":"BT","Bolivia":"BO",
+  "Bosnia and Herzegovina":"BA","Botswana":"BW","Brazil":"BR","Brunei":"BN","Bulgaria":"BG",
+  "Burkina Faso":"BF","Burundi":"BI","Cambodia":"KH","Cameroon":"CM","Cape Verde":"CV",
+  "Central African Republic":"CF","Chad":"TD","Chile":"CL","China":"CN","Colombia":"CO",
+  "Comoros":"KM","Congo":"CG","DR Congo":"CD","Costa Rica":"CR","Ivory Coast":"CI",
+  "Croatia":"HR","Cuba":"CU","Cyprus":"CY","Czech Republic":"CZ","Dominican Republic":"DO",
+  "Ecuador":"EC","Egypt":"EG","El Salvador":"SV","Equatorial Guinea":"GQ","Eritrea":"ER",
+  "Estonia":"EE","Ethiopia":"ET","Fiji":"FJ","Gabon":"GA","Gambia":"GM","Georgia":"GE",
+  "Ghana":"GH","Greece":"GR","Grenada":"GD","Guatemala":"GT","Guinea":"GN","Guinea-Bissau":"GW",
+  "Guyana":"GY","Haiti":"HT","Honduras":"HN","Hungary":"HU","India":"IN","Indonesia":"ID",
+  "Iran":"IR","Iraq":"IQ","Israel":"IL","Italy":"IT","Jamaica":"JM","Jordan":"JO",
+  "Kazakhstan":"KZ","Kenya":"KE","North Korea":"KP","Kuwait":"KW","Kyrgyzstan":"KG",
+  "Laos":"LA","Latvia":"LV","Lebanon":"LB","Lesotho":"LS","Liberia":"LR","Libya":"LY",
+  "Lithuania":"LT","Madagascar":"MG","Malawi":"MW","Malaysia":"MY","Maldives":"MV",
+  "Mali":"ML","Malta":"MT","Marshall Islands":"MH","Mauritania":"MR","Mauritius":"MU",
+  "Mexico":"MX","Moldova":"MD","Mongolia":"MN","Montenegro":"ME","Morocco":"MA",
+  "Mozambique":"MZ","Myanmar":"MM","Namibia":"NA","Nepal":"NP","Nicaragua":"NI",
+  "Niger":"NE","Nigeria":"NG","North Macedonia":"MK","Oman":"OM","Pakistan":"PK",
+  "Palau":"PW","Panama":"PA","Papua New Guinea":"PG","Paraguay":"PY","Peru":"PE",
+  "Philippines":"PH","Poland":"PL","Portugal":"PT","Palestine":"PS","Qatar":"QA",
+  "Romania":"RO","Russia":"RU","Rwanda":"RW","Samoa":"WS","San Marino":"SM",
+  "Sao Tome and Principe":"ST","Saudi Arabia":"SA","Senegal":"SN","Serbia":"RS",
+  "Seychelles":"SC","Sierra Leone":"SL","Singapore":"SG","Slovenia":"SI","South Africa":"ZA",
+  "South Sudan":"SS","Spain":"ES","Sri Lanka":"LK","Sudan":"SD","Suriname":"SR",
+  "Eswatini":"SZ","Syria":"SY","Taiwan":"TW","Tajikistan":"TJ","Tanzania":"TZ",
+  "Thailand":"TH","Timor-Leste":"TL","Togo":"TG","Tonga":"TO","Trinidad and Tobago":"TT",
+  "Tunisia":"TN","Turkey":"TR","Turkmenistan":"TM","Uganda":"UG","Ukraine":"UA",
+  "United Arab Emirates":"AE","Uruguay":"UY","Uzbekistan":"UZ","Vanuatu":"VU",
+  "Venezuela":"VE","Vietnam":"VN","Yemen":"YE","Zambia":"ZM","Zimbabwe":"ZW"
+};
+
 export function loadBackendIntegrationsTGG(app) {
 
   const findAll = () => new Promise((res, rej) =>
@@ -41,84 +76,126 @@ export function loadBackendIntegrationsTGG(app) {
       ];
 
       res.json({
-        chartType: "polar",
         articlesCount,
         categories,
         series: [{ name: "Indicadores educativos", data: values }]
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
-  // Mapeo ISO 3166-1 alpha-2 → nombre de país usado en la DB
-  const ISO_TO_COUNTRY = {
-    AF:"Afghanistan",AL:"Albania",DZ:"Algeria",AO:"Angola",AG:"Antigua and Barbuda",
-    AR:"Argentina",AM:"Armenia",AZ:"Azerbaijan",BH:"Bahrain",BD:"Bangladesh",
-    BB:"Barbados",BY:"Belarus",BJ:"Benin",BT:"Bhutan",BO:"Bolivia",
-    BA:"Bosnia and Herzegovina",BW:"Botswana",BR:"Brazil",BN:"Brunei",BG:"Bulgaria",
-    BF:"Burkina Faso",BI:"Burundi",KH:"Cambodia",CM:"Cameroon",CV:"Cape Verde",
-    CF:"Central African Republic",TD:"Chad",CL:"Chile",CN:"China",CO:"Colombia",
-    KM:"Comoros",CG:"Congo",CD:"DR Congo",CR:"Costa Rica",CI:"Ivory Coast",
-    HR:"Croatia",CU:"Cuba",CY:"Cyprus",CZ:"Czech Republic",DO:"Dominican Republic",
-    EC:"Ecuador",EG:"Egypt",SV:"El Salvador",GQ:"Equatorial Guinea",ER:"Eritrea",
-    EE:"Estonia",ET:"Ethiopia",FJ:"Fiji",GA:"Gabon",GM:"Gambia",GE:"Georgia",
-    GH:"Ghana",GR:"Greece",GD:"Grenada",GT:"Guatemala",GN:"Guinea",GW:"Guinea-Bissau",
-    GY:"Guyana",HT:"Haiti",HN:"Honduras",HU:"Hungary",IN:"India",ID:"Indonesia",
-    IR:"Iran",IQ:"Iraq",IL:"Israel",IT:"Italy",JM:"Jamaica",JO:"Jordan",
-    KZ:"Kazakhstan",KE:"Kenya",KP:"North Korea",KW:"Kuwait",KG:"Kyrgyzstan",
-    LA:"Laos",LV:"Latvia",LB:"Lebanon",LS:"Lesotho",LR:"Liberia",LY:"Libya",
-    LT:"Lithuania",MG:"Madagascar",MW:"Malawi",MY:"Malaysia",MV:"Maldives",
-    ML:"Mali",MT:"Malta",MH:"Marshall Islands",MR:"Mauritania",MU:"Mauritius",
-    MX:"Mexico",MD:"Moldova",MN:"Mongolia",ME:"Montenegro",MA:"Morocco",
-    MZ:"Mozambique",MM:"Myanmar",NA:"Namibia",NP:"Nepal",NI:"Nicaragua",
-    NE:"Niger",NG:"Nigeria",MK:"North Macedonia",OM:"Oman",PK:"Pakistan",
-    PW:"Palau",PA:"Panama",PG:"Papua New Guinea",PY:"Paraguay",PE:"Peru",
-    PH:"Philippines",PL:"Poland",PT:"Portugal",PS:"Palestine",QA:"Qatar",
-    RO:"Romania",RU:"Russia",RW:"Rwanda",WS:"Samoa",SM:"San Marino",
-    ST:"Sao Tome and Principe",SA:"Saudi Arabia",SN:"Senegal",RS:"Serbia",
-    SC:"Seychelles",SL:"Sierra Leone",SG:"Singapore",SI:"Slovenia",ZA:"South Africa",
-    SS:"South Sudan",ES:"Spain",LK:"Sri Lanka",SD:"Sudan",SR:"Suriname",
-    SZ:"Eswatini",SY:"Syria",TW:"Taiwan",TJ:"Tajikistan",TZ:"Tanzania",
-    TH:"Thailand",TL:"Timor-Leste",TG:"Togo",TO:"Tonga",TT:"Trinidad and Tobago",
-    TN:"Tunisia",TR:"Turkey",TM:"Turkmenistan",UG:"Uganda",UA:"Ukraine",
-    AE:"United Arab Emirates",UY:"Uruguay",UZ:"Uzbekistan",VU:"Vanuatu",
-    VE:"Venezuela",VN:"Vietnam",YE:"Yemen",ZM:"Zambia",ZW:"Zimbabwe"
-  };
 
-  app.get(BASE_URL_INTEGRATIONS_TGG + "/spotify-literacy", async (req, res) => {
+  // -------- Google OAuth2 setup (one-time) ----------------------------------------
+  // Visita /api/integrations/tgg/google-setup en el navegador para obtener el refresh_token
+  let googleRefreshToken = process.env.GOOGLE_REFRESH_TOKEN || null;
+
+  app.get(BASE_URL_INTEGRATIONS_TGG + "/google-setup", (req, res) => {
+    const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+    url.searchParams.set("client_id",     process.env.GOOGLE_CLIENT_ID);
+    url.searchParams.set("redirect_uri",  "http://localhost:8080/api/integrations/tgg/google-callback");
+    url.searchParams.set("response_type", "code");
+    url.searchParams.set("scope",         "https://www.googleapis.com/auth/books");
+    url.searchParams.set("access_type",   "offline");
+    url.searchParams.set("prompt",        "consent");
+    res.redirect(url.toString());
+  });
+
+  app.get(BASE_URL_INTEGRATIONS_TGG + "/google-callback", async (req, res) => {
+    const code = req.query.code;
+    if (!code) {
+      return res.status(400).send(
+        `<pre>No se recibió código.\nParámetros recibidos:\n${JSON.stringify(req.query, null, 2)}</pre>`
+      );
+    }
+    try {
+      const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          code,
+          client_id:     process.env.GOOGLE_CLIENT_ID,
+          client_secret: process.env.GOOGLE_CLIENT_SECRET,
+          redirect_uri:  "http://localhost:8080/api/integrations/tgg/google-callback",
+          grant_type:    "authorization_code"
+        })
+      }).then(r => r.json());
+
+      if (!tokenRes.refresh_token) {
+        return res.status(502).send(`No se obtuvo refresh_token: ${JSON.stringify(tokenRes)}`);
+      }
+      googleRefreshToken = tokenRes.refresh_token;
+      console.log("✅ GOOGLE_REFRESH_TOKEN:", googleRefreshToken);
+      res.send(`<h2>✅ Autorización completada</h2><p>Refresh token guardado en memoria. Añádelo al .env:</p><pre>GOOGLE_REFRESH_TOKEN=${googleRefreshToken}</pre>`);
+    } catch (e) {
+      res.status(500).send("Error: " + e.message);
+    }
+  });
+
+  // Google Books API (OAuth2 refresh_token) → libros de educación por idioma
+  // Compara: total de libros (norm. 0-100) vs alfabetización media de países que hablan ese idioma
+  app.get(BASE_URL_INTEGRATIONS_TGG + "/books-literacy", async (req, res) => {
   try {
-    const tokenRes = await fetch("https://accounts.spotify.com/api/token", {
+    // OAuth2: intercambiar refresh_token por access_token
+    if (!googleRefreshToken) {
+      return res.status(503).json({ error: "Visita /api/integrations/tgg/google-setup para autorizar Google Books." });
+    }
+
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
-      headers: {
-        "Authorization": "Basic " + Buffer.from(
-          process.env.SPOTIFY_CLIENT_ID + ":" + process.env.SPOTIFY_CLIENT_SECRET
-        ).toString("base64"),
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: "grant_type=client_credentials"
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id:     process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        refresh_token: googleRefreshToken,
+        grant_type:    "refresh_token"
+      })
     }).then(r => r.json());
 
     const accessToken = tokenRes.access_token;
-    const searchUrl = new URL("https://api.spotify.com/v1/search");
-    searchUrl.searchParams.set("q", "literacy education");
-    searchUrl.searchParams.set("type", "track");
-    searchUrl.searchParams.set("limit", "10");
-    const ext = await fetch(searchUrl.toString(), {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    }).then(r => r.json());
+    if (!accessToken) {
+      return res.status(502).json({ error: "Google OAuth2 falló", detail: tokenRes });
+    }
 
-    const tracks = (ext.tracks?.items || []).slice(0, 10);
-    const categories = tracks.map(t => {
-      const n = t.name || "";
-      return n.length > 28 ? n.substring(0, 25) + "…" : n;
-    });
-    const duration = tracks.map(t => Math.round((t.duration_ms || 0) / 1000));
-    const artists  = tracks.map(t => t.artists?.[0]?.name || "");
+    // Idiomas y países representativos de la DB
+    const LANG_COUNTRIES = {
+      "ar": ["Egypt","Algeria","Morocco","Sudan","Yemen","Iraq","Jordan","Tunisia","Libya"],
+      "es": ["Bolivia","Ecuador","Peru","Guatemala","Honduras","Nicaragua","El Salvador","Paraguay","Cuba"],
+      "fr": ["Senegal","Mali","Burkina Faso","Niger","Chad","Madagascar","Cameroon","Benin","Togo"],
+      "en": ["Nigeria","Kenya","Uganda","Tanzania","Ghana","Zambia","Zimbabwe","Malawi","Sierra Leone"],
+      "pt": ["Mozambique","Angola"],
+      "hi": ["India"],
+      "sw": ["Tanzania","Kenya","Uganda"],
+      "zh": ["China"],
+      "ru": ["Russia","Kazakhstan","Kyrgyzstan","Tajikistan","Uzbekistan","Turkmenistan"]
+    };
+    const LANG_LABELS = { ar:"Árabe", es:"Español", fr:"Francés", en:"Inglés", pt:"Portugués", hi:"Hindi", sw:"Swahili", zh:"Chino", ru:"Ruso" };
 
-    res.json({
-      chartType: "bar",
-      categories,
-      artists,
-      series: [{ name: "Duración (seg)", data: duration, color: "#1DB954" }]
-    });
+    const docs = await findAll();
+
+    // Llamadas paralelas a Google Books por idioma
+    const results = await Promise.all(Object.entries(LANG_COUNTRIES).map(async ([lang, countries]) => {
+      try {
+        const r = await fetch(
+          `https://www.googleapis.com/books/v1/volumes?q=education+literacy&langRestrict=${lang}&maxResults=1`,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        ).then(r => r.json());
+
+        const totalBooks = r.totalItems || 0;
+
+        // Alfabetización media de los países de la DB que hablan este idioma
+        const matches = docs.filter(d => countries.includes(d.country) && d.total);
+        if (!matches.length) return null;
+        const avgLiteracy = Math.round(matches.reduce((s, d) => s + d.total, 0) / matches.length * 10) / 10;
+
+        return { lang, label: LANG_LABELS[lang], totalBooks, avgLiteracy };
+      } catch { return null; }
+    }));
+
+    const data = results.filter(Boolean).sort((a, b) => a.avgLiteracy - b.avgLiteracy);
+
+    // Normalizar totalBooks a escala 0-100 para comparar con literacy
+    const maxBooks = Math.max(...data.map(d => d.totalBooks), 1);
+    data.forEach(d => { d.booksNorm = Math.round((d.totalBooks / maxBooks) * 100); });
+
+    res.json({ data });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -163,7 +240,7 @@ export function loadBackendIntegrationsTGG(app) {
         data: proxy.map(d => ({ ...toPoint(d), name: `${d.country} (proxy)` })) }
     ];
 
-    res.json({ chartType: "scatter", totalRepos, matchedCountries: [...mentioned], series });
+    res.json({ totalRepos, matchedCountries: [...mentioned], series });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -207,7 +284,6 @@ export function loadBackendIntegrationsTGG(app) {
       const satellites = Object.fromEntries(entries.map(([c, v]) => [c, v.count]));
 
       res.json({
-        chartType: "donut",
         totalSatellites: items.length,
         columns: columns.length > 0 ? columns : [["Sin coincidencias", 100]],
         satellites
@@ -245,7 +321,6 @@ export function loadBackendIntegrationsTGG(app) {
       const coffeeNorm = coffeeVals.map(v => Math.round((v / maxCoffee) * 100 * 10) / 10);
 
       res.json({
-        chartType: "bar",
         categories,
         columns: [
           ["Alfabetización (%)", ...literacyVals],
@@ -283,8 +358,6 @@ export function loadBackendIntegrationsTGG(app) {
       const casesMap = Object.fromEntries(entries.map(([c, v]) => [c, v.cases]));
 
       res.json({
-        chartType: "pie",
-        totalItems: items.length,
         columns: columns.length > 0 ? columns : [["Sin coincidencias", 100]],
         casesMap
       });
@@ -320,7 +393,6 @@ export function loadBackendIntegrationsTGG(app) {
       }
 
       res.json({
-        chartType: "scatter",
         xs: Object.keys(xs).length > 0 ? xs : { "Sin datos comunes": "x_none" },
         columns: columns.length > 0 ? columns : [["x_none", 0], ["Sin datos comunes", 0]]
       });

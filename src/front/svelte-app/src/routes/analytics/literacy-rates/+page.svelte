@@ -4,6 +4,7 @@
 
     let error = $state("");
     let loading = $state(true);
+    let spotifyError = $state("");
 
     onMount(async () => {
         const [c3Module] = await Promise.all([
@@ -118,46 +119,53 @@
         .catch(e => console.error('newsapi:', e.message));
 
 
-        // 2. Spotify → C3.js gauge: duración total acumulada de top tracks "literacy/education"
-        fetch('/api/integrations/tgg/spotify-literacy')
+        // 2. Google Books OAuth2 → libros de educación por idioma vs alfabetización media
+        fetch('/api/integrations/tgg/books-literacy')
         .then(async r => {
             const d = await r.json();
-            if (!r.ok) throw new Error(d.error || r.status);
+            if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
 
-            const rawDurations = (d.series[0]?.data || []);
-            // @ts-ignore
-            const totalSeconds = rawDurations.reduce((acc, v) => acc + (Number(v) || 0), 0);
-            const trackCount = rawDurations.length;
-            const maxSeconds = 1800; // referencia: 30 min de escucha
+            const data = /** @type {{label:string,totalBooks:number,booksNorm:number,avgLiteracy:number}[]} */ (d.data || []);
+            if (!data.length) { spotifyError = 'Google Books no devolvió datos.'; return; }
+
+            const labels = data.map(x => x.label);
 
             c3.generate({
-                bindto: '#oauth-spotify-gauge',
-                title: { text: 'Top tracks "literacy / education" · Spotify (duración acumulada)' },
+                bindto: '#oauth-spotify-chart',
                 data: {
-                    columns: [['Duración acumulada', totalSeconds]],
-                    type: 'gauge'
+                    columns: [
+                        ['Alfabetización media (%)', ...data.map(x => x.avgLiteracy)],
+                        ['Libros educación (norm.)', ...data.map(x => x.booksNorm)]
+                    ],
+                    type: 'area-spline',
+                    colors: { 'Alfabetización media (%)': '#98c379', 'Libros educación (norm.)': '#61afef' }
                 },
-                gauge: {
-                    label: {
-                        // @ts-ignore
-                        format: (value) => `${value}s (${trackCount} tracks)`,
-                        show: true
+                axis: {
+                    x: {
+                        type: 'category',
+                        categories: labels,
+                        label: { text: 'Idioma (ordenado por alfabetización ↑)', position: 'outer-center' }
                     },
-                    min: 0,
-                    max: maxSeconds,
-                    units: ' s',
-                    width: 39
-                },
-                color: {
-                    pattern: ['#e06c75', '#e5c07b', '#98c379', '#61afef'],
-                    threshold: {
-                        values: [maxSeconds * 0.25, maxSeconds * 0.5, maxSeconds * 0.75, maxSeconds]
+                    y: {
+                        label: { text: 'Valor (0 – 100)', position: 'outer-middle' },
+                        min: 0, max: 100
                     }
                 },
-                size: { height: 360 }
+                tooltip: {
+                    // @ts-ignore
+                    contents(points) {
+                        const i = points[0].index;
+                        const raw = data[i];
+                        let html = `<table class="c3-tooltip"><thead><tr><th colspan="2">${labels[i]}</th></tr></thead><tbody>`;
+                        html += `<tr><td class="name">Alfabetización media</td><td><b>${raw.avgLiteracy}%</b></td></tr>`;
+                        html += `<tr><td class="name">Libros en Google Books</td><td><b>${raw.totalBooks.toLocaleString()}</b></td></tr>`;
+                        return html + '</tbody></table>';
+                    }
+                },
+                size: { height: 380 }
             });
         })
-        .catch(e => console.error('spotify:', e.message));
+        .catch(e => { spotifyError = `Error Google Books: ${e.message}`; console.error('books:', e.message); });
 
 
         // 3. GitHub → column: alfabetización por país (verde = mencionados en repos, azul = proxy)
@@ -428,7 +436,11 @@
     </div>
 
     <div class="chart-box">
-        <div id="oauth-spotify-gauge" class="oauth-chart"></div>
+        {#if spotifyError}
+            <p class="error">{spotifyError}</p>
+        {:else}
+            <div id="oauth-spotify-chart" class="oauth-chart"></div>
+        {/if}
     </div>
 
     <div class="chart-box">
