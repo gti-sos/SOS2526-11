@@ -43,11 +43,12 @@
                 <li>SOS2526-12 mid-population-ages → <b>donut</b> (ApexCharts, combinado con alcohol)</li>
                 <li>soporte-sos religious-believes-stats → <b>radar</b> (ApexCharts, combinado con alcohol)</li>
                 <li>space-launches (SOS) → <b>polarArea</b> (ApexCharts, combinado con alcohol)</li>
+                <li>SOS2526-27 drinking-water-services → <b>bar</b> (ApexCharts, combinado con alcohol)</li>
             </ul>
             <p class="signal-note">
                 MRG integra 3 APIs externas mediante OAuth2 Client Credentials (Vimeo, Twitch, Discord)
-                con widgets Highcharts y, además, integra 3 APIs SOS de otros grupos
-                (SOS2526-12, soporte-sos y space-launches) con widgets ApexCharts. Todos los widgets
+                con widgets Highcharts y, además, integra 4 APIs SOS de otros grupos
+                (SOS2526-12, soporte-sos, space-launches y SOS2526-27) con widgets ApexCharts. Todos los widgets
                 cruzan los datos externos con la base de datos propia de alcohol-consumptions-per-capita-v2
                 a través de proxies propios accesibles bajo /api/integrations/mrg.
             </p>
@@ -87,6 +88,7 @@
             <li><code>GET /api/integrations/mrg/sos12-mid-population-ages</code></li>
             <li><code>GET /api/integrations/mrg/sos-religious-believes</code></li>
             <li><code>GET /api/integrations/mrg/sos-space-launches</code></li>
+            <li><code>GET /api/integrations/mrg/sos27-drinking-water</code></li>
             <li><code>GET /api/integrations/tgg/newsapi-education</code></li>
             <li><code>GET /api/integrations/tgg/spotify-literacy</code></li>
             <li><code>GET /api/integrations/tgg/github-literacy</code></li>

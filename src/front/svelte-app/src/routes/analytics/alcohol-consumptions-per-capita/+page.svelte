@@ -237,6 +237,43 @@
                 yaxis: { labels: { style: { colors: ['#abb2bf'] } } },
             }).render();
         } catch (e) { console.error('Space polarArea:', e.message); }
+
+        // 7. SOS2526-27 drinking-water-services -> ApexCharts bar
+        try {
+            const r = await fetch('/api/integrations/mrg/sos27-drinking-water');
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.error || r.status);
+            new ApexCharts(document.querySelector('#sos27-water-bar'), {
+                ...apexBaseTheme,
+                chart: { ...apexBaseTheme.chart, type: 'bar', height: 460 },
+                plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
+                series: d.series,
+                xaxis: {
+                    categories: d.labels,
+                    labels: { style: { colors: Array(d.labels.length).fill('#abb2bf') } }
+                },
+                yaxis: { labels: { style: { colors: ['#abb2bf'] } } },
+                title: { text: 'Consumo de alcohol · países con datos de agua potable (SOS2526-27)', style: { color: '#e5c07b' } },
+                subtitle: { text: `${d.matchedCountries} países cruzados · Top 15 por consumo`, style: { color: '#abb2bf' } },
+                tooltip: {
+                    theme: 'dark',
+                    // @ts-ignore
+                    custom: ({ dataPointIndex }) => {
+                        const w = d.waterData[dataPointIndex];
+                        const country = d.labels[dataPointIndex];
+                        const alc = d.series[0].data[dataPointIndex];
+                        return `<div style="padding:8px;background:#282c34;color:#abb2bf;font-size:13px">
+                            <b>${country}</b><br/>
+                            Alcohol: <b>${alc} L/cápita</b><br/>
+                            Acceso agua urbana: <b>${w.waterMillions}M pers.</b> (${w.year})
+                        </div>`;
+                    }
+                },
+                colors: ['#61afef'],
+                dataLabels: { enabled: false },
+                grid: { borderColor: '#3e4451' },
+            }).render();
+        } catch (e) { console.error('SOS27 water bar:', e.message); }
     });
 </script>
 
@@ -331,11 +368,12 @@
     <div class="chart-box"><div id="oauth-treemap" class="oauth-chart"></div></div>
     <div class="chart-box"><div id="oauth-packedbubble" class="oauth-chart"></div></div>
 
-    <h1 style="margin-top: 3rem;">Integraciones SOS (3 APIs de otros grupos)</h1>
+    <h1 style="margin-top: 3rem;">Integraciones SOS (4 APIs de otros grupos)</h1>
     <p style="text-align:center; color:#abb2bf; max-width:800px; margin:0 auto 1rem;">
         Widgets <strong>ApexCharts</strong> que combinan APIs SOS de otros grupos con la API propia de alcohol.
     </p>
     <div class="chart-box"><div id="sos12-donut" class="oauth-chart"></div></div>
     <div class="chart-box"><div id="sos-religious-radar" class="oauth-chart"></div></div>
     <div class="chart-box"><div id="sos-space-polar" class="oauth-chart"></div></div>
+    <div class="chart-box"><div id="sos27-water-bar" class="oauth-chart"></div></div>
 </main>
