@@ -124,10 +124,14 @@
         fetch('/api/integrations/mrg/discord-alcohol').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
+            const subtitle = d.discordAppId
+                ? `App ID Discord: ${d.discordAppId} → multiplicador ${d.discordMultiplier.toFixed(4)}`
+                : `Sin credenciales Discord — multiplicador fallback ${d.discordMultiplier}`;
             Highcharts.chart('oauth-packedbubble', {
                 chart: { type: 'packedbubble', backgroundColor: 'transparent' },
                 title: { text: 'Consumo agrupado por país (Discord + DB propia)', style: { color: '#e5c07b' } },
-                tooltip: { useHTML: true, pointFormat: '<b>{point.name}</b>: {point.value}' },
+                subtitle: { text: subtitle, style: { color: '#abb2bf' } },
+                tooltip: { useHTML: true, pointFormat: '<b>{point.name}</b>: {point.value} L' },
                 plotOptions: { packedbubble: { minSize: '20%', maxSize: '100%', layoutAlgorithm: { gravitationalConstant: 0.05 } } },
                 series: d.series,
                 legend: { itemStyle: { color: '#abb2bf' } }

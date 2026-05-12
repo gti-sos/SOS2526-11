@@ -161,14 +161,21 @@ export function loadBackendIntegrationsMRG(app) {
   // -------- 3. Discord -> packedbubble ----------------------------------
   app.get(BASE_URL_INTEGRATIONS_MRG + "/discord-alcohol", async (req, res) => {
     try {
-      let discordFactor = 10;
+      // discordMultiplier: derivado del application_id de Discord (últimos 4 dígitos → 1.0–1.9999)
+      // Si la credencial falla se usa el fallback 1.5 para que los datos sigan siendo visibles
+      let discordMultiplier = 1.5;
+      let discordAppId = null;
       try {
         const token = await getToken("mrg_discord", discordToken);
         const ext = await fetchT("https://discord.com/api/oauth2/@me", {
           headers: { Authorization: `Bearer ${token}` }
         }).then(r => r.json());
-        // Usamos el scope del token como factor simbólico
-        discordFactor = (ext.scopes?.length ?? 1) * 10;
+        // application.id es un Snowflake (string de dígitos); usamos sus últimos 4 como fracción
+        discordAppId = ext.application?.id ?? ext.user?.id ?? null;
+        if (discordAppId) {
+          const last4 = parseInt(String(discordAppId).slice(-4), 10);
+          discordMultiplier = 1 + last4 / 10000; // rango 1.0 – 1.9999
+        }
       } catch (e) { console.warn("Discord fallback:", e.message); }
 
       const docs = await findAll();
@@ -178,12 +185,12 @@ export function loadBackendIntegrationsMRG(app) {
         if (!byCountry[c]) byCountry[c] = [];
         byCountry[c].push({
           name: `${c} ${d.date_year}`,
-          value: (d.alcohol_litre ?? 0) + discordFactor / 10,
+          value: Math.round(Number(d.alcohol_litre ?? 0) * discordMultiplier * 10) / 10,
         });
       });
       const series = Object.entries(byCountry).map(([name, data]) => ({ name, data }));
 
-      res.json({ chartType: "packedbubble", series });
+      res.json({ chartType: "packedbubble", series, discordAppId, discordMultiplier });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
