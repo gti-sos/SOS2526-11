@@ -853,9 +853,8 @@
         {#if sos12Data}
         <div class="sos-integration-card">
             <h2>{sos12Data.api}</h2>
-            <p><strong>Grupo:</strong> {sos12Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos12Data.integratedBy}</p>
-            <p><strong>Fuente:</strong> {sos12Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos12Data.count}</p>
-            <p><strong>URL externa:</strong> <code>{sos12Data.sourceUrl}</code></p>
+            <p><strong>Grupo:</strong> {sos12Data.group} &nbsp;|&nbsp</p>
+            <p><strong>Registros:</strong> {sos12Data.count}</p>
             <p><strong>Widget:</strong> ECharts bar (combinado)</p>
             <p>{sos12Data.explanation}</p>
             {#if sos12Data.apiError}
@@ -882,9 +881,8 @@
         {#if sos14Data}
         <div class="sos-integration-card">
             <h2>{sos14Data.api}</h2>
-            <p><strong>Grupo:</strong> {sos14Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos14Data.integratedBy}</p>
-            <p><strong>Fuente:</strong> {sos14Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos14Data.count}</p>
-            <p><strong>URL externa:</strong> <code>{sos14Data.sourceUrl}</code></p>
+            <p><strong>Grupo:</strong> {sos14Data.group} &nbsp;|&nbsp</p>
+            <p><strong>Registros:</strong> {sos14Data.count}</p>
             <p><strong>Widget:</strong> ECharts treemap</p>
             <p>{sos14Data.explanation}</p>
             {#if sos14Data.apiError}
@@ -911,9 +909,8 @@
         {#if sos20Data}
         <div class="sos-integration-card">
             <h2>{sos20Data.api}</h2>
-            <p><strong>Grupo:</strong> {sos20Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos20Data.integratedBy}</p>
-            <p><strong>Fuente:</strong> {sos20Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos20Data.count}</p>
-            <p><strong>URL externa:</strong> <code>{sos20Data.sourceUrl}</code></p>
+            <p><strong>Grupo:</strong> {sos20Data.group} &nbsp;|&nbsp</p>
+            <p><strong>Registros:</strong> {sos20Data.count}</p>
             <p><strong>Widget:</strong> ECharts radar</p>
             <p>{sos20Data.explanation}</p>
             {#if sos20Data.apiError}
@@ -940,9 +937,8 @@
         {#if sos21Data}
         <div class="sos-integration-card">
             <h2>{sos21Data.api}</h2>
-            <p><strong>Grupo:</strong> {sos21Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos21Data.integratedBy}</p>
-            <p><strong>Fuente:</strong> {sos21Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos21Data.count}</p>
-            <p><strong>URL externa:</strong> <code>{sos21Data.sourceUrl}</code></p>
+            <p><strong>Grupo:</strong> {sos21Data.group} &nbsp;|&nbsp</p>
+            <p><strong>Registros:</strong> {sos21Data.count}</p>
             <p><strong>Widget:</strong> ECharts heatmap</p>
             <p>{sos21Data.explanation}</p>
             {#if sos21Data.apiError}
@@ -969,9 +965,8 @@
         {#if sos27Data}
         <div class="sos-integration-card">
             <h2>{sos27Data.api}</h2>
-            <p><strong>Grupo:</strong> {sos27Data.group} &nbsp;|&nbsp; <strong>Integrado por:</strong> {sos27Data.integratedBy}</p>
-            <p><strong>Fuente:</strong> {sos27Data.dataSource === 'api' ? 'API SOS real' : 'Error al consultar API'} &nbsp;|&nbsp; <strong>Registros:</strong> {sos27Data.count}</p>
-            <p><strong>URL externa:</strong> <code>{sos27Data.sourceUrl}</code></p>
+            <p><strong>Grupo:</strong> {sos27Data.group} &nbsp;|&nbsp</p>
+            <p><strong>Registros:</strong> {sos27Data.count}</p>
             <p><strong>Widget:</strong> ECharts scatter</p>
             <p>{sos27Data.explanation}</p>
             {#if sos27Data.apiError}
