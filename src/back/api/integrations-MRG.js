@@ -214,63 +214,50 @@ export function loadBackendIntegrationsMRG(app) {
   });
 
   // -------- 3. Discord -> packedbubble ----------------------------------
-  // Relación real: el Snowflake ID de Discord codifica el momento de creación de la app.
-  // Decodificamos ese timestamp para obtener el año de referencia.
-  // Calculamos la media global de consumo de alcohol en ese año y agrupamos los países
-  // en dos clusters: los que estaban por encima o por debajo de esa media en el año de referencia.
+  // Discord actúa como proveedor OAuth2 (client_credentials → /oauth2/@me).
+  // Los datos son de la DB propia de alcohol. Los países se agrupan por nivel
+  // de consumo medio según la escala de la OMS: alto ≥10 L, medio 5-10 L, bajo <5 L.
   app.get(BASE_URL_INTEGRATIONS_MRG + "/discord-alcohol", async (req, res) => {
     try {
-      const DISCORD_EPOCH = 1420070400000n; // 2015-01-01 UTC
-      let refYear = 2016; // año de referencia por defecto (fallback)
+      let appName = "Discord OAuth2";
 
       try {
         const token = await getToken("mrg_discord", discordToken);
         const ext = await fetchT("https://discord.com/api/oauth2/@me", {
           headers: { Authorization: `Bearer ${token}` }
         }).then(r => r.json());
-
-        const appId = ext.application?.id ?? ext.user?.id ?? null;
-        if (appId) {
-          // Decodificar Snowflake → timestamp → año de creación de la app
-          const timestampMs = Number((BigInt(appId) >> 22n) + DISCORD_EPOCH);
-          refYear = new Date(timestampMs).getFullYear();
-        }
+        appName = ext.application?.name ?? "Discord OAuth2";
       } catch (e) { console.warn("Discord fallback:", e.message); }
 
       const docs = await findAll();
 
-      // Media global de alcohol en el año de referencia
-      const refDocs = docs.filter(d => d.date_year === refYear);
-      const globalAvgRef = refDocs.length > 0
-        ? Math.round((refDocs.reduce((s, d) => s + Number(d.alcohol_litre || 0), 0) / refDocs.length) * 100) / 100
-        : 5.0;
-
-      // Para cada país: consumo promedio y si estaba por encima/debajo de la media en refYear
+      // Consumo medio por país (todos los años disponibles)
       const byCountry = {};
       docs.forEach(d => {
         const c = d.nation;
-        if (!byCountry[c]) byCountry[c] = { sum: 0, count: 0, refLitres: null };
+        if (!c) return;
+        if (!byCountry[c]) byCountry[c] = { sum: 0, count: 0 };
         byCountry[c].sum += Number(d.alcohol_litre || 0);
         byCountry[c].count += 1;
-        if (d.date_year === refYear) byCountry[c].refLitres = Number(d.alcohol_litre || 0);
       });
 
-      const aboveAvg = [];
-      const belowAvg = [];
+      // Clasificación por niveles OMS
+      const high = [], medium = [], low = [];
       Object.entries(byCountry).forEach(([nation, info]) => {
-        const avgLitres = Math.round((info.sum / Math.max(1, info.count)) * 10) / 10;
-        const ref = info.refLitres ?? avgLitres;
-        const point = { name: nation, value: avgLitres };
-        if (ref >= globalAvgRef) aboveAvg.push(point);
-        else belowAvg.push(point);
+        const avg = Math.round((info.sum / info.count) * 10) / 10;
+        const point = { name: nation, value: avg };
+        if (avg >= 10) high.push(point);
+        else if (avg >= 5) medium.push(point);
+        else low.push(point);
       });
 
       const series = [
-        { name: `Sobre la media en ${refYear} (>${globalAvgRef} L)`, data: aboveAvg },
-        { name: `Bajo la media en ${refYear} (<${globalAvgRef} L)`, data: belowAvg },
+        { name: 'Consumo alto (≥10 L/cápita)', data: high, color: '#e06c75' },
+        { name: 'Consumo medio (5–10 L/cápita)', data: medium, color: '#e5c07b' },
+        { name: 'Consumo bajo (<5 L/cápita)', data: low, color: '#98c379' },
       ];
 
-      res.json({ chartType: "packedbubble", series, refYear, globalAvgRef });
+      res.json({ chartType: "packedbubble", series, appName });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

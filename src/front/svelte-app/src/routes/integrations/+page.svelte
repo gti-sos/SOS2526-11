@@ -39,7 +39,7 @@
             <ul>
                 <li>Vimeo (OAuth2 Client Credentials) → <b>bubble</b> (Highcharts)</li>
                 <li>Twitch (OAuth2 Client Credentials) → <b>treemap</b> (Highcharts)</li>
-                <li>Discord (OAuth2 Client Credentials) → <b>packedbubble</b> (Highcharts)</li>
+                <li>Discord (OAuth2 Client Credentials) → <b>packedbubble</b> (Highcharts) · países por nivel OMS</li>
                 <li>SOS2526-12 mid-population-ages → <b>donut</b> (ApexCharts, combinado con alcohol)</li>
                 <li>soporte-sos religious-believes-stats → <b>radar</b> (ApexCharts, combinado con alcohol)</li>
                 <li>space-launches (SOS) → <b>polarArea</b> (ApexCharts, combinado con alcohol)</li>

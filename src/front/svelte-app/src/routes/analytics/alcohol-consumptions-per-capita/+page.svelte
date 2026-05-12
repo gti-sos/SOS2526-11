@@ -142,22 +142,21 @@
         }).catch(e => console.error('treemap:', e.message));
 
         // 3. Discord -> packedbubble
-        // Relación: Snowflake del app → año de creación → media global ese año → agrupa países
+        // Discord actúa como proveedor OAuth2. Los datos son de la DB propia.
+        // Países agrupados por nivel de consumo medio (escala OMS).
         fetch('/api/integrations/mrg/discord-alcohol').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
-            const subtitle = `Discord App registrada en ${d.refYear} · Media global ese año: ${d.globalAvgRef} L/cápita · Dos clusters: sobre/bajo esa media`;
             Highcharts.chart('oauth-packedbubble', {
                 chart: { type: 'packedbubble', backgroundColor: 'transparent' },
-                title: { text: `Consumo de alcohol agrupado por referencia Discord (${d.refYear})`, style: { color: '#e5c07b' } },
-                subtitle: { text: subtitle, style: { color: '#abb2bf', fontSize: '11px' } },
+                title: { text: 'Consumo de alcohol por país · Autenticado vía Discord OAuth2', style: { color: '#e5c07b' } },
+                subtitle: { text: `Países agrupados por nivel de consumo medio (escala OMS) · App: ${d.appName}`, style: { color: '#abb2bf', fontSize: '11px' } },
                 tooltip: {
                     useHTML: true,
                     formatter: function() {
                         // @ts-ignore
                         const pt = this.point;
-                        return `<b>${pt.name}</b><br/>Consumo medio: <b>${pt.value} L/cápita</b><br/>` +
-                            `<span style="color:#7f848e">Ref. ${d.refYear}: media global ${d.globalAvgRef} L</span>`;
+                        return `<b>${pt.name}</b><br/>Consumo medio: <b>${pt.value} L/cápita</b>`;
                     },
                     backgroundColor: '#282c34',
                     style: { color: '#abb2bf' }
