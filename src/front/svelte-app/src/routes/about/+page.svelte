@@ -28,6 +28,9 @@
                     style="border:none; border-radius:6px; margin-top:0.5rem;"
                     title="Vídeo D03 MRG"
                 ></iframe>
+                <a class="btn" href="https://drive.google.com/file/d/1SF97Ci87kgESelMb-0rrcL4esBgWP_MW/view?usp=sharing" target="_blank" rel="noopener" style="margin-top:0.75rem;">
+                    Abrir en Google Drive →
+                </a>
             </article>
 
             <article class="card">
