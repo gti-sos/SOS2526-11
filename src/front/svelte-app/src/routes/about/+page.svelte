@@ -49,8 +49,16 @@
             <article class="card">
                 <h3>José Fernández Montero</h3>
                 <p class="who">JFM — road-fatalities</p>
-                <a class="btn" href="REEMPLAZAR_CON_URL_YOUTUBE_JFM" target="_blank" rel="noopener">
-                    Ver vídeo D03 →
+                <iframe
+                    src="https://drive.google.com/file/d/11O9WGjQnkQqiFzK5Z8tZa27h5O7JT7XW/preview"
+                    width="100%"
+                    height="300"
+                    allow="autoplay"
+                    style="border:none; border-radius:6px; margin-top:0.5rem;"
+                    title="Vídeo D03 JFM"
+                ></iframe>
+                <a class="btn" href="https://drive.google.com/file/d/11O9WGjQnkQqiFzK5Z8tZa27h5O7JT7XW/view?usp=sharing" target="_blank" rel="noopener" style="margin-top:0.75rem;">
+                    Abrir en Google Drive →
                 </a>
             </article>
         </div>
