@@ -20,9 +20,14 @@
             <article class="card">
                 <h3>Miguel Ridao Gallardo</h3>
                 <p class="who">MRG — alcohol-consumptions-per-capita</p>
-                <a class="btn" href="REEMPLAZAR_CON_URL_YOUTUBE_MRG" target="_blank" rel="noopener">
-                    Ver vídeo D03 →
-                </a>
+                <iframe
+                    src="https://drive.google.com/file/d/1SF97Ci87kgESelMb-0rrcL4esBgWP_MW/preview"
+                    width="100%"
+                    height="300"
+                    allow="autoplay"
+                    style="border:none; border-radius:6px; margin-top:0.5rem;"
+                    title="Vídeo D03 MRG"
+                ></iframe>
             </article>
 
             <article class="card">

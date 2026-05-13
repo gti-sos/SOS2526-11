@@ -148,69 +148,6 @@
         await deleteAlcoholData(deleteNation.trim(), parseInt(deleteYear, 10));
     }
 
-    // Búsqueda dinámica con filtros
-    // async function searchAlcoholData() {
-    //     try {
-    //         let url = '/api/v2/alcohol-consumptions-per-capita';
-    //         let results = [];
-
-    //         if (searchParams.nation && searchParams.nation.trim()) {
-    //             const nation = encodeURIComponent(searchParams.nation.trim());
-    //             const queryParts = [];
-                
-    //             if (searchParams.date_year) queryParts.push(`date_year=${searchParams.date_year}`);
-    //             if (searchParams.from) queryParts.push(`from=${searchParams.from}`);
-    //             if (searchParams.to) queryParts.push(`to=${searchParams.to}`);
-    //             if (searchParams.offset) queryParts.push(`offset=${searchParams.offset}`);
-    //             if (searchParams.limit) queryParts.push(`limit=${searchParams.limit}`);
-                
-    //             const query = queryParts.join('&');
-    //             url = `/api/v2/alcohol-consumptions-per-capita/${nation}${query ? '?' + query : ''}`;
-    //         } else {
-    //             const queryParts = [];
-    //             if (searchParams.date_year) queryParts.push(`date_year=${searchParams.date_year}`);
-    //             // No incluir from/to en búsqueda sin nación - se filtran en frontend
-    //             if (searchParams.alcohol_litre) queryParts.push(`alcohol_litre=${searchParams.alcohol_litre}`);
-    //             if (searchParams.recorded_consumption) queryParts.push(`recorded_consumption=${searchParams.recorded_consumption}`);
-    //             if (searchParams.unrecorded_consumption) queryParts.push(`unrecorded_consumption=${searchParams.unrecorded_consumption}`);
-    //             if (searchParams.offset) queryParts.push(`offset=${searchParams.offset}`);
-    //             if (searchParams.limit) queryParts.push(`limit=${searchParams.limit}`);
-                
-    //             const query = queryParts.join('&');
-    //             url = `/api/v2/alcohol-consumptions-per-capita${query ? '?' + query : ''}`;
-    //         }
-
-    //         const res = await fetch(url);
-            
-    //         if (res.ok) {
-    //             results = await res.json();
-                
-    //             // Filtrado local para rangos de fechas si no se especifica país (igual que JFM)
-    //             if (!searchParams.nation && (searchParams.from || searchParams.to)) {
-    //                 // @ts-ignore
-    //                 results = results.filter(item => {
-    //                     if (searchParams.from && item.date_year < parseInt(searchParams.from)) return false;
-    //                     if (searchParams.to && item.date_year > parseInt(searchParams.to)) return false;
-    //                     return true;
-    //                 });
-    //             }
-                
-    //             alcoholData = results;
-    //             if(alcoholData.length > 0) {
-    //                 setMessage('Búsqueda realizada exitosamente.', 'success');
-    //             } else {
-    //                 setMessage('No se encontraron datos para esa búsqueda.', 'error');
-    //             }
-    //         } else {
-    //             const error = await res.json();
-    //             setMessage(`Error en la búsqueda: ${error.error || 'No encontrado'}`, 'error');
-    //             alcoholData = [];
-    //         }
-    //     } catch (err) {
-    //         setMessage('Error de conexión al buscar.', 'error');
-    //     }
-    // }
-    // Búsqueda dinámica con filtros
     async function searchAlcoholData() {
         try {
             let url = '/api/v2/alcohol-consumptions-per-capita';
