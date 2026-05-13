@@ -1006,14 +1006,14 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
   // 6. SOS2526-20 -> spice-stats (proxy SOS)
   // -------------------------------------------------------------------
   app.get(BASE_URL_INTEGRATIONS_JFM + "/sos20-spice-stats", async (req, res) => {
-    const SOURCE_URL = "https://sos2526-20-stable.onrender.com/api/v2/spice-stats/";
+    const SOURCE_URL = "https://sos2526-20-stable.onrender.com/api/v2/spice-stats?limit=1000&offset=0";
     try {
       // Fuerza la carga inicial de datos de la API externa SOS
       await fetch("https://sos2526-20-stable.onrender.com/api/v2/spice-stats/LoadInitialData")
         .catch(() => {});
 
       const [r, ownDocs] = await Promise.all([
-        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 30000),
+        fetchT(SOURCE_URL, { headers: { Accept: "application/json" } }, 60000),
         dbFindAll(),
       ]);
       const text = await r.text();
@@ -1151,6 +1151,13 @@ app.get(BASE_URL_INTEGRATIONS_JFM + "/fedex-fatalities", async (req, res) => {
         chartData: chartData20,
         explanation: `Combinación de producción de especias por año (SOS2526-20) con mortalidad vial propia (road-fatalities-v2). El radar compara 5 métricas normalizadas (0-100) para los ${combinedData20.length} años en común: producción, consumo de especias, muertes viales, tasa vial por población y tasa vial por vehículo.`,
         ownApiFieldsUsed: ["year", "population_death_rate", "total_death"],
+        debug: {
+          sos20RawTotal:  json.total ?? null,
+          sos20Returned:  items.length,
+          spiceYears,
+          roadYears:      [...roadByYear20.keys()].sort((a, b) => a - b),
+          commonYears20,
+        },
         data: combinedData20,
       });
     } catch (e) {
