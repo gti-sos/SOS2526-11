@@ -1,100 +1,100 @@
-{"country":"Sudan","total":60.7,"male":65.4,"female":56.1,"gender_gap":9.3,"year":2018,"_id":"0YnPqgZV24JZFU7P"}
-{"country":"Cambodia","total":80.5,"male":86.5,"female":75,"gender_gap":11.5,"year":2015,"_id":"0yYt94cbPhk8CyAn"}
-{"country":"Yemen","total":70.1,"male":85.1,"female":55,"gender_gap":30.1,"year":2015,"_id":"1JHJpx8xi9mK7Ylr"}
-{"country":"Turkey","total":96.7,"male":99.1,"female":94.4,"gender_gap":4.7,"year":2019,"_id":"1SoSrKhRwmoHXj4M"}
-{"country":"Serbia","total":99.5,"male":99.9,"female":99.1,"gender_gap":0.8,"year":2019,"_id":"39W7EVNuV0f1l1Gk"}
-{"country":"Cyprus","total":99.1,"male":99.5,"female":98.7,"gender_gap":0.8,"year":2015,"_id":"4I5Sv2AJI5HcTcSc"}
-{"country":"Kenya","total":81.5,"male":85,"female":78.2,"gender_gap":6.8,"year":2018,"_id":"4T8Gcyuusnvj7MqE"}
-{"country":"South Sudan","total":34.5,"male":40.3,"female":28.9,"gender_gap":11.4,"year":2018,"_id":"4b93o5TlFxYWGNS9"}
-{"country":"Croatia","total":99.3,"male":99.7,"female":98.9,"gender_gap":0.8,"year":2015,"_id":"5EZMIXaBnYMoMN73"}
-{"country":"Bangladesh","total":74.66,"male":76.56,"female":72.82,"gender_gap":3.72,"year":2022,"_id":"8pPCGEXRqbS3uXEI"}
-{"country":"Sri Lanka","total":92.3,"male":93,"female":91.6,"gender_gap":1.4,"year":2019,"_id":"9l32h57nqvHqIZMl"}
-{"country":"Chile","total":96.3,"male":96.3,"female":96.3,"gender_gap":0,"year":2017,"_id":"9po3hnwJeyuA6G43"}
-{"country":"DR Congo","total":77,"male":88.5,"female":66.5,"gender_gap":22,"year":2016,"_id":"9vL5GvX2ckk6MgH8"}
-{"country":"Panama","total":95.7,"male":98.8,"female":95.4,"gender_gap":3.4,"year":2019,"_id":"A8ykCoHifat4o8R0"}
-{"country":"Ivory Coast","total":89.9,"male":93.1,"female":86.7,"gender_gap":6.4,"year":2019,"_id":"AXBnZVXveduwlB1g"}
-{"country":"Vietnam","total":95.8,"male":97,"female":94.6,"gender_gap":2.4,"year":2019,"_id":"AXmoDWpNWW1v46l5"}
-{"country":"Mozambique","total":60.7,"male":72.6,"female":50.3,"gender_gap":22.3,"year":2017,"_id":"Bu34RsICqfgoN3E0"}
-{"country":"Ukraine","total":99.8,"male":99.8,"female":99.7,"gender_gap":0.1,"year":2015,"_id":"CBXEqn8zT2LdfvnX"}
-{"country":"Belarus","total":99.9,"male":99.9,"female":99.9,"gender_gap":0,"year":2019,"_id":"CuTO2Var23fai0BS"}
-{"country":"Comoros","total":58.8,"male":64.6,"female":53,"gender_gap":11.6,"year":2018,"_id":"CxkJGYxLxdPtX5ud"}
-{"country":"Singapore","total":97.5,"male":98.9,"female":96.1,"gender_gap":2.8,"year":2019,"_id":"CyEJ5xi0WnCXoUiG"}
-{"country":"Bhutan","total":66.6,"male":75,"female":57.1,"gender_gap":17.9,"year":2017,"_id":"ESryDcVwuTLL5qOg"}
-{"country":"Brazil","total":93.2,"male":93,"female":93.4,"gender_gap":0.4,"year":2018,"_id":"EfUnu4zqsLNei6Ky"}
-{"country":"United Arab Emirates","total":97.6,"male":98,"female":96.9,"gender_gap":1.1,"year":2019,"_id":"ElP7mHaw5TTjB4jf"}
-{"country":"Bolivia","total":92.5,"male":96.5,"female":88.6,"gender_gap":7.9,"year":2015,"_id":"F2Fw6d3V6wlUMwPV"}
-{"country":"Ecuador","total":93.6,"male":94.8,"female":92.5,"gender_gap":2.3,"year":2020,"_id":"F4EjhAlPiceknJKW"}
-{"country":"Burkina Faso","total":39.3,"male":49.2,"female":31,"gender_gap":18.2,"year":2018,"_id":"FlUuM5lIx876rNvu"}
-{"country":"Pakistan","total":58,"male":69.3,"female":46.5,"gender_gap":22.8,"year":2019,"_id":"Fnh9j7P89XkMqKCA"}
-{"country":"Estonia","total":99.8,"male":99.8,"female":99.8,"gender_gap":0,"year":2015,"_id":"FrMKgDQTHgDhgGrJ"}
-{"country":"Argentina","total":99,"male":98.9,"female":99.1,"gender_gap":0.2,"year":2018,"_id":"G3JFhAkrlfuCCr6j"}
-{"country":"Azerbaijan","total":99.8,"male":99.9,"female":99.7,"gender_gap":0.2,"year":2019,"_id":"HYWJ2jDalbogH9uX"}
-{"country":"Armenia","total":99.8,"male":99.8,"female":99.7,"gender_gap":0.1,"year":2020,"_id":"JlwT1OzkTlDR21BQ"}
-{"country":"Albania","total":98.1,"male":98.5,"female":97.8,"gender_gap":0.7,"year":2018,"_id":"K9UeLvPDEX5JdwfI"}
-{"country":"Jamaica","total":88.7,"male":84,"female":93.1,"gender_gap":9.1,"year":2015,"_id":"KQxYKxxQU3TVPHIn"}
-{"country":"Ethiopia","total":51.8,"male":57.2,"female":44.4,"gender_gap":12.8,"year":2017,"_id":"KWR5bxmcFKmOc6fn"}
-{"country":"North Macedonia","total":98.4,"male":99.1,"female":97.6,"gender_gap":1.5,"year":2020,"_id":"LJ3ftGbb2Qx4dSO0"}
-{"country":"Cuba","total":99.8,"male":99.9,"female":99.8,"gender_gap":0.1,"year":2015,"_id":"MYYV0FikkrLGg5IP"}
-{"country":"Bosnia and Herzegovina","total":98.5,"male":99.5,"female":97.5,"gender_gap":2,"year":2015,"_id":"Mh56gCeWWqwPHGTq"}
-{"country":"Angola","total":71.1,"male":82,"female":60.7,"gender_gap":21.3,"year":2015,"_id":"Mrlg7z1Mzpz9LhxB"}
-{"country":"Senegal","total":51.9,"male":64.8,"female":39.8,"gender_gap":25,"year":2017,"_id":"NBGlqaBssc8xHHuA"}
-{"country":"Italy","total":99.2,"male":99.4,"female":99,"gender_gap":0.4,"year":2018,"_id":"NuiI8aZKuSCypekb"}
-{"country":"Brunei","total":97.2,"male":98.1,"female":93.4,"gender_gap":4.7,"year":2018,"_id":"Nvrvx0Al5cuvHtRy"}
-{"country":"Cape Verde","total":86.8,"male":91.7,"female":82,"gender_gap":9.7,"year":2015,"_id":"O3A2ZEmbUjtYD7W6"}
-{"country":"Morocco","total":73.8,"male":83.3,"female":64.6,"gender_gap":18.7,"year":2018,"_id":"OgW5aiLDj7W257K1"}
-{"country":"Egypt","total":71.2,"male":76.5,"female":65.5,"gender_gap":11,"year":2017,"_id":"P52lFHhr5vH8ZpJw"}
-{"country":"Poland","total":99.8,"male":99.9,"female":99.7,"gender_gap":0.2,"year":2015,"_id":"QNVrJHOdbHRTGC1A"}
-{"country":"Algeria","total":81.4,"male":87.4,"female":75.3,"gender_gap":12.1,"year":2018,"_id":"QQDXwvZ5W6M3omie"}
-{"country":"Paraguay","total":94.5,"male":94.9,"female":94.2,"gender_gap":0.7,"year":2020,"_id":"QpWRZdUTqvnidoM6"}
-{"country":"Barbados","total":99.6,"male":99.6,"female":99.6,"gender_gap":0,"year":2014,"_id":"R4TuqLpdKLCOywik"}
-{"country":"Equatorial Guinea","total":95.3,"male":97.4,"female":93,"gender_gap":4.4,"year":2015,"_id":"RYll5fR6VLqErbbj"}
-{"country":"Rwanda","total":73.2,"male":77.6,"female":69.4,"gender_gap":8.2,"year":2018,"_id":"S7Lb0fDhhAwMVHln"}
-{"country":"Czech Republic","total":99,"male":99,"female":99,"gender_gap":0,"year":2011,"_id":"SjNUeqsuNDjstrjX"}
-{"country":"Kazakhstan","total":99.8,"male":99.8,"female":99.7,"gender_gap":0.1,"year":2018,"_id":"Sp84s7pAWNqpnfST"}
-{"country":"Myanmar","total":89.1,"male":92.4,"female":86.3,"gender_gap":6.1,"year":2019,"_id":"TRZM18noepClwoO8"}
-{"country":"Qatar","total":93.5,"male":92.4,"female":94.7,"gender_gap":2.3,"year":2017,"_id":"ThjGR5XhJAHZPFFM"}
-{"country":"Nicaragua","total":82.6,"male":82.4,"female":82.8,"gender_gap":0.4,"year":2015,"_id":"Uwker66zrf8xUGsG"}
-{"country":"Nepal","total":67.9,"male":78.6,"female":59.7,"gender_gap":18.9,"year":2018,"_id":"VD50ndkcszXNSsIh"}
-{"country":"Afghanistan","total":37.3,"male":52.1,"female":22.6,"gender_gap":29.5,"year":2021,"_id":"WHPMsugfbWv762xd"}
-{"country":"Spain","total":98.6,"male":99,"female":98.2,"gender_gap":0.8,"year":2020,"_id":"WReQy7zRXZRnzGz8"}
-{"country":"Antigua and Barbuda","total":99,"male":98.4,"female":99.4,"gender_gap":1,"year":2015,"_id":"Yi1GoDszkj5cktCp"}
-{"country":"Uzbekistan","total":100,"male":100,"female":100,"gender_gap":0,"year":2019,"_id":"Z2A0WFJknxYLBGaB"}
-{"country":"Burundi","total":68.4,"male":76.3,"female":61.2,"gender_gap":15.1,"year":2017,"_id":"ZDduwp8auaxkROYv"}
-{"country":"Eritrea","total":76.6,"male":84.4,"female":68.9,"gender_gap":15.5,"year":2018,"_id":"ZfNF7vnui1Z1ZuBv"}
-{"country":"Costa Rica","total":97.9,"male":97.8,"female":97.9,"gender_gap":0.1,"year":2018,"_id":"ZmvOW8QyHjA9PX8Q"}
-{"country":"Mexico","total":95.2,"male":96.1,"female":94.5,"gender_gap":1.6,"year":2020,"_id":"ZsTas0IAA6fpXGiT"}
-{"country":"Romania","total":98.8,"male":99.1,"female":98.6,"gender_gap":0.5,"year":2018,"_id":"aCy3mhw8PrI05bfL"}
-{"country":"South Africa","total":95,"male":95.5,"female":94.5,"gender_gap":1,"year":2019,"_id":"aHCUQsuxVTSzK0Bp"}
-{"country":"India","total":74.4,"male":82.4,"female":65.8,"gender_gap":16.6,"year":2018,"_id":"aHYXm8ColiUBbcnM"}
-{"country":"Bulgaria","total":98.4,"male":98.7,"female":98.1,"gender_gap":0.6,"year":2015,"_id":"ajK5bd8Vq9LqpzuK"}
-{"country":"Chad","total":22.3,"male":31.3,"female":14,"gender_gap":17.3,"year":2016,"_id":"b0fCowqLNxoqEkxt"}
-{"country":"Israel","total":97.8,"male":98.7,"female":96.8,"gender_gap":1.9,"year":2011,"_id":"bzcHOxKBeCVJTnQy"}
-{"country":"Colombia","total":95.6,"male":95.4,"female":95.9,"gender_gap":0.5,"year":2020,"_id":"c0R2wL7cTxR0eFNk"}
-{"country":"Fiji","total":99.1,"male":99.1,"female":99.1,"gender_gap":0,"year":2018,"_id":"cJGR3JFeTnVTHDKD"}
-{"country":"Slovenia","total":99.7,"male":99.7,"female":99.7,"gender_gap":0,"year":2015,"_id":"ccIRN4UEE6pftdKL"}
-{"country":"Indonesia","total":96,"male":97.4,"female":94.6,"gender_gap":2.8,"year":2020,"_id":"d8M99OTKhncQGAjN"}
-{"country":"Iran","total":85.5,"male":90.4,"female":80.8,"gender_gap":9.6,"year":2016,"_id":"dQL6blDE77XKjDL1"}
-{"country":"Spain","total":99.3,"male":98.5,"female":98.1,"gender_gap":0.6,"year":2021,"_id":"eBFfUQyLN85q0gle"}
-{"country":"Benin","total":42.4,"male":54,"female":31.1,"gender_gap":22.9,"year":2018,"_id":"eLsIcjNs845465Mv"}
-{"country":"Russia","total":99.7,"male":99.7,"female":99.7,"gender_gap":0,"year":2018,"_id":"fKEkML3rq8FlHtKj"}
-{"country":"Niger","total":35.1,"male":43.6,"female":26.7,"gender_gap":16.9,"year":2018,"_id":"g3tByTlP2xkaNSpf"}
-{"country":"Jordan","total":98.2,"male":98.6,"female":97.8,"gender_gap":0.8,"year":2018,"_id":"iTf9dwKcLnPc7boY"}
-{"country":"Dominican Republic","total":93.8,"male":93.8,"female":93.8,"gender_gap":0,"year":2016,"_id":"iZRlYs0KgvzGVX8l"}
-{"country":"El Salvador","total":89.1,"male":91.3,"female":87.3,"gender_gap":4,"year":2019,"_id":"krfqOFNnLoLmPG2X"}
-{"country":"China","total":96.8,"male":98.5,"female":95.2,"gender_gap":3.3,"year":2018,"_id":"mRzohItQMacGZZHg"}
-{"country":"Uruguay","total":98.8,"male":98.5,"female":99,"gender_gap":0.5,"year":2019,"_id":"mao9cLIGzcxYh9JS"}
-{"country":"Iraq","total":85.6,"male":91.2,"female":79.9,"gender_gap":11.3,"year":2017,"_id":"pE21O9gJoZ7uQHEK"}
-{"country":"Bahrain","total":97.5,"male":99.9,"female":94.9,"gender_gap":5,"year":2018,"_id":"ptZd6AhnQeum6XXK"}
-{"country":"Cameroon","total":77.1,"male":82.6,"female":71.6,"gender_gap":11,"year":2018,"_id":"s4n8gASeIMsobFRR"}
-{"country":"Andorra","total":100,"male":100,"female":100,"gender_gap":0,"year":2016,"_id":"sEOMCLsy0rrPiKMj"}
-{"country":"Saudi Arabia","total":97.6,"male":98.6,"female":96,"gender_gap":2.6,"year":2020,"_id":"sYVyC4Js9WWMxKnb"}
-{"country":"Portugal","total":96.1,"male":97.4,"female":95.1,"gender_gap":2.3,"year":2018,"_id":"slqtWqhs7BK27ihL"}
-{"country":"Namibia","total":91.5,"male":91.6,"female":91.4,"gender_gap":0.2,"year":2018,"_id":"sqB3jncjk47h5rGh"}
-{"country":"Philippines","total":96.3,"male":95.7,"female":96.9,"gender_gap":1.2,"year":2019,"_id":"tWuGWo2nnyityx0e"}
-{"country":"Congo","total":80.3,"male":86.1,"female":74.6,"gender_gap":11.5,"year":2018,"_id":"tnU7QRA5WQ4hnhtw"}
-{"country":"Nigeria","total":62,"male":71.3,"female":52.7,"gender_gap":18.6,"year":2018,"_id":"uRQFmBQjoJtiHKxM"}
-{"country":"Peru","total":94.5,"male":97,"female":92,"gender_gap":5,"year":2020,"_id":"wb2PgiKVozzaP3hs"}
-{"country":"Zambia","total":86.7,"male":90.6,"female":83.1,"gender_gap":7.5,"year":2018,"_id":"yIFPVJcT2fCFr4pS"}
-{"country":"Botswana","total":88.5,"male":88,"female":88.9,"gender_gap":0.9,"year":2015,"_id":"yWDzODoazw1s8IHr"}
-{"country":"Zimbabwe","total":86.5,"male":88.5,"female":84.6,"gender_gap":3.9,"year":2015,"_id":"yqWC1Ue7h69YfDAJ"}
-{"country":"Central African Republic","total":37.4,"male":49.5,"female":25.8,"gender_gap":23.7,"year":2018,"_id":"zgrTQJHZBQ8UO4qB"}
+{"country":"Nigeria","total":62,"male":71.3,"female":52.7,"gender_gap":18.6,"year":2018,"_id":"0ErwVG7wUXwBbXwD"}
+{"country":"Nepal","total":67.9,"male":78.6,"female":59.7,"gender_gap":18.9,"year":2018,"_id":"1ct6ygW4pNcwVxYS"}
+{"country":"DR Congo","total":77,"male":88.5,"female":66.5,"gender_gap":22,"year":2016,"_id":"1fwXLkptkCBwXKV9"}
+{"country":"Panama","total":95.7,"male":98.8,"female":95.4,"gender_gap":3.4,"year":2019,"_id":"1oeEqmtK8JIFyoYu"}
+{"country":"Central African Republic","total":37.4,"male":49.5,"female":25.8,"gender_gap":23.7,"year":2018,"_id":"2J4sl5lerSqoH97w"}
+{"country":"Bahrain","total":97.5,"male":99.9,"female":94.9,"gender_gap":5,"year":2018,"_id":"2ls7DBc1zTUKBqnH"}
+{"country":"North Macedonia","total":98.4,"male":99.1,"female":97.6,"gender_gap":1.5,"year":2020,"_id":"3lzk6vIzozKUzceu"}
+{"country":"Ivory Coast","total":89.9,"male":93.1,"female":86.7,"gender_gap":6.4,"year":2019,"_id":"4TNqPTD2rqkkTHn0"}
+{"country":"Serbia","total":99.5,"male":99.9,"female":99.1,"gender_gap":0.8,"year":2019,"_id":"4cbYXgCqvYqi3IRI"}
+{"country":"Saudi Arabia","total":97.6,"male":98.6,"female":96,"gender_gap":2.6,"year":2020,"_id":"6us3l9Zujh5Azw63"}
+{"country":"Croatia","total":99.3,"male":99.7,"female":98.9,"gender_gap":0.8,"year":2015,"_id":"8qaTJxbuC3vMD6fa"}
+{"country":"Armenia","total":99.8,"male":99.8,"female":99.7,"gender_gap":0.1,"year":2020,"_id":"90ZeveB03mNztZ50"}
+{"country":"Cameroon","total":77.1,"male":82.6,"female":71.6,"gender_gap":11,"year":2018,"_id":"9Xj3GtPmaCelRDGl"}
+{"country":"Chile","total":96.3,"male":96.3,"female":96.3,"gender_gap":0,"year":2017,"_id":"9oTvVrA4y6L5NNiE"}
+{"country":"Senegal","total":51.9,"male":64.8,"female":39.8,"gender_gap":25,"year":2017,"_id":"AocYYBe5KbrX4EnM"}
+{"country":"Congo","total":80.3,"male":86.1,"female":74.6,"gender_gap":11.5,"year":2018,"_id":"BefXuSQZVtqBh4RD"}
+{"country":"Mozambique","total":60.7,"male":72.6,"female":50.3,"gender_gap":22.3,"year":2017,"_id":"C0spsmc7B4LivKEm"}
+{"country":"Namibia","total":91.5,"male":91.6,"female":91.4,"gender_gap":0.2,"year":2018,"_id":"C5rKF8vmzkeIPJnh"}
+{"country":"Andorra","total":100,"male":100,"female":100,"gender_gap":0,"year":2016,"_id":"DMvwGXytjkmFESSY"}
+{"country":"Czech Republic","total":99,"male":99,"female":99,"gender_gap":0,"year":2011,"_id":"EEL8LO1nKR17siF4"}
+{"country":"Costa Rica","total":97.9,"male":97.8,"female":97.9,"gender_gap":0.1,"year":2018,"_id":"Edbz0qMtdJSNUGZo"}
+{"country":"Azerbaijan","total":99.8,"male":99.9,"female":99.7,"gender_gap":0.2,"year":2019,"_id":"FRW1ZlgO6SR3IpLf"}
+{"country":"Bangladesh","total":74.66,"male":76.56,"female":72.82,"gender_gap":3.72,"year":2022,"_id":"G1PuTSQ0tj4UGyJb"}
+{"country":"Poland","total":99.8,"male":99.9,"female":99.7,"gender_gap":0.2,"year":2015,"_id":"GD5FpTABGuzD2Zn2"}
+{"country":"Kenya","total":81.5,"male":85,"female":78.2,"gender_gap":6.8,"year":2018,"_id":"GTJawO2uvPxm8go5"}
+{"country":"Brazil","total":93.2,"male":93,"female":93.4,"gender_gap":0.4,"year":2018,"_id":"HhbJ9IfATgUhw5Ql"}
+{"country":"Romania","total":98.8,"male":99.1,"female":98.6,"gender_gap":0.5,"year":2018,"_id":"Hj42dLG71rTi8kxw"}
+{"country":"Cambodia","total":80.5,"male":86.5,"female":75,"gender_gap":11.5,"year":2015,"_id":"Hr5shLkmJJfAtKBI"}
+{"country":"Afghanistan","total":37.3,"male":52.1,"female":22.6,"gender_gap":29.5,"year":2021,"_id":"Ib7pmYFobG9oGsvA"}
+{"country":"Bulgaria","total":98.4,"male":98.7,"female":98.1,"gender_gap":0.6,"year":2015,"_id":"Ja3U17psYTDCKBra"}
+{"country":"Bosnia and Herzegovina","total":98.5,"male":99.5,"female":97.5,"gender_gap":2,"year":2015,"_id":"Lj0AoeB3GcoHuSlc"}
+{"country":"Sri Lanka","total":92.3,"male":93,"female":91.6,"gender_gap":1.4,"year":2019,"_id":"LqSGtoAfrZ9TOmlf"}
+{"country":"Cyprus","total":99.1,"male":99.5,"female":98.7,"gender_gap":0.8,"year":2015,"_id":"LvLnqTbHzkxvmCPg"}
+{"country":"Belarus","total":99.9,"male":99.9,"female":99.9,"gender_gap":0,"year":2019,"_id":"M16iTYimebywhWoa"}
+{"country":"Sudan","total":60.7,"male":65.4,"female":56.1,"gender_gap":9.3,"year":2018,"_id":"M4pldOO1vBJXOryE"}
+{"country":"Uruguay","total":98.8,"male":98.5,"female":99,"gender_gap":0.5,"year":2019,"_id":"NS3PkAnvVAMQ4W0p"}
+{"country":"Niger","total":35.1,"male":43.6,"female":26.7,"gender_gap":16.9,"year":2018,"_id":"O5MY6jcbCENWnzCs"}
+{"country":"Albania","total":98.1,"male":98.5,"female":97.8,"gender_gap":0.7,"year":2018,"_id":"O98bEG5MypXfQlMY"}
+{"country":"Chad","total":22.3,"male":31.3,"female":14,"gender_gap":17.3,"year":2016,"_id":"Oulk4aFRYJSky3Vq"}
+{"country":"Mexico","total":95.2,"male":96.1,"female":94.5,"gender_gap":1.6,"year":2020,"_id":"P8qZzt9aDcXIF8Ie"}
+{"country":"Egypt","total":71.2,"male":76.5,"female":65.5,"gender_gap":11,"year":2017,"_id":"QEmSe4KI5AXemuNx"}
+{"country":"Qatar","total":93.5,"male":92.4,"female":94.7,"gender_gap":2.3,"year":2017,"_id":"QXS13visqJG91h9F"}
+{"country":"Spain","total":99.3,"male":98.5,"female":98.1,"gender_gap":0.6,"year":2021,"_id":"RshnvbMH1bgkFiL8"}
+{"country":"El Salvador","total":89.1,"male":91.3,"female":87.3,"gender_gap":4,"year":2019,"_id":"Rx5LVlSMGLhdmu2l"}
+{"country":"Cape Verde","total":86.8,"male":91.7,"female":82,"gender_gap":9.7,"year":2015,"_id":"S5w1OZgreoKwU3bW"}
+{"country":"Benin","total":42.4,"male":54,"female":31.1,"gender_gap":22.9,"year":2018,"_id":"ScwnhcziQ3KFnu9N"}
+{"country":"Iran","total":85.5,"male":90.4,"female":80.8,"gender_gap":9.6,"year":2016,"_id":"SmszRMGBq381s7SG"}
+{"country":"Fiji","total":99.1,"male":99.1,"female":99.1,"gender_gap":0,"year":2018,"_id":"T8CmxXBMw29RjvgV"}
+{"country":"Barbados","total":99.6,"male":99.6,"female":99.6,"gender_gap":0,"year":2014,"_id":"THW3SFdRWjMkyjQ9"}
+{"country":"Paraguay","total":94.5,"male":94.9,"female":94.2,"gender_gap":0.7,"year":2020,"_id":"U0ou46lYixKMZQmi"}
+{"country":"Jamaica","total":88.7,"male":84,"female":93.1,"gender_gap":9.1,"year":2015,"_id":"UEBMOUwXkV0AYkCi"}
+{"country":"Spain","total":98.6,"male":99,"female":98.2,"gender_gap":0.8,"year":2020,"_id":"VSCi193ki4Bx9HVs"}
+{"country":"Colombia","total":95.6,"male":95.4,"female":95.9,"gender_gap":0.5,"year":2020,"_id":"Vink4ctopBWqH4Pg"}
+{"country":"Uzbekistan","total":100,"male":100,"female":100,"gender_gap":0,"year":2019,"_id":"WEAzZm2nElx3Ousm"}
+{"country":"Estonia","total":99.8,"male":99.8,"female":99.8,"gender_gap":0,"year":2015,"_id":"XsAG9WwzumNCP9mD"}
+{"country":"Botswana","total":88.5,"male":88,"female":88.9,"gender_gap":0.9,"year":2015,"_id":"Y0qI8aJp2KYVmXng"}
+{"country":"Burundi","total":68.4,"male":76.3,"female":61.2,"gender_gap":15.1,"year":2017,"_id":"YIdkjVhDWBsE4YM4"}
+{"country":"Argentina","total":99,"male":98.9,"female":99.1,"gender_gap":0.2,"year":2018,"_id":"ZHkHpeg53QjpJzEu"}
+{"country":"Ethiopia","total":51.8,"male":57.2,"female":44.4,"gender_gap":12.8,"year":2017,"_id":"aDLI6YDXlFThJJ1Z"}
+{"country":"Italy","total":99.2,"male":99.4,"female":99,"gender_gap":0.4,"year":2018,"_id":"bjDzGLhZV85NOCdi"}
+{"country":"Dominican Republic","total":93.8,"male":93.8,"female":93.8,"gender_gap":0,"year":2016,"_id":"cS5ukP0p9pWU9x0J"}
+{"country":"India","total":74.4,"male":82.4,"female":65.8,"gender_gap":16.6,"year":2018,"_id":"cTvNWFt3RGFYxFd4"}
+{"country":"Israel","total":97.8,"male":98.7,"female":96.8,"gender_gap":1.9,"year":2011,"_id":"cimVTLliitTjQ5LH"}
+{"country":"Rwanda","total":73.2,"male":77.6,"female":69.4,"gender_gap":8.2,"year":2018,"_id":"d1Tt8VxgVvirAM7t"}
+{"country":"Myanmar","total":89.1,"male":92.4,"female":86.3,"gender_gap":6.1,"year":2019,"_id":"dFJQ8q3BxG9xqnO0"}
+{"country":"Russia","total":99.7,"male":99.7,"female":99.7,"gender_gap":0,"year":2018,"_id":"dLS95DlRRsXB1Tzu"}
+{"country":"Singapore","total":97.5,"male":98.9,"female":96.1,"gender_gap":2.8,"year":2019,"_id":"dYKRoteyOpsxkzuv"}
+{"country":"Peru","total":94.5,"male":97,"female":92,"gender_gap":5,"year":2020,"_id":"dYNlm4istep3peG9"}
+{"country":"Vietnam","total":95.8,"male":97,"female":94.6,"gender_gap":2.4,"year":2019,"_id":"eFQQVLRIaMCfKtS2"}
+{"country":"China","total":96.8,"male":98.5,"female":95.2,"gender_gap":3.3,"year":2018,"_id":"eOeKRYPs5ervJaJ1"}
+{"country":"Cuba","total":99.8,"male":99.9,"female":99.8,"gender_gap":0.1,"year":2015,"_id":"f4ANfs3dh2bHNDM6"}
+{"country":"Angola","total":71.1,"male":82,"female":60.7,"gender_gap":21.3,"year":2015,"_id":"f4TAFwTU24wEy22S"}
+{"country":"Indonesia","total":96,"male":97.4,"female":94.6,"gender_gap":2.8,"year":2020,"_id":"fHHhWj64poCCl496"}
+{"country":"Zimbabwe","total":86.5,"male":88.5,"female":84.6,"gender_gap":3.9,"year":2015,"_id":"fPDs7jMw2Mx2AOlr"}
+{"country":"Ecuador","total":93.6,"male":94.8,"female":92.5,"gender_gap":2.3,"year":2020,"_id":"flcFc5a60iDV3Xba"}
+{"country":"Nicaragua","total":82.6,"male":82.4,"female":82.8,"gender_gap":0.4,"year":2015,"_id":"hXJoVmDdQe0OF3Fx"}
+{"country":"Brunei","total":97.2,"male":98.1,"female":93.4,"gender_gap":4.7,"year":2018,"_id":"hXNUx2ZDYxgomhys"}
+{"country":"Philippines","total":96.3,"male":95.7,"female":96.9,"gender_gap":1.2,"year":2019,"_id":"ioBLCQYfJ5Leghvk"}
+{"country":"South Sudan","total":34.5,"male":40.3,"female":28.9,"gender_gap":11.4,"year":2018,"_id":"irh4mdlOX00iJDmV"}
+{"country":"Bhutan","total":66.6,"male":75,"female":57.1,"gender_gap":17.9,"year":2017,"_id":"j6D1leKVbzmX73na"}
+{"country":"Morocco","total":73.8,"male":83.3,"female":64.6,"gender_gap":18.7,"year":2018,"_id":"lgKfZLi6bRcnjtbf"}
+{"country":"Zambia","total":86.7,"male":90.6,"female":83.1,"gender_gap":7.5,"year":2018,"_id":"mmpThWwjrLqhFzxC"}
+{"country":"Algeria","total":81.4,"male":87.4,"female":75.3,"gender_gap":12.1,"year":2018,"_id":"o6CUGOsrHV9aBn4d"}
+{"country":"Yemen","total":70.1,"male":85.1,"female":55,"gender_gap":30.1,"year":2015,"_id":"oQZnCIzOqg5j1wS3"}
+{"country":"Portugal","total":96.1,"male":97.4,"female":95.1,"gender_gap":2.3,"year":2018,"_id":"oZiDJhoHX18fYSip"}
+{"country":"Burkina Faso","total":39.3,"male":49.2,"female":31,"gender_gap":18.2,"year":2018,"_id":"qC2wpHmlnmh2ERxC"}
+{"country":"Comoros","total":58.8,"male":64.6,"female":53,"gender_gap":11.6,"year":2018,"_id":"qaRVHOrEC24AtJ8J"}
+{"country":"Turkey","total":96.7,"male":99.1,"female":94.4,"gender_gap":4.7,"year":2019,"_id":"rQVIBCu4uqm8hbEu"}
+{"country":"Pakistan","total":58,"male":69.3,"female":46.5,"gender_gap":22.8,"year":2019,"_id":"spCLzswqbeLBgzhx"}
+{"country":"South Africa","total":95,"male":95.5,"female":94.5,"gender_gap":1,"year":2019,"_id":"sq5qyZWNMt5hdDe0"}
+{"country":"Equatorial Guinea","total":95.3,"male":97.4,"female":93,"gender_gap":4.4,"year":2015,"_id":"tC6FT5djCv0DqZGo"}
+{"country":"Iraq","total":85.6,"male":91.2,"female":79.9,"gender_gap":11.3,"year":2017,"_id":"tyi8oZLZsY4Y2xJU"}
+{"country":"Kazakhstan","total":99.8,"male":99.8,"female":99.7,"gender_gap":0.1,"year":2018,"_id":"vkkn7rF20hqYyvIl"}
+{"country":"Jordan","total":98.2,"male":98.6,"female":97.8,"gender_gap":0.8,"year":2018,"_id":"w36trT6ydMWfNCZl"}
+{"country":"United Arab Emirates","total":97.6,"male":98,"female":96.9,"gender_gap":1.1,"year":2019,"_id":"wDyH9YWzuN6ijZC0"}
+{"country":"Slovenia","total":99.7,"male":99.7,"female":99.7,"gender_gap":0,"year":2015,"_id":"wfjsk8B0YZNcoYp1"}
+{"country":"Eritrea","total":76.6,"male":84.4,"female":68.9,"gender_gap":15.5,"year":2018,"_id":"xFTY1cEKqUlLx9zL"}
+{"country":"Bolivia","total":92.5,"male":96.5,"female":88.6,"gender_gap":7.9,"year":2015,"_id":"yRIopALujeZodF4Y"}
+{"country":"Antigua and Barbuda","total":99,"male":98.4,"female":99.4,"gender_gap":1,"year":2015,"_id":"zCz0RjUJS9c5hHI9"}
+{"country":"Ukraine","total":99.8,"male":99.8,"female":99.7,"gender_gap":0.1,"year":2015,"_id":"zuhpt37QRKuZF28r"}
