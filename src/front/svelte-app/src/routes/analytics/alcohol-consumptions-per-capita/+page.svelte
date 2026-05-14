@@ -100,6 +100,7 @@
             Highcharts.chart('oauth-bubble', {
                 chart: { type: 'bubble', backgroundColor: 'transparent', plotBorderWidth: 1, zoomType: 'xy' },
                 title: { text: 'Alcohol vs salud (Vimeo + DB propia)', style: { color: '#e5c07b' } },
+                subtitle: { text: 'Tamaño de burbujas según nº de vídeos Vimeo sobre alcohol', style: { color: '#abb2bf', fontSize: '11px' } },
                 xAxis: { title: { text: 'Consumo alcohol', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
                 yAxis: { title: { text: 'Esperanza vida (proxy)', style: { color: '#abb2bf' } }, labels: { style: { color: '#abb2bf' } } },
                 tooltip: { useHTML: true, pointFormat: '<b>{point.name}</b><br>Alcohol: {point.x}<br>Vida: {point.y}' },
@@ -114,9 +115,7 @@
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
 
-            const names = (d.channelNames || []).map((/** @type {any} */ c) => c.name);
-            const preview = names.slice(0, 6).join(', ') + (names.length > 6 ? ` y ${names.length - 6} más` : '');
-            const subtitle = `${d.twitchChannels} canales encontrados: ${preview || '—'} · Países en su idioma aparecen amplificados`;
+            const subtitle = 'Tile ampliado un 25% por cada canal Twitch en el idioma del país';
 
             Highcharts.chart('oauth-treemap', {
                 chart: { backgroundColor: 'transparent' },
@@ -142,21 +141,29 @@
         }).catch(e => console.error('treemap:', e.message));
 
         // 3. Discord -> packedbubble
-        // Discord actúa como proveedor OAuth2. Los datos son de la DB propia.
-        // Países agrupados por nivel de consumo medio (escala OMS).
+        // Discord aporta números reales (approximate_guild_count, approximate_user_install_count,
+        // scopes.length) que se usan como discordFactor para ponderar cada burbuja:
+        //   value = alcohol_avg × (1 + discordFactor)
         fetch('/api/integrations/mrg/discord-alcohol').then(async r => {
             const d = await r.json();
             if (!r.ok) throw new Error(d.error || r.status);
+            const ctx = d.discordContext || {};
+            const subtitle = 'Burbujas ponderadas por servidores donde la app Discord está añadida';
             Highcharts.chart('oauth-packedbubble', {
                 chart: { type: 'packedbubble', backgroundColor: 'transparent' },
-                title: { text: 'Consumo de alcohol por país · Autenticado vía Discord OAuth2', style: { color: '#e5c07b' } },
-                subtitle: { text: `Países agrupados por nivel de consumo medio (escala OMS) · App: ${d.appName}`, style: { color: '#abb2bf', fontSize: '11px' } },
+                title: { text: 'Consumo de alcohol por país · ponderado por Discord OAuth2', style: { color: '#e5c07b' } },
+                subtitle: { text: subtitle, style: { color: '#abb2bf', fontSize: '11px' } },
                 tooltip: {
                     useHTML: true,
                     formatter: function() {
                         // @ts-ignore
                         const pt = this.point;
-                        return `<b>${pt.name}</b><br/>Consumo medio: <b>${pt.value} L/cápita</b>`;
+                        const base = pt.baseAvg ?? pt.value;
+                        const factor = ctx.discordFactor ?? 0;
+                        return `<b>${pt.name}</b><br/>` +
+                               `Consumo medio (API propia): <b>${base} L/cápita</b><br/>` +
+                               `Valor ponderado: <b>${pt.value}</b><br/>` +
+                               `Fórmula: <code>${base} × (1 + ${factor}) = ${pt.value}</code>`;
                     },
                     backgroundColor: '#282c34',
                     style: { color: '#abb2bf' }
@@ -191,7 +198,7 @@
                 series: d.series,
                 labels: d.labels,
                 title: { text: `Población mundial por tramo de edad (SOS12 + alcohol propio)`, style: { color: '#e5c07b' } },
-                subtitle: { text: `Países combinados: ${d.matchedCountries}. Tramos ponderados por consumo medio de alcohol.`, style: { color: '#abb2bf' } },
+                subtitle: { text: 'Tramos de edad amplificados por consumo medio de alcohol del país', style: { color: '#abb2bf' } },
                 colors: ['#61afef', '#98c379', '#e5c07b', '#e06c75', '#c678dd'],
                 stroke: { colors: ['#282c34'] },
                 dataLabels: { style: { colors: ['#282c34'] } },
@@ -211,7 +218,7 @@
                 xaxis: { categories: d.categories, labels: { style: { colors: Array(d.categories.length).fill('#abb2bf') } } },
                 yaxis: { labels: { style: { colors: ['#abb2bf'] } } },
                 title: { text: 'Distribución religiosa + alcohol propio (top 6 países)', style: { color: '#e5c07b' } },
-                subtitle: { text: `Países combinados: ${d.matchedCountries}. Eje 'Alcohol×10' representa el consumo medio.`, style: { color: '#abb2bf' } },
+                subtitle: { text: 'Top 6 países por consumo · eje Alcohol×10 añadido al radar religioso', style: { color: '#abb2bf' } },
                 colors: ['#61afef', '#98c379', '#e5c07b', '#e06c75', '#c678dd', '#56b6c2'],
                 stroke: { width: 2 },
                 fill: { opacity: 0.2 },
@@ -230,7 +237,7 @@
                 series: d.series,
                 labels: d.labels,
                 title: { text: 'Lanzamientos espaciales × alcohol propio', style: { color: '#e5c07b' } },
-                subtitle: { text: `Países combinados: ${d.matchedCountries}. Métrica = lanzamientos × (1 + alcoholAvg/10).`, style: { color: '#abb2bf' } },
+                subtitle: { text: 'Lanzamientos por país × consumo medio de alcohol (top 8)', style: { color: '#abb2bf' } },
                 colors: ['#61afef', '#98c379', '#e5c07b', '#e06c75', '#c678dd', '#56b6c2', '#d19a66', '#abb2bf'],
                 stroke: { colors: ['#282c34'] },
                 fill: { opacity: 0.85 },
@@ -254,7 +261,7 @@
                 },
                 yaxis: { labels: { style: { colors: ['#abb2bf'] } } },
                 title: { text: 'Consumo de alcohol · países con datos de agua potable (SOS2526-27)', style: { color: '#e5c07b' } },
-                subtitle: { text: `${d.matchedCountries} países cruzados · Top 15 por consumo`, style: { color: '#abb2bf' } },
+                subtitle: { text: 'Solo países con datos en SOS27 · tooltip con millones con acceso a agua', style: { color: '#abb2bf' } },
                 tooltip: {
                     theme: 'dark',
                     // @ts-ignore

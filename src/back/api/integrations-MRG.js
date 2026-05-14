@@ -214,20 +214,43 @@ export function loadBackendIntegrationsMRG(app) {
   });
 
   // -------- 3. Discord -> packedbubble ----------------------------------
-  // Discord actúa como proveedor OAuth2 (client_credentials → /oauth2/@me).
-  // Los datos son de la DB propia de alcohol. Los países se agrupan por nivel
-  // de consumo medio según la escala de la OMS: alto ≥10 L, medio 5-10 L, bajo <5 L.
+  // Discord aporta tres números reales vía OAuth2 client_credentials (/oauth2/@me):
+  //   - approximate_guild_count       (servidores donde la app está añadida)
+  //   - approximate_user_install_count(usuarios que la han instalado)
+  //   - scopes.length                 (nº de scopes autorizados al token)
+  // Se construye un factor numérico (discordFactor) con esos datos y se usa
+  // para ponderar el value de cada burbuja:
+  //   value = alcohol_avg × (1 + discordFactor)
+  // Países con más consumo se amplifican más en términos absolutos.
   app.get(BASE_URL_INTEGRATIONS_MRG + "/discord-alcohol", async (req, res) => {
     try {
       let appName = "Discord OAuth2";
+      let guildCount = 0;
+      let userInstallCount = 0;
+      let scopeCount = 0;
+      let dataSource = "fallback";
 
       try {
         const token = await getToken("mrg_discord", discordToken);
         const ext = await fetchT("https://discord.com/api/oauth2/@me", {
           headers: { Authorization: `Bearer ${token}` }
         }).then(r => r.json());
-        appName = ext.application?.name ?? "Discord OAuth2";
+        appName          = ext.application?.name ?? "Discord OAuth2";
+        guildCount       = Number(ext.application?.approximate_guild_count) || 0;
+        userInstallCount = Number(ext.application?.approximate_user_install_count) || 0;
+        scopeCount       = Array.isArray(ext.scopes) ? ext.scopes.length : 0;
+        dataSource = "api";
       } catch (e) { console.warn("Discord fallback:", e.message); }
+
+      // Factor real obtenido de Discord. Si la app no está en ningún guild,
+      // usamos como respaldo el nº de instalaciones de usuario y, si tampoco,
+      // el nº de scopes autorizados al token. Acotamos para no descompensar.
+      const rawFactor =
+        guildCount       > 0 ? guildCount / 50       :
+        userInstallCount > 0 ? userInstallCount / 50 :
+        scopeCount       > 0 ? scopeCount / 2        :
+        0.5;
+      const discordFactor = Math.min(Math.max(rawFactor, 0.1), 5);
 
       const docs = await findAll();
 
@@ -241,23 +264,35 @@ export function loadBackendIntegrationsMRG(app) {
         byCountry[c].count += 1;
       });
 
-      // Clasificación por niveles OMS
+      // Clasificación por niveles OMS, ponderando cada país por el factor Discord
       const high = [], medium = [], low = [];
       Object.entries(byCountry).forEach(([nation, info]) => {
-        const avg = Math.round((info.sum / info.count) * 10) / 10;
-        const point = { name: nation, value: avg };
+        const avg = info.sum / info.count;
+        const weighted = Math.round(avg * (1 + discordFactor) * 10) / 10;
+        const point = { name: nation, value: weighted, baseAvg: Math.round(avg * 10) / 10 };
         if (avg >= 10) high.push(point);
         else if (avg >= 5) medium.push(point);
         else low.push(point);
       });
 
       const series = [
-        { name: 'Consumo alto (≥10 L/cápita)', data: high, color: '#e06c75' },
+        { name: 'Consumo alto (≥10 L/cápita)',  data: high,   color: '#e06c75' },
         { name: 'Consumo medio (5–10 L/cápita)', data: medium, color: '#e5c07b' },
-        { name: 'Consumo bajo (<5 L/cápita)', data: low, color: '#98c379' },
+        { name: 'Consumo bajo (<5 L/cápita)',    data: low,    color: '#98c379' },
       ];
 
-      res.json({ chartType: "packedbubble", series, appName });
+      res.json({
+        chartType: "packedbubble",
+        series,
+        appName,
+        discordContext: {
+          guildCount,
+          userInstallCount,
+          scopeCount,
+          discordFactor: Math.round(discordFactor * 100) / 100,
+        },
+        dataSource,
+      });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
